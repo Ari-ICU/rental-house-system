@@ -1,0 +1,12 @@
+// types/bills.ts
+import { Rental } from './rents';
+
+export interface Bill {
+    id: number;
+    rental: Rental; // link the Bill to a Rental
+    month: string;
+    electricityAmount: number;
+    waterAmount: number;
+    electricityStatus: 'Paid' | 'Unpaid';
+    waterStatus: 'Paid' | 'Unpaid';
+}
