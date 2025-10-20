@@ -3,7 +3,7 @@
 import { Rental } from "@/types/rents";
 import { useLang } from "@/context/LangContext";
 import { useState } from "react";
-import RentalModal from "./rentals/RentalModal";
+import { useRouter } from "next/navigation";
 
 interface RecentRentalsTableProps {
     rentals: Rental[];
@@ -17,18 +17,12 @@ const statusColors: Record<string, string> = {
 
 const RecentRentalsTable = ({ rentals }: RecentRentalsTableProps) => {
     const { lang } = useLang();
-    const [selectedRental, setSelectedRental] = useState<Rental | null>(null);
-    const [modalOpen, setModalOpen] = useState(false);
+    const router = useRouter();
 
     const handleRowClick = (rental: Rental) => {
-        setSelectedRental(rental);
-        setModalOpen(true);
+        router.push(`/dashboard/rentals/${rental.id}`);
     };
 
-    const closeModal = () => {
-        setModalOpen(false);
-        setSelectedRental(null);
-    };
 
     return (
         <div className="overflow-x-auto bg-white shadow rounded-lg">
@@ -84,14 +78,6 @@ const RecentRentalsTable = ({ rentals }: RecentRentalsTableProps) => {
                     ))}
                 </tbody>
             </table>
-
-            {modalOpen && selectedRental && (
-                <RentalModal
-                    isOpen={modalOpen}
-                    onClose={closeModal}
-                    rental={selectedRental}
-                />
-            )}
         </div>
     );
 };

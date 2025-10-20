@@ -7,7 +7,7 @@ import {
     FaFileContract,
     FaUsers,
     FaChartBar,
-    FaCog,
+    FaCamera,
     FaBars,
     FaLifeRing,
     FaChevronDown,
@@ -61,6 +61,18 @@ const Sidebar: React.FC<{ isMobileOpen: boolean; onClose: () => void }> = ({ isM
                 { name: "Electricity and Water Bills", nameKh: "វិក្កយបត្រ​អគ្គិសនី និង​ទឹក", href: "/dashboard/bills", icon: <FaUsers /> },
             ],
         },
+        {
+        title: "Camera Controller",
+        titleKh: "កាមេរ៉ា",
+        links: [
+            {
+                name: "Manage Cameras",
+                nameKh: "គ្រប់គ្រងកាមេរ៉ា",
+                href: "/dashboard/camera",
+                icon: <FaCamera />,
+            },
+        ],
+    },
         {
             title: "Reports & Analytics",
             titleKh: "របាយការណ៍ និងវិភាគ",

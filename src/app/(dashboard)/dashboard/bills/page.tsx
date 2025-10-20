@@ -1,39 +1,41 @@
 'use client';
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import BillsList from "@/components/bills/BillsList";
 import { bills as billsData } from "@/data/bills";
 import { Bill } from "@/types/bill";
 import BillHeader from "@/components/bills/BillHeader";
 import { formatKhmerDate } from "@/utils/dateFormatter";
 import { printMultipleBills } from "@/components/bills/printMultipleBills";
-import { useLang } from "@/context/LangContext"; // your global lang context
+import { useLang } from "@/context/LangContext";
 
 const BillsPage: React.FC = () => {
-    const { lang } = useLang(); // get current global language
+    const { lang } = useLang();
+    const router = useRouter();
 
-    // State to manage bills
     const [bills, setBills] = useState<Bill[]>(billsData);
+    const [searchQuery, setSearchQuery] = useState("");
 
-    // Search function works for both English and Khmer
-    const handleSearch = (query: string) => {
-        const lowerQuery = query.toLowerCase().replace(/\s+/g, " ").trim();
+    const filteredBills = useMemo(() => {
+        if (!searchQuery.trim()) return bills;
 
-        const filtered = billsData.filter((b) => {
+        const lowerQuery = searchQuery.toLowerCase().replace(/\s+/g, " ").trim();
+
+        return billsData.filter((b) => {
             const clientName = (b.rental?.ClientName || "").toLowerCase().replace(/\s+/g, " ").trim();
             const electricityStatus = b.electricityStatus.toLowerCase();
             const waterStatus = b.waterStatus.toLowerCase();
 
             const monthEn = b.month
                 ? new Date(b.month)
-                    .toLocaleDateString("en-US", { year: "numeric", month: "long", day: "2-digit" })
+                    .toLocaleDateString("en-US", { year: "numeric", month: "long" })
                     .toLowerCase()
-                    .replace(/\s+/g, " ")
                     .trim()
                 : "";
 
             const monthKm = b.month
-                ? formatKhmerDate(b.month, "km").toLowerCase().replace(/\s+/g, " ").trim()
+                ? formatKhmerDate(b.month, "km").toLowerCase().trim()
                 : "";
 
             return (
@@ -44,27 +46,39 @@ const BillsPage: React.FC = () => {
                 monthKm.includes(lowerQuery)
             );
         });
+    }, [searchQuery, bills]);
 
-        setBills(filtered);
+    const handleSearch = (query: string) => {
+        setSearchQuery(query);
     };
 
     const handleAdd = () => {
-        alert(lang === "km" ? "បានចុចបន្ថែមការជួល!" : "Add Rental clicked!");
+        router.push("/dashboard/bills/create"); // Navigate to create page
     };
 
     const handlePrintAll = () => {
-        if (bills.length === 0) {
+        if (!filteredBills.length) {
             alert(lang === "km" ? "មិនមានវិក័យប័ត្រណាមួយសម្រាប់បោះពុម្ព!" : "No bills to print!");
             return;
         }
-        printMultipleBills(bills, lang, '/signature.png');
+        printMultipleBills(filteredBills, lang, "/signature.png");
     };
 
     return (
-        <div className="min-h-screen">
-            <BillHeader onAdd={handleAdd} onSearch={handleSearch} onPrint={handlePrintAll} />
-            <main>
-                <BillsList bills={bills} />
+        <div className="min-h-screen ">
+            <BillHeader
+                onAdd={handleAdd}
+                onSearch={handleSearch}
+                onPrint={handlePrintAll}
+            />
+            <main className="">
+                {filteredBills.length > 0 ? (
+                    <BillsList bills={filteredBills} />
+                ) : (
+                    <p className="text-center text-gray-500 mt-10">
+                        {lang === "km" ? "មិនមានវិក័យប័ត្រណាមួយសំរាប់បង្ហាញ" : "No bills found"}
+                    </p>
+                )}
             </main>
         </div>
     );

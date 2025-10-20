@@ -1,11 +1,12 @@
 'use client';
 
 import React, { useState, useEffect } from "react";
+import { useRouter } from 'next/navigation';
 import { FaEdit, FaTrash, FaSave, FaTimes, FaChevronLeft, FaChevronRight, FaEye, FaCalendarAlt } from "react-icons/fa";
+
 import { Rental, RentalStatus } from "@/types/rents";
 import { formatKhmerDate } from "@/utils/dateFormatter";
 import KhmerCalendar from "@/utils/KhmerCalendar";
-import RentalModal from "./RentalModal";
 import { useLang } from "@/context/LangContext";
 
 interface RentalListProps {
@@ -29,6 +30,7 @@ const RentalList: React.FC<RentalListProps> = ({
     rentals = [],
     itemsPerPageOptions = [10, 20],
 }) => {
+    const router = useRouter();
     const { lang } = useLang();
     const [localRentals, setLocalRentals] = useState<Rental[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -36,8 +38,6 @@ const RentalList: React.FC<RentalListProps> = ({
     const [statusFilter, setStatusFilter] = useState<RentalStatus | "All">("All");
     const [editingId, setEditingId] = useState<number | null>(null);
     const [editForm, setEditForm] = useState<Partial<Rental>>({});
-    const [selectedRental, setSelectedRental] = useState<Rental | null>(null);
-    const [isModalOpen, setIsModalOpen] = useState(false);
     const [showDatePopup, setShowDatePopup] = useState(false);
     const [editingDateField, setEditingDateField] = useState<"startDate" | "endDate" | null>(null);
 
@@ -108,8 +108,7 @@ const RentalList: React.FC<RentalListProps> = ({
     };
 
     const handleViewDetails = (rental: Rental) => {
-        setSelectedRental(rental);
-        setIsModalOpen(true);
+        router.push(`/dashboard/rentals/${rental.id}`);
     };
 
     const t = {
@@ -274,8 +273,6 @@ const RentalList: React.FC<RentalListProps> = ({
                     isPopup={true}
                 />
             )}
-
-            <RentalModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} rental={selectedRental} />
         </div>
     );
 };

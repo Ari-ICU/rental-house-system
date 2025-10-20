@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import RentalHeader from "@/components/rentals/RentalHeader";
 import RentalList from "@/components/rentals/RentalList";
 import { Rental, RentalStatus } from "@/types/rents";
@@ -16,6 +16,8 @@ const statusMap: { [key: string]: RentalStatus } = {
 
 const RentalPage: React.FC = () => {
     const params = useParams();
+    const router = useRouter();
+
     const statusParam = params.status;
     const statusKey =
         typeof statusParam === "string" ? statusParam.toLowerCase() : "";
@@ -32,7 +34,6 @@ const RentalPage: React.FC = () => {
     }, [status]);
 
     const handleSearch = (query: string) => {
-        // Normalize query: lowercase, replace slashes with dash, trim, collapse multiple spaces
         const normalizedQuery = query
             .toLowerCase()
             .replace(/\//g, "-")
@@ -40,14 +41,12 @@ const RentalPage: React.FC = () => {
             .trim();
 
         const filtered = allRentals.filter((r) => {
-            // Filter by status if applicable
             if (status && r.status !== status) return false;
 
             const tenantName = r.ClientName.toLowerCase().replace(/\s+/g, " ").trim();
             const roomNumber = r.roomNumber.toLowerCase().replace(/\s+/g, " ").trim();
             const startDate = r.startDate?.toLowerCase().replace(/\s+/g, " ").trim() || "";
             const endDate = r.endDate?.toLowerCase().replace(/\s+/g, " ").trim() || "";
-
 
             const khStartDate = r.startDate
                 ? formatKhmerDate(r.startDate, "km").toLowerCase().replace(/\s+/g, " ").trim()
@@ -64,21 +63,22 @@ const RentalPage: React.FC = () => {
                 khStartDate.includes(normalizedQuery) ||
                 khEndDate.includes(normalizedQuery)
             );
-
         });
 
         setRentals(filtered);
     };
 
-
     const handleAdd = () => {
-        alert("Add Rental clicked!");
+        // Navigate to create rental page
+        router.push("/dashboard/rentals/create");
     };
 
     return (
-        <div className="min-h-screen">
+        <div className="min-h-screen bg-gray-100">
             <RentalHeader onSearch={handleSearch} onAdd={handleAdd} />
-            <RentalList rentals={rentals} />
+            <div className="">
+                <RentalList rentals={rentals} />
+            </div>
         </div>
     );
 };

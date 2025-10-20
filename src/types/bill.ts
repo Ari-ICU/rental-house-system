@@ -9,4 +9,5 @@ export interface Bill {
     waterAmount: number;
     electricityStatus: 'Paid' | 'Unpaid';
     waterStatus: 'Paid' | 'Unpaid';
+    notes: string
 }
