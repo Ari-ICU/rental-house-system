@@ -1,16 +1,17 @@
 'use client';
 
 import React, { useState, ChangeEvent } from "react";
-import { FaSearch, FaPlus } from "react-icons/fa";
+import { FaSearch, FaPlus, FaPrint } from "react-icons/fa";
 import { usePathname } from "next/navigation";
 import { useLang } from "@/context/LangContext";
 
 interface BillHeaderProps {
     onSearch?: (query: string) => void;
     onAdd?: () => void;
+    onPrint?: () => void;
 }
 
-const BillHeader: React.FC<BillHeaderProps> = ({ onSearch, onAdd }) => {
+const BillHeader: React.FC<BillHeaderProps> = ({ onSearch, onAdd, onPrint }) => {
     const [searchQuery, setSearchQuery] = useState("");
     const pathname = usePathname();
     const { lang } = useLang();
@@ -36,6 +37,7 @@ const BillHeader: React.FC<BillHeaderProps> = ({ onSearch, onAdd }) => {
         : "ស្វែងរកវិក្កយបត្រតាមឈ្មោះអតិថិជន ឬ លេខវិក្កយបត្រ";
 
     const addButtonText = lang === "en" ? "Add Bill" : "បន្ថែមវិក្កយបត្រ";
+    const printButtonText = lang === "en" ? "Print All" : "បោះពុម្ពទាំងអស់";
 
     return (
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-4 gap-4 w-full">
@@ -54,15 +56,27 @@ const BillHeader: React.FC<BillHeaderProps> = ({ onSearch, onAdd }) => {
                     <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm" />
                 </div>
 
-                {onAdd && (
-                    <button
-                        onClick={onAdd}
-                        className="flex items-center justify-center gap-2 bg-blue-500 text-white px-4 py-2 sm:px-6 rounded-lg hover:bg-blue-600 transition-colors text-sm font-medium w-full sm:w-auto"
-                        aria-label={addButtonText}
-                    >
-                        <FaPlus className="text-sm" /> {addButtonText}
-                    </button>
-                )}
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full sm:w-auto">
+                    {onAdd && (
+                        <button
+                            onClick={onAdd}
+                            className="flex items-center justify-center gap-2 bg-blue-500 text-white px-4 py-2 sm:px-6 rounded-lg hover:bg-blue-600 transition-colors text-sm font-medium w-full sm:w-auto"
+                            aria-label={addButtonText}
+                        >
+                            <FaPlus className="text-sm" /> {addButtonText}
+                        </button>
+                    )}
+
+                    {onPrint && (
+                        <button
+                            onClick={onPrint}
+                            className="flex items-center justify-center gap-2 bg-gray-600 text-white px-4 py-2 sm:px-6 rounded-lg hover:bg-gray-700 transition-colors text-sm font-medium w-full sm:w-auto"
+                            aria-label={printButtonText}
+                        >
+                            <FaPrint className="text-sm" /> {printButtonText}
+                        </button>
+                    )}
+                </div>
             </div>
         </div>
     );

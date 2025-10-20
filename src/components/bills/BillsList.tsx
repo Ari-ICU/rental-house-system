@@ -17,7 +17,7 @@ import { formatKhmerDate } from "@/utils/dateFormatter";
 import KhmerCalendar from "@/utils/KhmerCalendar";
 import BillViewModal from "@/components/bills/BillViewModal";
 import { useLang } from "@/context/LangContext";
-import { printBill } from "@/components/bills/printBill";
+import  { printBill } from "@/components/bills/printBill";
 
 
 interface BillsListProps {
@@ -106,7 +106,7 @@ const BillsList: React.FC<BillsListProps> = ({
     };
 
     const handlePrint = (bill: Bill) => {
-        printBill(bill, lang);
+        printBill(bill, lang, '/signature.png');
     };
 
     const updateEditForm = (updater: (current: Bill) => Bill) => {
