@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Rental } from '@/types/rents';
 import { useLang } from '@/context/LangContext';
 import KhmerCalendar from '@/utils/KhmerCalendar';
+import FileUploader from '@/common/FileUploader';
 
 const RentalForm: React.FC = () => {
     const { lang } = useLang();
@@ -13,7 +14,7 @@ const RentalForm: React.FC = () => {
 
     const [formData, setFormData] = useState<Omit<Rental, 'id'>>({
         ClientName: '',
-        image: '', // profile image
+        image: '',
         roomNumber: '',
         status: 'In-Active',
         rentAmount: 0,
@@ -36,12 +37,10 @@ const RentalForm: React.FC = () => {
     const [showDatePopup, setShowDatePopup] = useState(false);
     const [editingDateField, setEditingDateField] = useState<'startDate' | 'endDate' | null>(null);
 
-    // Image previews
     const [profilePreview, setProfilePreview] = useState<string | null>(null);
     const [frontPreview, setFrontPreview] = useState<string | null>(null);
     const [backPreview, setBackPreview] = useState<string | null>(null);
 
-    // Handle input fields
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
     ) => {
@@ -52,7 +51,6 @@ const RentalForm: React.FC = () => {
         }));
     };
 
-    // Handle date fields
     const handleDateFieldClick = (field: 'startDate' | 'endDate') => {
         setEditingDateField(field);
         setShowDatePopup(true);
@@ -61,12 +59,16 @@ const RentalForm: React.FC = () => {
     const handleDateChange = (dateStr: string) => {
         if (editingDateField) {
             setFormData((prev) => ({ ...prev, [editingDateField]: dateStr }));
+            setShowDatePopup(false);
         }
     };
 
-    // Handle profile image
     const handleProfileImageChange = (file: File | null) => {
-        if (!file) return;
+        if (!file) {
+            setFormData((prev) => ({ ...prev, image: '' }));
+            setProfilePreview(null);
+            return;
+        }
         const reader = new FileReader();
         reader.onload = () => {
             const base64 = reader.result as string;
@@ -76,9 +78,16 @@ const RentalForm: React.FC = () => {
         reader.readAsDataURL(file);
     };
 
-    // Handle ID card images
     const handleCardImageChange = (side: 'front' | 'back', file: File | null) => {
-        if (!file) return;
+        if (!file) {
+            setFormData((prev) => ({
+                ...prev,
+                clientImageCard: { ...prev.clientImageCard, [side]: '' },
+            }));
+            if (side === 'front') setFrontPreview(null);
+            if (side === 'back') setBackPreview(null);
+            return;
+        }
         const reader = new FileReader();
         reader.onload = () => {
             const base64 = reader.result as string;
@@ -92,14 +101,12 @@ const RentalForm: React.FC = () => {
         reader.readAsDataURL(file);
     };
 
-    // Handle form submit
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
-
         try {
             console.log('Submitting Rental Form Data:', formData);
-            // TODO: Send data to your API
+            // TODO: API call
         } catch (error) {
             console.error('Error submitting form:', error);
         } finally {
@@ -107,25 +114,34 @@ const RentalForm: React.FC = () => {
         }
     };
 
+    // Status options with correct translations
+    const statusOptions = [
+        { value: 'In-Active', label: lang === 'km' ? 'សកម្ម' : 'Active' },
+        { value: 'Non-Active', label: lang === 'km' ? 'មិនសកម្ម' : 'Inactive' },
+        { value: 'Past', label: lang === 'km' ? 'កន្លងផុត' : 'Past' },
+    ];
+
     return (
         <form
             onSubmit={handleSubmit}
-            className="max-w-6xl mx-auto p-6 bg-white rounded-xl shadow-md border border-gray-100 space-y-6"
+            className="max-w-6xl mx-auto p-6 bg-white rounded-2xl shadow-lg border border-gray-200 space-y-8"
         >
             {/* Back Button */}
             <button
                 type="button"
                 onClick={() => router.back()}
-                className="flex items-center gap-2 text-gray-700 hover:text-gray-900 font-medium mb-4"
+                className="flex items-center gap-2 text-gray-600 hover:text-gray-900 font-medium mb-2 transition"
+                aria-label={lang === 'km' ? 'ត្រឡប់ក្រោយ' : 'Go back'}
             >
-                <FaArrowLeft /> {lang === 'km' ? 'ត្រឡប់ក្រោយ' : 'Back'}
+                <FaArrowLeft />
+                <span>{lang === 'km' ? 'ត្រឡប់ក្រោយ' : 'Back'}</span>
             </button>
 
-            {/* Title */}
+            {/* Header */}
             <div className="text-center mb-2">
-                <h2 className="text-2xl font-semibold text-gray-800">
+                <h1 className="text-2xl font-bold text-gray-800">
                     {lang === 'km' ? 'បន្ថែមការជួលថ្មី' : 'Add New Rental'}
-                </h2>
+                </h1>
                 <p className="text-sm text-gray-500 mt-1">
                     {lang === 'km'
                         ? 'បំពេញព័ត៌មានខាងក្រោមដើម្បីបង្កើតកំណត់ត្រាជួលថ្មី។'
@@ -133,272 +149,256 @@ const RentalForm: React.FC = () => {
                 </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                {/* Client Profile Image */}
-                <div className="relative col-span-1 md:col-span-2">
-                    <label className="block text-sm text-blue-600 mb-1">
-                        {lang === 'km' ? 'រូបភាពអតិថិជន' : 'Client Image'}
-                    </label>
-                    <input
-                        type="file"
+            {/* Form Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Profile Image */}
+                <div className="md:col-span-2">
+                    <FileUploader
+                        label={lang === 'km' ? 'រូបភាពអតិថិជន' : 'Client Photo'}
                         accept="image/*"
-                        onChange={(e) => handleProfileImageChange(e.target.files?.[0] ?? null)}
-                        className="block w-full text-sm border border-gray-300 rounded-lg p-2"
+                        onFileSelect={handleProfileImageChange}
+                        preview={profilePreview}
                     />
-                    {profilePreview && (
-                        <div className="mt-2">
-                            <img
-                                src={profilePreview}
-                                alt="Client Preview"
-                                className="w-40 h-40 object-cover rounded-lg border"
-                            />
-                        </div>
-                    )}
                 </div>
 
                 {/* Client Name */}
-                <div className="relative">
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                        {lang === 'km' ? 'ឈ្មោះអតិថិជន *' : 'Client Name *'}
+                    </label>
                     <input
                         type="text"
                         name="ClientName"
                         value={formData.ClientName}
                         onChange={handleChange}
-                        className="peer w-full px-4 py-3 mt-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
                         required
                     />
-                    <label className="absolute -top-2 left-3 text-xs text-blue-600 bg-white px-1">
-                        {lang === 'km' ? 'ឈ្មោះអតិថិជន *' : 'Client Name *'}
-                    </label>
                 </div>
 
                 {/* Room Number */}
-                <div className="relative">
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                        {lang === 'km' ? 'លេខបន្ទប់ *' : 'Room Number *'}
+                    </label>
                     <input
                         type="text"
                         name="roomNumber"
                         value={formData.roomNumber}
                         onChange={handleChange}
-                        className="peer w-full px-4 py-3 mt-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
                         required
                     />
-                    <label className="absolute -top-2 left-3 text-xs text-blue-600 bg-white px-1">
-                        {lang === 'km' ? 'លេខបន្ទប់ *' : 'Room Number *'}
-                    </label>
                 </div>
 
                 {/* Status */}
-                <div className="relative">
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                        {lang === 'km' ? 'ស្ថានភាព *' : 'Status *'}
+                    </label>
                     <select
                         name="status"
                         value={formData.status}
                         onChange={handleChange}
-                        className="peer w-full px-4 py-3 mt-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white"
+                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition appearance-none"
                         required
                     >
-                        <option value="In-Active">{lang === 'km' ? 'សកម្ម' : 'In-Active'}</option>
-                        <option value="Non-Active">{lang === 'km' ? 'មិនសកម្ម' : 'Non-Active'}</option>
-                        <option value="Past">{lang === 'km' ? 'កន្លងមក' : 'Past'}</option>
+                        {statusOptions.map((opt) => (
+                            <option key={opt.value} value={opt.value}>
+                                {opt.label}
+                            </option>
+                        ))}
                     </select>
-                    <label className="absolute -top-2 left-3 text-xs text-blue-600 bg-white px-1">
-                        {lang === 'km' ? 'ស្ថានភាព *' : 'Status *'}
-                    </label>
                 </div>
 
                 {/* Rent Amount */}
-                <div className="relative">
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                        {lang === 'km' ? 'តម្លៃជួល ($)*' : 'Rent Amount ($)*'}
+                    </label>
                     <input
                         type="number"
                         name="rentAmount"
                         value={formData.rentAmount || ''}
                         onChange={handleChange}
                         min={0}
-                        className="peer w-full px-4 py-3 mt-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
                         required
                     />
-                    <label className="absolute -top-2 left-3 text-xs text-blue-600 bg-white px-1">
-                        {lang === 'km' ? 'តម្លៃជួល ($)*' : 'Rent Amount ($)*'}
-                    </label>
                 </div>
 
                 {/* Start Date */}
-                <div className="relative">
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                        {lang === 'km' ? 'ថ្ងៃចាប់ផ្តើម *' : 'Start Date *'}
+                    </label>
                     <button
                         type="button"
                         onClick={() => handleDateFieldClick('startDate')}
-                        className="w-full text-left px-4 py-3 mt-2 border border-gray-300 rounded-lg flex justify-between items-center focus:ring-2 focus:ring-blue-500"
+                        className="w-full text-left px-4 py-2.5 border border-gray-300 rounded-lg flex justify-between items-center focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
                     >
-                        <span>
-                            {formData.startDate
-                                ? formData.startDate
-                                : lang === 'km'
-                                ? 'ជ្រើសរើសថ្ងៃចាប់ផ្តើម'
-                                : 'Select Start Date'}
+                        <span className={formData.startDate ? 'text-gray-900' : 'text-gray-400'}>
+                            {formData.startDate ||
+                                (lang === 'km' ? 'ជ្រើសរើសថ្ងៃ' : 'Select date')}
                         </span>
                         <FaCalendarAlt className="text-gray-500" />
                     </button>
                 </div>
 
                 {/* End Date */}
-                <div className="relative">
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                        {lang === 'km' ? 'ថ្ងៃបញ្ចប់ *' : 'End Date *'}
+                    </label>
                     <button
                         type="button"
                         onClick={() => handleDateFieldClick('endDate')}
-                        className="w-full text-left px-4 py-3 mt-2 border border-gray-300 rounded-lg flex justify-between items-center focus:ring-2 focus:ring-blue-500"
+                        className="w-full text-left px-4 py-2.5 border border-gray-300 rounded-lg flex justify-between items-center focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
                     >
-                        <span>
-                            {formData.endDate
-                                ? formData.endDate
-                                : lang === 'km'
-                                ? 'ជ្រើសរើសថ្ងៃបញ្ចប់'
-                                : 'Select End Date'}
+                        <span className={formData.endDate ? 'text-gray-900' : 'text-gray-400'}>
+                            {formData.endDate ||
+                                (lang === 'km' ? 'ជ្រើសរើសថ្ងៃ' : 'Select date')}
                         </span>
                         <FaCalendarAlt className="text-gray-500" />
                     </button>
                 </div>
 
-                {/* Client Phone */}
-                <div className="relative">
+                {/* Phone & Email */}
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                        {lang === 'km' ? 'លេខទូរស័ព្ទ' : 'Phone'}
+                    </label>
                     <input
                         type="tel"
                         name="clientPhone"
                         value={formData.clientPhone}
                         onChange={handleChange}
-                        className="peer w-full px-4 py-3 mt-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
                     />
-                    <label className="absolute -top-2 left-3 text-xs text-blue-600 bg-white px-1">
-                        {lang === 'km' ? 'លេខទូរស័ព្ទអតិថិជន' : 'Client Phone'}
-                    </label>
                 </div>
 
-                {/* Client Email */}
-                <div className="relative">
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                        {lang === 'km' ? 'អ៊ីមែល' : 'Email'}
+                    </label>
                     <input
                         type="email"
                         name="clientEmail"
                         value={formData.clientEmail}
                         onChange={handleChange}
-                        className="peer w-full px-4 py-3 mt-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
                     />
-                    <label className="absolute -top-2 left-3 text-xs text-blue-600 bg-white px-1">
-                        {lang === 'km' ? 'អ៊ីមែលអតិថិជន' : 'Client Email'}
-                    </label>
                 </div>
 
-                {/* Client Address */}
-                <div className="relative col-span-1 md:col-span-2">
+                {/* Address */}
+                <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                        {lang === 'km' ? 'អាស័យដ្ឋាន' : 'Address'}
+                    </label>
                     <input
                         type="text"
                         name="clientAddress"
                         value={formData.clientAddress}
                         onChange={handleChange}
-                        className="peer w-full px-4 py-3 mt-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
                     />
-                    <label className="absolute -top-2 left-3 text-xs text-blue-600 bg-white px-1">
-                        {lang === 'km' ? 'អាស័យដ្ឋានអតិថិជន' : 'Client Address'}
-                    </label>
                 </div>
 
-                {/* ID Card Front */}
+                {/* ID Card Images */}
                 <div>
-                    <label className="block text-sm text-blue-600 mb-1">
-                        {lang === 'km' ? 'អត្តសញ្ញាណប័ណ្ណ (មុខ)' : 'ID Card (Front)'}
-                    </label>
-                    <input
-                        type="file"
+                    <FileUploader
+                        label={lang === 'km' ? 'អត្តសញ្ញាណប័ណ្ណ (មុខ)' : 'ID Card (Front)'}
                         accept="image/*"
-                        onChange={(e) => handleCardImageChange('front', e.target.files?.[0] ?? null)}
-                        className="block w-full text-sm border border-gray-300 rounded-lg p-2"
+                        onFileSelect={(file) => handleCardImageChange('front', file)}
+                        preview={frontPreview}
                     />
-                    {frontPreview && <img src={frontPreview} alt="Front ID" className="mt-2 w-[600px] h-72 mx-auto border rounded-lg" />}
                 </div>
 
-                {/* ID Card Back */}
                 <div>
-                    <label className="block text-sm text-blue-600 mb-1">
-                        {lang === 'km' ? 'អត្តសញ្ញាណប័ណ្ណ (ក្រោយ)' : 'ID Card (Back)'}
-                    </label>
-                    <input
-                        type="file"
+                    <FileUploader
+                        label={lang === 'km' ? 'អត្តសញ្ញាណប័ណ្ណ (ខាងក្រោយ)' : 'ID Card (Back)'}
                         accept="image/*"
-                        onChange={(e) => handleCardImageChange('back', e.target.files?.[0] ?? null)}
-                        className="block w-full text-sm border border-gray-300 rounded-lg p-2"
+                        onFileSelect={(file) => handleCardImageChange('back', file)}
+                        preview={backPreview}
                     />
-                    {backPreview && <img src={backPreview} alt="Back ID" className="mt-2 w-[600px] h-72 mx-auto border rounded-lg" />}
                 </div>
 
-                {/* Emergency Contact Name */}
-                <div className="relative">
+                {/* Emergency Contact */}
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                        {lang === 'km' ? 'ឈ្មោះអ្នកទំនាក់ទំនងបន្ទាន់' : 'Emergency Contact'}
+                    </label>
                     <input
                         type="text"
                         name="emergencyContactName"
                         value={formData.emergencyContactName}
                         onChange={handleChange}
-                        className="peer w-full px-4 py-3 mt-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
                     />
-                    <label className="absolute -top-2 left-3 text-xs text-blue-600 bg-white px-1">
-                        {lang === 'km' ? 'ឈ្មោះអ្នកទំនាក់ទំនងបន្ទាន់' : 'Emergency Contact Name'}
-                    </label>
                 </div>
 
-                {/* Emergency Contact Phone */}
-                <div className="relative">
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                        {lang === 'km' ? 'លេខទូរស័ព្ទបន្ទាន់' : 'Emergency Phone'}
+                    </label>
                     <input
                         type="tel"
                         name="emergencyContactPhone"
                         value={formData.emergencyContactPhone}
                         onChange={handleChange}
-                        className="peer w-full px-4 py-3 mt-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
                     />
-                    <label className="absolute -top-2 left-3 text-xs text-blue-600 bg-white px-1">
-                        {lang === 'km'
-                            ? 'លេខទូរស័ព្ទអ្នកទំនាក់ទំនងបន្ទាន់'
-                            : 'Emergency Contact Phone'}
-                    </label>
                 </div>
 
                 {/* Notes */}
-                <div className="relative col-span-1 md:col-span-2">
+                <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                        {lang === 'km' ? 'កំណត់សម្គាល់' : 'Notes'}
+                    </label>
                     <textarea
                         name="notes"
                         value={formData.notes}
                         onChange={handleChange}
                         rows={3}
-                        className="peer w-full px-4 py-3 mt-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 resize-none"
+                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition resize-none"
                     />
-                    <label className="absolute -top-2 left-3 text-xs text-blue-600 bg-white px-1">
-                        {lang === 'km' ? 'កំណត់សម្គាល់' : 'Notes'}
-                    </label>
                 </div>
             </div>
 
             {/* Submit Button */}
-            <button
-                type="submit"
-                disabled={isSubmitting}
-                className={`w-full py-3 px-4 rounded-lg font-medium text-white transition-colors ${
-                    isSubmitting
-                        ? 'bg-gray-400 cursor-not-allowed'
-                        : 'bg-blue-600 hover:bg-blue-700 active:bg-blue-800'
-                }`}
-            >
-                {isSubmitting
-                    ? lang === 'km'
-                        ? 'កំពុងដាក់ស្នើ...'
-                        : 'Submitting...'
-                    : lang === 'km'
-                        ? 'ដាក់ស្នើការជួល'
-                        : 'Submit Rental'}
-            </button>
+            <div className="pt-4">
+                <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className={`w-full py-3 px-4 rounded-xl font-semibold text-white transition-all
+                        ${isSubmitting
+                            ? 'bg-gray-400 cursor-not-allowed'
+                            : 'bg-blue-600 hover:bg-blue-700 active:bg-blue-800 shadow-md hover:shadow-lg'
+                        }`}
+                >
+                    {isSubmitting
+                        ? lang === 'km'
+                            ? 'កំពុងដាក់ស្នើ...'
+                            : 'Submitting...'
+                        : lang === 'km'
+                            ? 'ដាក់ស្នើការជួល'
+                            : 'Submit Rental'}
+                </button>
+            </div>
 
             {/* Khmer Calendar Popup */}
             {showDatePopup && editingDateField && (
-                <KhmerCalendar
-                    selectedDate={formData[editingDateField]}
-                    onChange={handleDateChange}
-                    lang={lang}
-                    onClose={() => setShowDatePopup(false)}
-                    isPopup={true}
-                />
+                <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-4">
+                    <div className="bg-white rounded-2xl shadow-xl w-full max-w-md">
+                        <KhmerCalendar
+                            selectedDate={formData[editingDateField]}
+                            onChange={handleDateChange}
+                            lang={lang}
+                            onClose={() => setShowDatePopup(false)}
+                            isPopup={true}
+                        />
+                    </div>
+                </div>
             )}
         </form>
     );

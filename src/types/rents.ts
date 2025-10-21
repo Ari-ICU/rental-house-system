@@ -2,11 +2,10 @@ export type RentalStatus =
     | "In-Active"
     | "Non-Active"
     | "Past";
-
-
+    
 export interface ClientImageCard {
-    front?: string; // url or base64
-    back?: string;  // url or base64
+    front?: string; 
+    back?: string; 
 }
 export interface Rental {
     id: number;

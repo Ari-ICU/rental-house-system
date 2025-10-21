@@ -94,7 +94,7 @@ export default function KhmerCalendar({ selectedDate, onChange, lang = "km", onC
         w-full max-w-md p-4 border border-gray-200 rounded-xl shadow-lg bg-white transition-all duration-200 ease-in-out
         ${isPopup ? 'fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 ring-1 ring-black/5 shadow-2xl' : 'relative shadow-md'}
     `;
-    const overlayClasses = isPopup ? "fixed inset-0 bg-black/50 z-40" : "";
+    const overlayClasses = isPopup ? "fixed inset-0 bg-black/60 backdrop-blur-sm z-40" : "";
 
     const dropdownItemClasses = "px-3 py-2 cursor-pointer hover:bg-blue-50 transition-colors duration-150 text-gray-700 hover:text-blue-600 first:rounded-t last:rounded-b";
 

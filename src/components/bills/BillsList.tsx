@@ -17,7 +17,7 @@ import { formatKhmerDate } from "@/utils/dateFormatter";
 import KhmerCalendar from "@/utils/KhmerCalendar";
 import BillViewModal from "@/components/bills/BillViewModal";
 import { useLang } from "@/context/LangContext";
-import  { printBill } from "@/components/bills/printBill";
+import { printBill } from "@/components/bills/printBill";
 
 
 interface BillsListProps {
@@ -34,7 +34,7 @@ const allStatuses: ("Paid" | "Unpaid" | "All")[] = ["All", "Paid", "Unpaid"];
 
 const BillsList: React.FC<BillsListProps> = ({
     bills = [],
-    itemsPerPageOptions = [5, 10, 20],
+    itemsPerPageOptions = [10, 20],
 }) => {
     const { lang } = useLang();
     const [localBills, setLocalBills] = useState<Bill[]>([]);

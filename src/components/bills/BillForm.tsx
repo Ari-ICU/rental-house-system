@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaCalendarAlt, FaArrowLeft } from 'react-icons/fa';
 import { Bill } from '@/types/bill';
 import { Rental } from '@/types/rents';
@@ -10,27 +10,44 @@ import { useRouter } from 'next/navigation';
 
 interface BillFormProps {
     rentals: Rental[];
+    bill?: Bill; // Optional: for editing existing bill
 }
 
-const BillForm: React.FC<BillFormProps> = ({ rentals }) => {
+const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
     const { lang } = useLang();
     const router = useRouter();
 
     // Filter out non-active rentals
     const activeRentals = rentals.filter(r => r.status !== 'Non-Active');
 
+    // Initialize form data (use existing bill if editing)
     const [formData, setFormData] = useState<Omit<Bill, 'id'>>({
-        rental: activeRentals[0] || ({} as Rental),
-        month: '',
-        electricityAmount: 0,
-        waterAmount: 0,
-        electricityStatus: 'Unpaid',
-        waterStatus: 'Unpaid',
-        notes: '',
+        rental: bill?.rental || activeRentals[0] || ({} as Rental),
+        month: bill?.month || '',
+        electricityAmount: bill?.electricityAmount || 0,
+        waterAmount: bill?.waterAmount || 0,
+        electricityStatus: bill?.electricityStatus || 'Unpaid',
+        waterStatus: bill?.waterStatus || 'Unpaid',
+        notes: bill?.notes || '',
     });
 
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [showMonthPopup, setShowMonthPopup] = useState(false);
+
+    // Update formData when bill changes (for edit)
+    useEffect(() => {
+        if (bill) {
+            setFormData({
+                rental: bill.rental,
+                month: bill.month,
+                electricityAmount: bill.electricityAmount,
+                waterAmount: bill.waterAmount,
+                electricityStatus: bill.electricityStatus,
+                waterStatus: bill.waterStatus,
+                notes: bill.notes || '',
+            });
+        }
+    }, [bill]);
 
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -63,8 +80,16 @@ const BillForm: React.FC<BillFormProps> = ({ rentals }) => {
         setIsSubmitting(true);
 
         try {
-            console.log('Submitting Bill Data:', formData);
-            // TODO: Send data to API
+            if (bill) {
+                // Update existing bill
+                console.log('Updating Bill:', { id: bill.id, ...formData });
+                // TODO: Call API PUT / PATCH for updating
+            } else {
+                // Create new bill
+                console.log('Creating Bill:', formData);
+                // TODO: Call API POST for creating
+            }
+            router.back();
         } catch (error) {
             console.error('Error submitting form:', error);
         } finally {
@@ -88,17 +113,27 @@ const BillForm: React.FC<BillFormProps> = ({ rentals }) => {
 
             <div className="text-center mb-2">
                 <h2 className="text-2xl font-semibold text-gray-800">
-                    {lang === 'km' ? 'បង្កើតវិក័យប័ត្រ' : 'Create Bill'}
+                    {lang === 'km'
+                        ? bill
+                            ? 'កែប្រែវិក័យប័ត្រ'
+                            : 'បង្កើតវិក័យប័ត្រ'
+                        : bill
+                        ? 'Edit Bill'
+                        : 'Create Bill'}
                 </h2>
                 <p className="text-sm text-gray-500 mt-1">
                     {lang === 'km'
-                        ? 'បំពេញព័ត៌មានខាងក្រោមដើម្បីបង្កើតវិក័យប័ត្រថ្មី។'
+                        ? bill
+                            ? 'កែប្រែព័ត៌មានវិក័យប័ត្រនេះ។'
+                            : 'បំពេញព័ត៌មានខាងក្រោមដើម្បីបង្កើតវិក័យប័ត្រថ្មី។'
+                        : bill
+                        ? 'Edit the bill details below.'
                         : 'Fill in the details below to create a new bill.'}
                 </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                {/* Select Rental */}
+                {/* Rental Selection */}
                 <div className="relative">
                     <select
                         name="rental"
@@ -125,7 +160,13 @@ const BillForm: React.FC<BillFormProps> = ({ rentals }) => {
                         onClick={() => setShowMonthPopup(true)}
                         className="w-full text-left px-4 py-3 mt-2 border border-gray-300 rounded-lg flex justify-between items-center focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
-                        <span>{formData.month ? formData.month : lang === 'km' ? 'ជ្រើសរើសខែ' : 'Select Month'}</span>
+                        <span>
+                            {formData.month
+                                ? formData.month
+                                : lang === 'km'
+                                ? 'ជ្រើសរើសខែ'
+                                : 'Select Month'}
+                        </span>
                         <FaCalendarAlt className="text-gray-500" />
                     </button>
                     <label className="absolute -top-2 left-3 text-xs text-blue-600 bg-white px-1">
@@ -133,7 +174,7 @@ const BillForm: React.FC<BillFormProps> = ({ rentals }) => {
                     </label>
                 </div>
 
-                {/* Electricity Amount */}
+                {/* Electricity & Water Inputs */}
                 <div className="relative">
                     <input
                         type="number"
@@ -149,7 +190,6 @@ const BillForm: React.FC<BillFormProps> = ({ rentals }) => {
                     </label>
                 </div>
 
-                {/* Water Amount */}
                 <div className="relative">
                     <input
                         type="number"
@@ -165,7 +205,7 @@ const BillForm: React.FC<BillFormProps> = ({ rentals }) => {
                     </label>
                 </div>
 
-                {/* Electricity Status */}
+                {/* Status Selects */}
                 <div className="relative">
                     <select
                         name="electricityStatus"
@@ -182,7 +222,6 @@ const BillForm: React.FC<BillFormProps> = ({ rentals }) => {
                     </label>
                 </div>
 
-                {/* Water Status */}
                 <div className="relative">
                     <select
                         name="waterStatus"
@@ -225,8 +264,16 @@ const BillForm: React.FC<BillFormProps> = ({ rentals }) => {
                 }`}
             >
                 {isSubmitting
-                    ? lang === 'km' ? 'កំពុងដាក់ស្នើ...' : 'Submitting...'
-                    : lang === 'km' ? 'បង្កើតវិក័យប័ត្រ' : 'Create Bill'}
+                    ? lang === 'km'
+                        ? 'កំពុងដាក់ស្នើ...'
+                        : 'Submitting...'
+                    : bill
+                    ? lang === 'km'
+                        ? 'កែប្រែវិក័យប័ត្រ'
+                        : 'Update Bill'
+                    : lang === 'km'
+                    ? 'បង្កើតវិក័យប័ត្រ'
+                    : 'Create Bill'}
             </button>
 
             {/* Khmer Calendar Popup */}
