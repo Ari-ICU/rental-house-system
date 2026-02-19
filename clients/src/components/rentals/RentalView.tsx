@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import {
     FaArrowLeft, FaPhoneAlt, FaEnvelope, FaMapMarkerAlt, FaEdit,
     FaDoorOpen, FaDollarSign, FaCalendarAlt, FaIdCard,
-    FaExclamationTriangle, FaStickyNote, FaUser,
+    FaExclamationTriangle, FaStickyNote, FaUser, FaMoneyBillWave,
 } from 'react-icons/fa';
 import { Rental, RentalStatus } from '@/types/rents';
 import { useLang } from '@/context/LangContext';
@@ -257,6 +257,53 @@ const RentalView: React.FC<RentalViewProps> = ({ rental }) => {
                     </div>
                 </DetailCard>
             )}
+
+            {/* Billing History */}
+            <DetailCard
+                icon={<FaMoneyBillWave className="text-emerald-600 text-xs" />}
+                iconBg="bg-emerald-100"
+                title={label('Billing History', 'ប្រវត្តិនៃការបង់ប្រាក់')}
+            >
+                {rental.bills && rental.bills.length > 0 ? (
+                    <div className="overflow-x-auto -mx-6 sm:mx-0">
+                        <table className="w-full text-xs text-left">
+                            <thead className="bg-gray-50 text-gray-400 uppercase tracking-wider font-semibold">
+                                <tr>
+                                    <th className="px-4 py-2">{label('Month', 'ខែ')}</th>
+                                    <th className="px-4 py-2">{label('Elec ($)', 'អគ្គិសនី')}</th>
+                                    <th className="px-4 py-2">{label('Water ($)', 'ទឹក')}</th>
+                                    <th className="px-4 py-2">{label('Status', 'ស្ថានភាព')}</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-gray-50">
+                                {rental.bills.map((bill) => (
+                                    <tr key={bill.id} className="hover:bg-gray-50/50">
+                                        <td className="px-4 py-3 font-medium text-gray-700">
+                                            {formatKhmerDate(bill.month, lang)}
+                                        </td>
+                                        <td className="px-4 py-3 text-gray-600">${bill.electricityAmount}</td>
+                                        <td className="px-4 py-3 text-gray-600">${bill.waterAmount}</td>
+                                        <td className="px-4 py-3">
+                                            <div className="flex gap-1">
+                                                <span className={`px-1.5 py-0.5 rounded-md ${bill.electricityStatus === 'Paid' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                                                    E: {label(bill.electricityStatus, bill.electricityStatus === 'Paid' ? 'បង់ហើយ' : 'នៅ')}
+                                                </span>
+                                                <span className={`px-1.5 py-0.5 rounded-md ${bill.waterStatus === 'Paid' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                                                    W: {label(bill.waterStatus, bill.waterStatus === 'Paid' ? 'បង់ហើយ' : 'នៅ')}
+                                                </span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                ) : (
+                    <p className="text-sm text-gray-400 italic text-center py-4">
+                        {label('No billing records found.', 'មិនទាន់មានប្រវត្តិនៃការបង់ប្រាក់នៅឡើយទេ។')}
+                    </p>
+                )}
+            </DetailCard>
 
             {/* Notes */}
             {rental.notes && (

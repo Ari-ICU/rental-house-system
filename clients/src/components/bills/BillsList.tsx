@@ -5,29 +5,31 @@ import {
     FaEdit,
     FaTrash,
     FaChevronLeft,
-    FaSave,
-    FaTimes,
     FaChevronRight,
     FaEye,
-    FaCalendarAlt,
     FaPrint
 } from "react-icons/fa";
 import { Bill } from "@/types/bill";
 import { formatKhmerDate } from "@/utils/dateFormatter";
-import KhmerCalendar from "@/utils/KhmerCalendar";
 import BillViewModal from "@/components/bills/BillViewModal";
 import { useLang } from "@/context/LangContext";
 import { printBill } from "@/components/bills/printBill";
 
 
+import { deleteBill } from "@/services/billService";
+import { toast } from "react-hot-toast";
+
+import { useRouter } from "next/navigation";
+
 interface BillsListProps {
     bills: Bill[];
     itemsPerPageOptions?: number[];
+    onRefresh?: () => void;
 }
 
 const statusColors: Record<"Paid" | "Unpaid", string> = {
-    Paid: "bg-green-100 text-green-800",
-    Unpaid: "bg-red-100 text-red-800",
+    Paid: "bg-emerald-50 text-emerald-700 border border-emerald-100",
+    Unpaid: "bg-rose-50 text-rose-700 border border-rose-100",
 };
 
 const allStatuses: ("Paid" | "Unpaid" | "All")[] = ["All", "Paid", "Unpaid"];
@@ -35,16 +37,15 @@ const allStatuses: ("Paid" | "Unpaid" | "All")[] = ["All", "Paid", "Unpaid"];
 const BillsList: React.FC<BillsListProps> = ({
     bills = [],
     itemsPerPageOptions = [10, 20],
+    onRefresh,
 }) => {
     const { lang } = useLang();
+    const router = useRouter();
     const [localBills, setLocalBills] = useState<Bill[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(itemsPerPageOptions[0]);
     const [statusFilter, setStatusFilter] =
         useState<"Paid" | "Unpaid" | "All">("All");
-    const [editingId, setEditingId] = useState<number | null>(null);
-    const [editForm, setEditForm] = useState<Bill | null>(null);
-    const [showDatePopup, setShowDatePopup] = useState(false);
 
     // Modal state
     const [viewModalOpen, setViewModalOpen] = useState(false);
@@ -70,14 +71,7 @@ const BillsList: React.FC<BillsListProps> = ({
     );
 
 
-    const handleEditStart = (bill: Bill) => {
-        setEditingId(bill.id);
-        setEditForm(bill);
-        setShowDatePopup(false);
-    };
-
-
-    const handleDelete = (id: number) => {
+    const handleDelete = async (id: number) => {
         if (
             confirm(
                 lang === "en"
@@ -85,13 +79,14 @@ const BillsList: React.FC<BillsListProps> = ({
                     : "តើអ្នកពិតជាចង់លុបវិក្កយបត្រនេះមែនទេ?"
             )
         ) {
-            const newBills = localBills.filter((b) => b.id !== id);
-            setLocalBills(newBills);
-            const newTotalPages = Math.ceil(newBills.length / itemsPerPage);
-            if (currentPage > newTotalPages) {
-                setCurrentPage(Math.max(1, newTotalPages));
+            try {
+                await deleteBill(id);
+                toast.success(lang === 'en' ? 'Bill deleted' : 'បានលុបវិក្កយបត្រ');
+                if (onRefresh) onRefresh();
+            } catch (err) {
+                console.error(err);
+                toast.error(lang === 'en' ? 'Delete failed' : 'លុបមិនបានសម្រេច');
             }
-            setShowDatePopup(false);
         }
     };
 
@@ -109,370 +104,248 @@ const BillsList: React.FC<BillsListProps> = ({
         printBill(bill, lang, '/signature.png');
     };
 
-    const updateEditForm = (updater: (current: Bill) => Bill) => {
-        setEditForm((prev) => {
-            if (!prev) return null;
-            return updater(prev);
-        });
-    };
-
-    const handleSave = () => {
-        if (editForm && editingId !== null) {
-            setLocalBills((prev) =>
-                prev.map((b) => (b.id === editingId ? editForm : b))
-            );
-        }
-        setEditingId(null);
-        setEditForm(null);
-        setShowDatePopup(false);
-    };
-
-    const handleCancel = () => {
-        setEditingId(null);
-        setEditForm(null);
-        setShowDatePopup(false);
-    };
-
     return (
-        <div className="flex flex-col gap-4 w-full">
+        <div className="flex flex-col gap-6 w-full">
             {/* Filters */}
-            <div className="flex flex-col sm:flex-row justify-end gap-4">
-                <div className="flex flex-col gap-1 w-full sm:w-auto">
-                    <label className="text-sm font-medium text-gray-700">
-                        {lang === "en" ? "Filter by Status" : "តម្រៀបតាមស្ថានភាព"}
-                    </label>
-                    <select
-                        value={statusFilter}
-                        onChange={(e) => {
-                            setStatusFilter(e.target.value as
-                                | "Paid"
-                                | "Unpaid"
-                                | "All");
-                            setCurrentPage(1);
-                            setShowDatePopup(false);
-                        }}
-                        className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-auto"
-                    >
-                        {allStatuses.map((status) => (
-                            <option key={status} value={status}>
-                                {lang === "en"
-                                    ? status
-                                    : status === "Paid"
-                                        ? "បានបង់"
-                                        : status === "Unpaid"
-                                            ? "មិនទាន់បង់"
-                                            : "ទាំងអស់"}
-                            </option>
-                        ))}
-                    </select>
+            <div className="flex flex-col sm:flex-row justify-between items-end gap-4 px-2">
+                <div className="text-sm text-gray-400 font-medium italic">
+                    {lang === 'en'
+                        ? `Showing ${currentBills.length} of ${filteredBills.length} records`
+                        : `បង្ហាញ ${currentBills.length} ក្នុងចំណោម ${filteredBills.length} កំណត់ត្រា`}
                 </div>
-                <div className="flex flex-col gap-1 w-full sm:w-auto">
-                    <label className="text-sm font-medium text-gray-700">
-                        {lang === "en" ? "Items per Page" : "ទំនិញក្នុងមួយទំព័រ"}
-                    </label>
-                    <select
-                        value={itemsPerPage}
-                        onChange={(e) => {
-                            setItemsPerPage(parseInt(e.target.value));
-                            setCurrentPage(1);
-                            setShowDatePopup(false);
-                        }}
-                        className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-auto"
-                    >
-                        {itemsPerPageOptions.map((opt) => (
-                            <option key={opt} value={opt}>
-                                {opt} {lang === "en" ? "per page" : "ក្នុងមួយទំព័រ"}
-                            </option>
-                        ))}
-                    </select>
+                <div className="flex flex-wrap gap-4">
+                    <div className="flex flex-col gap-1.5">
+                        <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">
+                            {lang === "en" ? "Filter by Status" : "តម្រៀបតាមស្ថានភាព"}
+                        </label>
+                        <select
+                            value={statusFilter}
+                            onChange={(e) => {
+                                setStatusFilter(e.target.value as
+                                    | "Paid"
+                                    | "Unpaid"
+                                    | "All");
+                                setCurrentPage(1);
+                            }}
+                            className="bg-white border border-gray-200 rounded-2xl px-4 py-2 text-sm focus:outline-none focus:ring-4 focus:ring-violet-50 transition-all cursor-pointer hover:border-violet-300"
+                        >
+                            {allStatuses.map((status) => (
+                                <option key={status} value={status}>
+                                    {lang === "en"
+                                        ? status
+                                        : status === "Paid"
+                                            ? "បានបង់"
+                                            : status === "Unpaid"
+                                                ? "មិនទាន់បង់"
+                                                : "ទាំងអស់"}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                        <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">
+                            {lang === "en" ? "Total Items" : "ចំនួនសរុប"}
+                        </label>
+                        <select
+                            value={itemsPerPage}
+                            onChange={(e) => {
+                                setItemsPerPage(parseInt(e.target.value));
+                                setCurrentPage(1);
+                            }}
+                            className="bg-white border border-gray-200 rounded-2xl px-4 py-2 text-sm focus:outline-none focus:ring-4 focus:ring-violet-50 transition-all cursor-pointer hover:border-violet-300"
+                        >
+                            {itemsPerPageOptions.map((opt) => (
+                                <option key={opt} value={opt}>
+                                    {opt} {lang === "en" ? "per page" : "ក្នុងមួយទំព័រ"}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
                 </div>
             </div>
 
             {/* Table */}
-            <div className="overflow-x-auto rounded-lg shadow-md">
-                <table className="min-w-full border border-gray-200 bg-white">
-                    <thead className="bg-gray-50">
+            <div className="relative overflow-hidden">
+                <table className="min-w-full border-separate border-spacing-0">
+                    <thead className="bg-gray-50/50">
                         <tr>
                             {[
                                 lang === "en" ? "ID" : "លេខសម្គាល់",
-                                lang === "en" ? "Client" : "អតិថិជន",
-                                lang === "en" ? "Month" : "ខែ",
-                                lang === "en" ? "Room Price ($)" : "តម្លៃបន្ទប់",
-                                lang === "en" ? "Electricity ($)" : "អគ្គិសនី ($)",
-                                lang === "en" ? "E-Status" : "ស្ថានភាពអគ្គិសនី",
-                                lang === "en" ? "Water ($)" : "ទឹក ($)",
-                                lang === "en" ? "W-Status" : "ស្ថានភាពទឹក",
+                                lang === "en" ? "Client & Room" : "អតិថិជន & បន្ទប់",
+                                lang === "en" ? "Bill Month" : "វិក្កយបត្រខែ",
+                                lang === "en" ? "Room Price" : "តម្លៃបន្ទប់",
+                                lang === "en" ? "E-Stat" : "ស្ថានភាពអគ្គិសនី",
+                                lang === "en" ? "W-Stat" : "ស្ថានភាពទឹក",
+                                lang === "en" ? "Total Due" : "សរុបត្រូវបង់",
                                 lang === "en" ? "Actions" : "សកម្មភាព",
                             ].map((header, idx) => (
                                 <th
                                     key={idx}
-                                    className="px-2 sm:px-4 py-3 text-left text-xs sm:text-sm text-gray-600 font-medium"
+                                    className="px-6 py-4 text-left text-[11px] font-bold text-gray-400 uppercase tracking-[0.1em] border-b border-gray-100"
                                 >
                                     {header}
                                 </th>
                             ))}
                         </tr>
                     </thead>
-                    {/* Inside tbody of BillsList */}
-                    <tbody>
+                    <tbody className="divide-y divide-gray-50">
                         {currentBills.length === 0 ? (
                             <tr>
-                                <td colSpan={9} className="text-center py-4 text-gray-500">
-                                    {lang === "en" ? "No bills found." : "មិនមានវិក្កយបត្រដែលស្គាល់។"}
+                                <td colSpan={8} className="text-center py-20 text-gray-400 bg-gray-50/30 italic">
+                                    {lang === "en" ? "No matches found." : "រកមិនឃើញលទ្ធផលដែលត្រូវគ្នា។"}
                                 </td>
                             </tr>
                         ) : (
                             currentBills.map((bill, idx) => {
-                                const isEditing = editingId === bill.id;
-                                const currentEditForm = isEditing ? editForm : null;
+                                const totalAmount = (bill.rental?.rentAmount || 0) + (bill.electricityAmount || 0) + (bill.waterAmount || 0);
                                 return (
                                     <tr
                                         key={bill.id}
-                                        className={`border-b border-gray-200 ${idx % 2 === 0 ? "bg-white" : "bg-gray-50"} hover:bg-gray-100 transition`}
+                                        className="hover:bg-violet-50/30 transition-colors group"
                                     >
-                                        <td className="px-4 py-3 text-sm">
-                                            {bill.id}
+                                        <td className="px-6 py-5 text-sm font-medium text-gray-400 tabular-nums">
+                                            #{bill.id}
                                         </td>
-                                        {/* Client */}
-                                        <td className="px-4 py-3 text-sm">
-                                            {isEditing ? (
-                                                <input
-                                                    type="text"
-                                                    value={currentEditForm?.rental?.ClientName || ""}
-                                                    onChange={(e) =>
-                                                        updateEditForm((prev) => ({
-                                                            ...prev,
-                                                            rental: { ...prev.rental, ClientName: e.target.value },
-                                                        }))
-                                                    }
-                                                    className="border border-gray-300 rounded px-2 py-1 w-full"
-                                                />
-                                            ) : (
-                                                bill.rental?.ClientName
-                                            )}
+                                        {/* Client & Room */}
+                                        <td className="px-6 py-5">
+                                            <div className="flex flex-col">
+                                                <span className="text-sm font-bold text-gray-800 tracking-tight">
+                                                    {bill.rental?.ClientName || 'N/A'}
+                                                </span>
+                                                <span className="text-[11px] text-violet-500 font-bold uppercase mt-0.5">
+                                                    Room: {bill.rental?.roomNumber || 'N/A'}
+                                                </span>
+                                            </div>
                                         </td>
 
                                         {/* Month */}
-                                        <td className="px-4 py-3 text-sm">
-                                            {isEditing ? (
-                                                <button
-                                                    type="button"
-                                                    className="w-full text-left border border-gray-300 rounded px-2 py-1 hover:bg-gray-50 transition-colors flex items-center justify-between text-xs"
-                                                    onClick={() => setShowDatePopup(true)}
-                                                >
-                                                    <span>{formatKhmerDate(currentEditForm?.month, lang)}</span>
-                                                    <FaCalendarAlt size={12} className="ml-2" />
-                                                </button>
-                                            ) : (
-                                                formatKhmerDate(bill.month, lang)
-                                            )}
+                                        <td className="px-6 py-5">
+                                            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-gray-100 rounded-xl text-xs font-semibold text-gray-600">
+                                                <svg className="w-3.5 h-3.5 opacity-40" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
+                                                </svg>
+                                                {formatKhmerDate(bill.month, lang)}
+                                            </div>
                                         </td>
 
                                         {/* Room Price */}
-                                        <td className="px-4 py-3 text-sm">
-                                            {isEditing ? (
-                                                <input
-                                                    type="number"
-                                                    value={currentEditForm?.rental?.rentAmount || 0}
-                                                    onChange={(e) =>
-                                                        updateEditForm((prev) => ({
-                                                            ...prev,
-                                                            rental: { ...prev.rental, rentAmount: parseFloat(e.target.value) || 0 },
-                                                        }))
-                                                    }
-                                                    className="border border-gray-300 rounded px-2 py-1 w-full"
-                                                />
-                                            ) : (
-                                                `$${bill.rental?.rentAmount}/mo`
-                                            )}
-                                        </td>
-
-                                        {/* Electricity Amount */}
-                                        <td className="px-4 py-3 text-sm">
-                                            {isEditing ? (
-                                                <input
-                                                    type="number"
-                                                    value={currentEditForm?.electricityAmount || 0}
-                                                    onChange={(e) =>
-                                                        updateEditForm((prev) => ({ ...prev, electricityAmount: parseFloat(e.target.value) || 0 }))
-                                                    }
-                                                    className="border border-gray-300 rounded px-2 py-1 w-full"
-                                                />
-                                            ) : (
-                                                bill.electricityAmount != null ? `$${bill.electricityAmount.toFixed(2)}` : 'N/A'
-                                            )}
+                                        <td className="px-6 py-5 text-sm font-bold text-gray-700">
+                                            ${bill.rental?.rentAmount?.toFixed(2) || '0.00'}
                                         </td>
 
                                         {/* Electricity Status */}
-                                        <td className="px-4 py-3 text-sm">
-                                            {isEditing ? (
-                                                <select
-                                                    value={currentEditForm?.electricityStatus || ""}
-                                                    onChange={(e) =>
-                                                        updateEditForm((prev) => ({ ...prev, electricityStatus: e.target.value as "Paid" | "Unpaid" }))
-                                                    }
-                                                    className="border border-gray-300 rounded px-2 py-1 w-full"
-                                                >
-                                                    <option value="Paid">{lang === "en" ? "Paid" : "បានបង់"}</option>
-                                                    <option value="Unpaid">{lang === "en" ? "Unpaid" : "មិនទាន់បង់"}</option>
-                                                </select>
-                                            ) : (
-                                                <span
-                                                    className={`px-2 py-1 rounded-full text-xs font-medium ${statusColors[bill.electricityStatus]}`}
-                                                >
-                                                    {lang === "en"
-                                                        ? bill.electricityStatus
-                                                        : bill.electricityStatus === "Paid"
-                                                            ? "បានបង់"
-                                                            : "មិនទាន់បង់"}
+                                        <td className="px-6 py-5">
+                                            <div className="flex flex-col gap-1">
+                                                <span className={`w-fit px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider ${statusColors[bill.electricityStatus]}`}>
+                                                    {lang === "en" ? bill.electricityStatus : bill.electricityStatus === "Paid" ? "បានបង់" : "មិនបង់"}
                                                 </span>
-                                            )}
-                                        </td>
-
-                                        {/* Water Amount */}
-                                        <td className="px-4 py-3 text-sm">
-                                            {isEditing ? (
-                                                <input
-                                                    type="number"
-                                                    value={currentEditForm?.waterAmount || 0}
-                                                    onChange={(e) =>
-                                                        updateEditForm((prev) => ({ ...prev, waterAmount: parseFloat(e.target.value) || 0 }))
-                                                    }
-                                                    className="border border-gray-300 rounded px-2 py-1 w-full"
-                                                />
-                                            ) : (
-                                                bill.waterAmount != null ? `$${bill.waterAmount.toFixed(2)}` : 'N/A'
-                                            )}
+                                                <span className="text-[10px] text-gray-400 font-medium ml-0.5">
+                                                    ${bill.electricityAmount?.toFixed(2) || '0.00'}
+                                                </span>
+                                            </div>
                                         </td>
 
                                         {/* Water Status */}
-                                        <td className="px-4 py-3 text-sm">
-                                            {isEditing ? (
-                                                <select
-                                                    value={currentEditForm?.waterStatus || ""}
-                                                    onChange={(e) =>
-                                                        updateEditForm((prev) => ({ ...prev, waterStatus: e.target.value as "Paid" | "Unpaid" }))
-                                                    }
-                                                    className="border border-gray-300 rounded px-2 py-1 w-full"
-                                                >
-                                                    <option value="Paid">{lang === "en" ? "Paid" : "បានបង់"}</option>
-                                                    <option value="Unpaid">{lang === "en" ? "Unpaid" : "មិនទាន់បង់"}</option>
-                                                </select>
-                                            ) : (
-                                                <span
-                                                    className={`px-2 py-1 rounded-full text-xs font-medium ${statusColors[bill.waterStatus]}`}
-                                                >
-                                                    {lang === "en"
-                                                        ? bill.waterStatus
-                                                        : bill.waterStatus === "Paid"
-                                                            ? "បានបង់"
-                                                            : "មិនទាន់បង់"}
+                                        <td className="px-6 py-5">
+                                            <div className="flex flex-col gap-1">
+                                                <span className={`w-fit px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider ${statusColors[bill.waterStatus]}`}>
+                                                    {lang === "en" ? bill.waterStatus : bill.waterStatus === "Paid" ? "បានបង់" : "មិនបង់"}
                                                 </span>
-                                            )}
+                                                <span className="text-[10px] text-gray-400 font-medium ml-0.5">
+                                                    ${bill.waterAmount?.toFixed(2) || '0.00'}
+                                                </span>
+                                            </div>
+                                        </td>
+
+                                        {/* Total Due */}
+                                        <td className="px-6 py-5">
+                                            <div className="text-sm font-black text-violet-700 bg-violet-50/50 w-fit px-3 py-1.5 rounded-2xl border border-violet-100">
+                                                ${totalAmount.toFixed(2)}
+                                            </div>
                                         </td>
 
                                         {/* Actions */}
-                                        <td className="px-4 py-3 flex gap-2">
-                                            {isEditing ? (
-                                                <>
-                                                    <button
-                                                        onClick={handleSave}
-                                                        className="bg-green-500 text-white p-2 rounded hover:bg-green-600 transition"
-                                                        title={lang === "en" ? "Save changes" : "រក្សាទុកការផ្លាស់ប្តូរ"}
-                                                    >
-                                                        <FaSave size={12} />
-                                                    </button>
-                                                    <button
-                                                        onClick={handleCancel}
-                                                        className="bg-gray-500 text-white p-2 rounded hover:bg-gray-600 transition"
-                                                        title={lang === "en" ? "Cancel edit" : "បោះបង់ការកែប្រែ"}
-                                                    >
-                                                        <FaTimes size={12} />
-                                                    </button>
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <button
-                                                        onClick={() => handleView(bill)}
-                                                        className="bg-indigo-500 text-white p-2 rounded hover:bg-indigo-600 transition"
-                                                        title={lang === "en" ? "View" : "មើល"}
-                                                    >
-                                                        <FaEye size={12} />
-                                                    </button>
-                                                    <button
-                                                        onClick={() => handleEditStart(bill)}
-                                                        className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition"
-                                                        title={lang === "en" ? "Edit" : "កែប្រែ"}
-                                                    >
-                                                        <FaEdit size={12} />
-                                                    </button>
-                                                    <button
-                                                        onClick={() => handleDelete(bill.id)}
-                                                        className="bg-red-500 text-white p-2 rounded hover:bg-red-600 transition"
-                                                        title={lang === "en" ? "Delete" : "លុប"}
-                                                    >
-                                                        <FaTrash size={12} />
-                                                    </button>
-                                                    <button
-                                                        onClick={() => handlePrint(bill)}
-                                                        className="bg-yellow-500 text-white p-2 rounded hover:bg-yellow-600 transition"
-                                                        title={lang === "en" ? "Print" : "បោះពុម្ព"}
-                                                    >
-                                                        <FaPrint size={12} />
-                                                    </button>
-                                                </>
-                                            )}
+                                        <td className="px-6 py-5">
+                                            <div className="flex items-center gap-1.5 transition-all opacity-0 group-hover:opacity-100">
+                                                <button
+                                                    onClick={() => handleView(bill)}
+                                                    className="p-2 text-indigo-500 hover:bg-indigo-50 rounded-xl transition-all active:scale-90"
+                                                    title={lang === "en" ? "View" : "មើល"}
+                                                >
+                                                    <FaEye size={16} />
+                                                </button>
+                                                <button
+                                                    onClick={() => router.push(`/dashboard/bills/edit/${bill.id}`)}
+                                                    className="p-2 text-blue-500 hover:bg-blue-50 rounded-xl transition-all active:scale-90"
+                                                    title={lang === "en" ? "Edit" : "កែប្រែ"}
+                                                >
+                                                    <FaEdit size={16} />
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDelete(bill.id)}
+                                                    className="p-2 text-rose-500 hover:bg-rose-50 rounded-xl transition-all active:scale-90"
+                                                    title={lang === "en" ? "Delete" : "លុប"}
+                                                >
+                                                    <FaTrash size={15} />
+                                                </button>
+                                                <div className="w-[1px] h-4 bg-gray-200 mx-1"></div>
+                                                <button
+                                                    onClick={() => handlePrint(bill)}
+                                                    className="p-2 text-amber-500 hover:bg-amber-50 rounded-xl transition-all active:scale-90"
+                                                    title={lang === "en" ? "Print" : "បោះពុម្ព"}
+                                                >
+                                                    <FaPrint size={15} />
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
                                 );
                             })
                         )}
                     </tbody>
-
                 </table>
             </div>
 
             {/* Pagination */}
             {totalPages > 1 && (
-                <div className="flex items-center justify-center gap-2 mt-4">
+                <div className="flex items-center justify-center gap-3 py-6 border-t border-gray-50">
                     <button
                         onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
                         disabled={currentPage === 1}
-                        className={`p-2 rounded border text-sm ${currentPage === 1
-                            ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                            : "bg-white text-gray-700 hover:bg-gray-100 border-gray-300"
-                            } transition`}
+                        className={`p-3 rounded-2xl transition-all ${currentPage === 1
+                            ? "text-gray-200 cursor-not-allowed"
+                            : "bg-white text-gray-700 hover:bg-violet-50 hover:text-violet-600 border border-gray-100 active:scale-90"
+                            }`}
                     >
-                        <FaChevronLeft size={14} />
+                        <FaChevronLeft size={12} />
                     </button>
-                    <span className="px-3 py-2 text-sm text-gray-700 bg-gray-100 rounded border">
-                        {currentPage} {lang === "en" ? "of" : "នៃ"} {totalPages}
-                    </span>
+
+                    <div className="flex items-center gap-1.5">
+                        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                            <button
+                                key={page}
+                                onClick={() => setCurrentPage(page)}
+                                className={`w-10 h-10 rounded-2xl text-xs font-bold transition-all ${currentPage === page
+                                    ? "bg-violet-600 text-white shadow-lg shadow-violet-200"
+                                    : "bg-white text-gray-500 border border-gray-100 hover:bg-gray-50"
+                                    }`}
+                            >
+                                {page}
+                            </button>
+                        ))}
+                    </div>
+
                     <button
                         onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
                         disabled={currentPage === totalPages}
-                        className={`p-2 rounded border text-sm ${currentPage === totalPages
-                            ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                            : "bg-white text-gray-700 hover:bg-gray-100 border-gray-300"
-                            } transition`}
+                        className={`p-3 rounded-2xl transition-all ${currentPage === totalPages
+                            ? "text-gray-200 cursor-not-allowed"
+                            : "bg-white text-gray-700 hover:bg-violet-50 hover:text-violet-600 border border-gray-100 active:scale-90"
+                            }`}
                     >
-                        <FaChevronRight size={14} />
+                        <FaChevronRight size={12} />
                     </button>
                 </div>
-            )}
-
-            {/* Date Picker Popup */}
-            {showDatePopup && editingId && editForm && (
-                <KhmerCalendar
-                    selectedDate={editForm.month || ""}
-                    onChange={(dateStr: string) => {
-                        updateEditForm((prev) => ({ ...prev, month: dateStr }));
-                        // Optionally close after selection: setShowDatePopup(false);
-                    }}
-                    lang={lang}
-                    onClose={() => setShowDatePopup(false)}
-                    isPopup={true}
-                />
             )}
 
             {/* View Modal */}

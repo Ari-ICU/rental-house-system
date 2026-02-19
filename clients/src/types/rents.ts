@@ -8,6 +8,7 @@ export interface ClientImageCard {
     front?: string;
     back?: string;
 }
+
 export interface Rental {
     id: number;
     ClientName: string;
@@ -27,4 +28,5 @@ export interface Rental {
     emergencyContactName?: string;
     emergencyContactPhone?: string;
 
+    bills?: import("./bill").Bill[];
 }

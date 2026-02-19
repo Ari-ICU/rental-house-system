@@ -1,0 +1,128 @@
+const prisma = require('../config/prisma');
+
+const convertDecimalToNumber = (bill) => {
+    if (!bill) return null;
+    return {
+        ...bill,
+        electricityAmount: Number(bill.electricityAmount),
+        waterAmount: Number(bill.waterAmount),
+        rental: bill.rental ? {
+            ...bill.rental,
+            rentAmount: Number(bill.rental.rentAmount)
+        } : undefined
+    };
+};
+
+const Bill = {
+    findAll: async () => {
+        const bills = await prisma.bill.findMany({
+            include: {
+                rental: true,
+            },
+            orderBy: {
+                createdAt: 'desc',
+            },
+        });
+        return bills.map(convertDecimalToNumber);
+    },
+
+    findById: async (id) => {
+        const parsedId = parseInt(id);
+        if (isNaN(parsedId)) {
+            return null;
+        }
+        const bill = await prisma.bill.findUnique({
+            where: {
+                id: parsedId,
+            },
+            include: {
+                rental: true,
+            },
+        });
+        return convertDecimalToNumber(bill);
+    },
+
+    create: async (billData) => {
+        const {
+            rentalId, month, electricityAmount, waterAmount,
+            electricityStatus, waterStatus, notes
+        } = billData;
+
+        const newBill = await prisma.bill.create({
+            data: {
+                rentalId: parseInt(rentalId),
+                month,
+                electricityAmount,
+                waterAmount,
+                electricityStatus,
+                waterStatus,
+                notes,
+            },
+            include: {
+                rental: true,
+            },
+        });
+        return convertDecimalToNumber(newBill);
+    },
+
+    update: async (id, billData) => {
+        const parsedId = parseInt(id);
+        if (isNaN(parsedId)) {
+            return null;
+        }
+
+        const allowedFields = [
+            'rentalId', 'month', 'electricityAmount', 'waterAmount',
+            'electricityStatus', 'waterStatus', 'notes'
+        ];
+
+        const dataToUpdate = {};
+        for (const key of allowedFields) {
+            if (billData[key] !== undefined) {
+                if (key === 'rentalId') {
+                    dataToUpdate[key] = parseInt(billData[key]);
+                } else {
+                    dataToUpdate[key] = billData[key];
+                }
+            }
+        }
+
+        if (Object.keys(dataToUpdate).length === 0) {
+            return null;
+        }
+
+        const updated = await prisma.bill.update({
+            where: {
+                id: parsedId,
+            },
+            data: dataToUpdate,
+            include: {
+                rental: true,
+            },
+        });
+        return convertDecimalToNumber(updated);
+    },
+
+    delete: async (id) => {
+        const parsedId = parseInt(id);
+        if (isNaN(parsedId)) {
+            return false;
+        }
+
+        try {
+            const deleted = await prisma.bill.delete({
+                where: {
+                    id: parsedId,
+                },
+            });
+            return !!deleted;
+        } catch (error) {
+            if (error.code === 'P2025') {
+                return false;
+            }
+            throw error;
+        }
+    }
+};
+
+module.exports = Bill;

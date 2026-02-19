@@ -1,12 +1,26 @@
 const prisma = require('../config/prisma');
 
+const convertDecimalToNumber = (rental) => {
+    if (!rental) return null;
+    return {
+        ...rental,
+        rentAmount: Number(rental.rentAmount),
+        bills: rental.bills ? rental.bills.map(bill => ({
+            ...bill,
+            electricityAmount: Number(bill.electricityAmount),
+            waterAmount: Number(bill.waterAmount)
+        })) : undefined
+    };
+};
+
 const Rental = {
     findAll: async () => {
-        return await prisma.rental.findMany({
+        const rentals = await prisma.rental.findMany({
             orderBy: {
                 createdAt: 'desc',
             },
         });
+        return rentals.map(convertDecimalToNumber);
     },
 
     findById: async (id) => {
@@ -14,11 +28,19 @@ const Rental = {
         if (isNaN(parsedId)) {
             return null;
         }
-        return await prisma.rental.findUnique({
+        const rental = await prisma.rental.findUnique({
             where: {
                 id: parsedId,
             },
+            include: {
+                bills: {
+                    orderBy: {
+                        createdAt: 'desc'
+                    }
+                }
+            }
         });
+        return convertDecimalToNumber(rental);
     },
 
     create: async (rentalData) => {
@@ -29,13 +51,14 @@ const Rental = {
             clientImageCardFront, clientImageCardBack, emergencyContactName, emergencyContactPhone, image
         } = rentalData;
 
-        return await prisma.rental.create({
+        const newRental = await prisma.rental.create({
             data: {
                 ClientName, roomNumber, status, rentAmount, startDate, endDate, notes,
                 clientPhone, clientEmail, clientAddress, clientIDCard,
                 clientImageCardFront, clientImageCardBack, emergencyContactName, emergencyContactPhone, image
             },
         });
+        return convertDecimalToNumber(newRental);
     },
 
     update: async (id, rentalData) => {
@@ -66,12 +89,13 @@ const Rental = {
             return null;
         }
 
-        return await prisma.rental.update({
+        const updated = await prisma.rental.update({
             where: {
                 id: parsedId,
             },
             data: dataToUpdate,
         });
+        return convertDecimalToNumber(updated);
     },
 
     delete: async (id) => {
