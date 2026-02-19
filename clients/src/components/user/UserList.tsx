@@ -1,7 +1,5 @@
-// components/UserList.tsx
-"use client";
-
 import React, { useState, useEffect } from "react";
+import CustomDropdown from "@/common/CustomDropdown";
 
 export type UserRole = "Admin" | "User" | "Manager" | "Guest";
 export type UserStatus = "Active" | "Inactive" | "Pending" | "Suspended";
@@ -97,20 +95,15 @@ const UserList: React.FC<UserListProps> = ({
         <div className="flex flex-col gap-4">
             {/* Items per page selector */}
             <div className="flex justify-end gap-4">
-                <select
-                    value={itemsPerPage}
-                    onChange={(e) => {
-                        setItemsPerPage(parseInt(e.target.value));
-                        setCurrentPage(1); // Reset to first page on change
+                <CustomDropdown
+                    options={itemsPerPageOptions.map(opt => ({ value: String(opt), label: `${opt} per page` }))}
+                    value={String(itemsPerPage)}
+                    onChange={(val) => {
+                        setItemsPerPage(parseInt(val));
+                        setCurrentPage(1);
                     }}
-                    className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                    {itemsPerPageOptions.map((opt) => (
-                        <option key={opt} value={opt}>
-                            {opt} per page
-                        </option>
-                    ))}
-                </select>
+                    className="w-40"
+                />
             </div>
 
             {/* Table */}
@@ -172,22 +165,12 @@ const UserList: React.FC<UserListProps> = ({
                                         </td>
                                         <td className="px-4 py-3">
                                             {isEditing ? (
-                                                <select
+                                                <CustomDropdown
+                                                    options={allRoles.map(role => ({ value: role, label: role }))}
                                                     value={editForm.role || ""}
-                                                    onChange={(e) =>
-                                                        updateEditForm(
-                                                            "role",
-                                                            e.target.value as UserRole
-                                                        )
-                                                    }
-                                                    className="border border-gray-300 rounded px-2 py-1"
-                                                >
-                                                    {allRoles.map((role) => (
-                                                        <option key={role} value={role}>
-                                                            {role}
-                                                        </option>
-                                                    ))}
-                                                </select>
+                                                    onChange={(val) => updateEditForm("role", val)}
+                                                    className="w-full min-w-[120px]"
+                                                />
                                             ) : (
                                                 <span
                                                     className={`px-3 py-1 rounded-full text-sm font-medium ${roleColors[user.role]
@@ -199,22 +182,12 @@ const UserList: React.FC<UserListProps> = ({
                                         </td>
                                         <td className="px-4 py-3">
                                             {isEditing ? (
-                                                <select
+                                                <CustomDropdown
+                                                    options={allStatuses.map(status => ({ value: status, label: status }))}
                                                     value={editForm.status || ""}
-                                                    onChange={(e) =>
-                                                        updateEditForm(
-                                                            "status",
-                                                            e.target.value as UserStatus
-                                                        )
-                                                    }
-                                                    className="border border-gray-300 rounded px-2 py-1"
-                                                >
-                                                    {allStatuses.map((status) => (
-                                                        <option key={status} value={status}>
-                                                            {status}
-                                                        </option>
-                                                    ))}
-                                                </select>
+                                                    onChange={(val) => updateEditForm("status", val)}
+                                                    className="w-full min-w-[120px]"
+                                                />
                                             ) : (
                                                 <span
                                                     className={`px-3 py-1 rounded-full text-sm font-medium ${statusColors[user.status]
@@ -285,8 +258,8 @@ const UserList: React.FC<UserListProps> = ({
                     onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
                     disabled={currentPage === 1}
                     className={`px-4 py-2 rounded ${currentPage === 1
-                            ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                            : "bg-blue-500 text-white hover:bg-blue-600"
+                        ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                        : "bg-blue-500 text-white hover:bg-blue-600"
                         }`}
                 >
                     Prev
@@ -297,8 +270,8 @@ const UserList: React.FC<UserListProps> = ({
                         key={page}
                         onClick={() => setCurrentPage(page)}
                         className={`px-3 py-1 rounded ${page === currentPage
-                                ? "bg-blue-600 text-white"
-                                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                            ? "bg-blue-600 text-white"
+                            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                             }`}
                     >
                         {page}
@@ -309,8 +282,8 @@ const UserList: React.FC<UserListProps> = ({
                     onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
                     disabled={currentPage === totalPages}
                     className={`px-4 py-2 rounded ${currentPage === totalPages
-                            ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                            : "bg-blue-500 text-white hover:bg-blue-600"
+                        ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                        : "bg-blue-500 text-white hover:bg-blue-600"
                         }`}
                 >
                     Next

@@ -13,6 +13,7 @@ import KhmerCalendar from '@/utils/KhmerCalendar';
 import FileUploader from '@/common/FileUploader';
 import { updateRental } from '@/services/rentalService';
 import { ApiError } from '@/lib/api';
+import CustomDropdown from '@/common/CustomDropdown';
 
 interface RentalEditFormProps {
     rental: Rental;
@@ -266,28 +267,12 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
                         </div>
 
                         {/* Status */}
-                        <div className="space-y-1.5">
-                            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                                {lang === 'km' ? 'ស្ថានភាព' : 'Status'} <span className="text-red-400">*</span>
-                            </label>
-                            <div className="relative">
-                                <select
-                                    name="status" value={formData.status} onChange={handleChange} required
-                                    className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 outline-none transition-all text-sm font-medium appearance-none cursor-pointer ${currentStatus.color} ${currentStatus.bg} ${currentStatus.border}`}
-                                >
-                                    {statusOptions.map(opt => (
-                                        <option key={opt.value} value={opt.value} className="text-gray-800 bg-white">
-                                            {opt.label}
-                                        </option>
-                                    ))}
-                                </select>
-                                <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
-                                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
+                        <CustomDropdown
+                            label={lang === 'km' ? 'ស្ថានភាព' : 'Status'}
+                            options={statusOptions}
+                            value={formData.status}
+                            onChange={(val: string) => setFormData(prev => ({ ...prev, status: val as any }))}
+                        />
 
                         {/* Rent Amount */}
                         <div className="space-y-1.5">

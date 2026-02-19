@@ -4,6 +4,7 @@
 import { Report } from "@/types/report";
 import React, { useState, useEffect } from "react";
 import { FaEdit, FaTrash, FaFileExport, FaEye, FaSave, FaTimes, FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import CustomDropdown from "@/common/CustomDropdown";
 
 interface ReportsTableProps {
     reports: Report[];
@@ -78,38 +79,27 @@ const ReportsTable: React.FC<ReportsTableProps> = ({
             <div className="flex flex-col sm:flex-row justify-end gap-4">
                 <div className="flex flex-col gap-1 w-full sm:w-auto">
                     <label className="text-sm font-medium text-gray-700">Filter by Status</label>
-                    <select
+                    <CustomDropdown
+                        options={[{ value: "All", label: "All" }, ...allStatuses.map(status => ({ value: status, label: status }))]}
                         value={statusFilter}
-                        onChange={(e) => {
-                            setStatusFilter(e.target.value as Report["status"] | "All");
+                        onChange={(val) => {
+                            setStatusFilter(val as any);
                             setCurrentPage(1);
                         }}
-                        className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-auto"
-                    >
-                        <option value="All">All</option>
-                        {allStatuses.map((status) => (
-                            <option key={status} value={status}>
-                                {status}
-                            </option>
-                        ))}
-                    </select>
+                        className="w-full sm:w-40"
+                    />
                 </div>
                 <div className="flex flex-col gap-1 w-full sm:w-auto">
                     <label className="text-sm font-medium text-gray-700">Items per Page</label>
-                    <select
-                        value={itemsPerPage}
-                        onChange={(e) => {
-                            setItemsPerPage(parseInt(e.target.value));
+                    <CustomDropdown
+                        options={itemsPerPageOptions.map(opt => ({ value: String(opt), label: `${opt} per page` }))}
+                        value={String(itemsPerPage)}
+                        onChange={(val) => {
+                            setItemsPerPage(parseInt(val));
                             setCurrentPage(1);
                         }}
-                        className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-auto"
-                    >
-                        {itemsPerPageOptions.map((opt) => (
-                            <option key={opt} value={opt}>
-                                {opt} per page
-                            </option>
-                        ))}
-                    </select>
+                        className="w-full sm:w-40"
+                    />
                 </div>
             </div>
 
@@ -181,21 +171,16 @@ const ReportsTable: React.FC<ReportsTableProps> = ({
                                         <td className="px-4 py-3">{new Date(report.generatedAt).toLocaleString()}</td>
                                         <td className="px-4 py-3">
                                             {isEditing ? (
-                                                <select
+                                                <CustomDropdown
+                                                    options={allStatuses.map(status => ({ value: status, label: status }))}
                                                     value={currentEditForm?.status || ""}
-                                                    onChange={(e) =>
+                                                    onChange={(val) =>
                                                         setEditForm((prev) =>
-                                                            prev ? { ...prev, status: e.target.value as Report["status"] } : prev
+                                                            prev ? { ...prev, status: val as Report["status"] } : prev
                                                         )
                                                     }
-                                                    className="border border-gray-300 rounded px-2 py-1 w-full"
-                                                >
-                                                    {allStatuses.map((status) => (
-                                                        <option key={status} value={status}>
-                                                            {status}
-                                                        </option>
-                                                    ))}
-                                                </select>
+                                                    className="w-full"
+                                                />
                                             ) : (
                                                 <span
                                                     className={`px-2 py-1 rounded-full text-xs font-medium ${statusColors[report.status]

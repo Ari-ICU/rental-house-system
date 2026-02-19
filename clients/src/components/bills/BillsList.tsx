@@ -20,6 +20,7 @@ import { deleteBill } from "@/services/billService";
 import { toast } from "react-hot-toast";
 
 import { useRouter } from "next/navigation";
+import CustomDropdown from "@/common/CustomDropdown";
 
 interface BillsListProps {
     bills: Bill[];
@@ -118,48 +119,35 @@ const BillsList: React.FC<BillsListProps> = ({
                         <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">
                             {lang === "en" ? "Filter by Status" : "តម្រៀបតាមស្ថានភាព"}
                         </label>
-                        <select
+                        <CustomDropdown
+                            options={allStatuses.map((status) => ({
+                                value: status,
+                                label: lang === "en" ? status : status === "Paid" ? "បានបង់" : status === "Unpaid" ? "មិនទាន់បង់" : "ទាំងអស់"
+                            }))}
                             value={statusFilter}
-                            onChange={(e) => {
-                                setStatusFilter(e.target.value as
-                                    | "Paid"
-                                    | "Unpaid"
-                                    | "All");
+                            onChange={(val) => {
+                                setStatusFilter(val as any);
                                 setCurrentPage(1);
                             }}
-                            className="bg-white border border-gray-200 rounded-2xl px-4 py-2 text-sm focus:outline-none focus:ring-4 focus:ring-violet-50 transition-all cursor-pointer hover:border-violet-300"
-                        >
-                            {allStatuses.map((status) => (
-                                <option key={status} value={status}>
-                                    {lang === "en"
-                                        ? status
-                                        : status === "Paid"
-                                            ? "បានបង់"
-                                            : status === "Unpaid"
-                                                ? "មិនទាន់បង់"
-                                                : "ទាំងអស់"}
-                                </option>
-                            ))}
-                        </select>
+                            className="w-40"
+                        />
                     </div>
                     <div className="flex flex-col gap-1.5">
                         <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">
                             {lang === "en" ? "Total Items" : "ចំនួនសរុប"}
                         </label>
-                        <select
-                            value={itemsPerPage}
-                            onChange={(e) => {
-                                setItemsPerPage(parseInt(e.target.value));
+                        <CustomDropdown
+                            options={itemsPerPageOptions.map((opt) => ({
+                                value: String(opt),
+                                label: `${opt} ${lang === "en" ? "per page" : "ក្នុងមួយទំព័រ"}`
+                            }))}
+                            value={String(itemsPerPage)}
+                            onChange={(val) => {
+                                setItemsPerPage(parseInt(val));
                                 setCurrentPage(1);
                             }}
-                            className="bg-white border border-gray-200 rounded-2xl px-4 py-2 text-sm focus:outline-none focus:ring-4 focus:ring-violet-50 transition-all cursor-pointer hover:border-violet-300"
-                        >
-                            {itemsPerPageOptions.map((opt) => (
-                                <option key={opt} value={opt}>
-                                    {opt} {lang === "en" ? "per page" : "ក្នុងមួយទំព័រ"}
-                                </option>
-                            ))}
-                        </select>
+                            className="w-40"
+                        />
                     </div>
                 </div>
             </div>

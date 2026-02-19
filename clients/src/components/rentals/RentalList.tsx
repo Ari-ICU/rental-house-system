@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from 'next/navigation';
 import { FaEdit, FaTrash, FaSave, FaTimes, FaChevronLeft, FaChevronRight, FaEye, FaCalendarAlt, FaHome, FaInbox } from "react-icons/fa";
+import CustomDropdown from "@/common/CustomDropdown";
 
 import { Rental, RentalStatus } from "@/types/rents";
 import { formatKhmerDate } from "@/utils/dateFormatter";
@@ -172,13 +173,12 @@ const RentalList: React.FC<RentalListProps> = ({
                 {/* Items Per Page */}
                 <div className="flex items-center gap-2 text-xs text-gray-500">
                     <span>{lang === "en" ? "Show" : "បង្ហាញ"}</span>
-                    <select
-                        value={itemsPerPage}
-                        onChange={(e) => { setItemsPerPage(parseInt(e.target.value)); setCurrentPage(1); }}
-                        className="border border-gray-200 rounded-lg px-2.5 py-1.5 text-xs text-gray-700 focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 bg-gray-50"
-                    >
-                        {itemsPerPageOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
-                    </select>
+                    <CustomDropdown
+                        options={itemsPerPageOptions.map(opt => ({ value: String(opt), label: String(opt) }))}
+                        value={String(itemsPerPage)}
+                        onChange={(val) => { setItemsPerPage(parseInt(val)); setCurrentPage(1); }}
+                        className="w-20"
+                    />
                     <span>{lang === "en" ? "per page" : "ក្នុងមួយទំព័រ"}</span>
                 </div>
             </div>
@@ -266,17 +266,15 @@ const RentalList: React.FC<RentalListProps> = ({
                                         {/* Status */}
                                         <td className="px-5 py-3.5">
                                             {isEditing ? (
-                                                <select
+                                                <CustomDropdown
+                                                    options={allStatuses.map(status => ({
+                                                        value: status,
+                                                        label: lang === "en" ? statusConfig[status].label : statusConfig[status].labelKm
+                                                    }))}
                                                     value={editForm.status || ""}
-                                                    onChange={(e) => updateEditForm("status", e.target.value as RentalStatus)}
-                                                    className="border border-violet-300 rounded-lg px-2 py-1.5 text-xs focus:outline-none w-full"
-                                                >
-                                                    {allStatuses.map(status => (
-                                                        <option key={status} value={status}>
-                                                            {lang === "en" ? statusConfig[status].label : statusConfig[status].labelKm}
-                                                        </option>
-                                                    ))}
-                                                </select>
+                                                    onChange={(val) => updateEditForm("status", val as RentalStatus)}
+                                                    className="w-full"
+                                                />
                                             ) : (
                                                 <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${cfg.badge}`}>
                                                     <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`}></span>

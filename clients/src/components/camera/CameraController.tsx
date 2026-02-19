@@ -7,6 +7,7 @@ import Hls from 'hls.js';
 import CameraSettings from '@/components/setting/CameraSettings';
 import { Camera } from '@/types/camera';
 import { toast } from 'react-hot-toast'; // npm install react-hot-toast
+import CustomDropdown from '@/common/CustomDropdown';
 
 interface CameraControllerProps {
     cameras?: Camera[];
@@ -341,18 +342,15 @@ const CameraController: React.FC<CameraControllerProps> = ({
                 </div>
 
                 <div className="flex items-center gap-3">
-                    <select
+                    <CustomDropdown
+                        options={[
+                            { value: 'All Floors', label: 'All Floors' },
+                            ...floors.map((floor) => ({ value: floor, label: floor }))
+                        ]}
                         value={selectedFloor}
-                        onChange={(e) => setSelectedFloor(e.target.value)}
-                        className="px-4 py-2.5 text-gray-700 bg-white border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                    >
-                        <option value="All Floors">All Floors</option>
-                        {floors.map((floor) => (
-                            <option key={floor} value={floor}>
-                                {floor}
-                            </option>
-                        ))}
-                    </select>
+                        onChange={(val) => setSelectedFloor(val)}
+                        className="w-48"
+                    />
                     <Tooltip text="Settings">
                         <button
                             onClick={async () => {

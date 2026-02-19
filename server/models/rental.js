@@ -5,6 +5,11 @@ const convertDecimalToNumber = (rental) => {
     return {
         ...rental,
         rentAmount: Number(rental.rentAmount),
+        // Add mapping for nested image object expected by frontend
+        clientImageCard: {
+            front: rental.clientImageCardFront || '',
+            back: rental.clientImageCardBack || ''
+        },
         bills: rental.bills ? rental.bills.map(bill => ({
             ...bill,
             electricityAmount: Number(bill.electricityAmount),

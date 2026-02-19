@@ -17,6 +17,7 @@ import { Rental } from '@/types/rents';
 import { useLang } from '@/context/LangContext';
 import KhmerCalendar from '@/utils/KhmerCalendar';
 import { useRouter } from 'next/navigation';
+import CustomDropdown from '@/common/CustomDropdown';
 
 import { createBill, updateBill } from '@/services/billService';
 import { toast } from 'react-hot-toast';
@@ -340,19 +341,14 @@ const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
                                         <div className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-gray-400">$</div>
                                     </div>
 
-                                    <div className="relative">
-                                        <select
-                                            name="electricityStatus"
-                                            value={formData.electricityStatus}
-                                            onChange={handleChange}
-                                            className="w-full px-5 py-4 bg-white border border-gray-100 rounded-2xl text-sm font-bold text-gray-700 focus:outline-none focus:ring-4 focus:ring-violet-50 focus:border-violet-200 transition-all appearance-none cursor-pointer"
-                                            required
-                                        >
-                                            <option value="Paid">{lang === 'km' ? 'បានបង់ (Paid)' : 'Paid'}</option>
-                                            <option value="Unpaid">{lang === 'km' ? 'មិនទាន់បង់ (Unpaid)' : 'Unpaid'}</option>
-                                        </select>
-                                        <FaChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-300 pointer-events-none text-xs" />
-                                    </div>
+                                    <CustomDropdown
+                                        options={[
+                                            { value: 'Paid', label: lang === 'km' ? 'បានបង់ (Paid)' : 'Paid' },
+                                            { value: 'Unpaid', label: lang === 'km' ? 'មិនទាន់បង់ (Unpaid)' : 'Unpaid' }
+                                        ]}
+                                        value={formData.electricityStatus}
+                                        onChange={(val: string) => setFormData(prev => ({ ...prev, electricityStatus: val as any }))}
+                                    />
                                 </div>
                             </div>
 
@@ -382,19 +378,14 @@ const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
                                         <div className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-gray-400">$</div>
                                     </div>
 
-                                    <div className="relative">
-                                        <select
-                                            name="waterStatus"
-                                            value={formData.waterStatus}
-                                            onChange={handleChange}
-                                            className="w-full px-5 py-4 bg-white border border-gray-100 rounded-2xl text-sm font-bold text-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-50 focus:border-blue-200 transition-all appearance-none cursor-pointer"
-                                            required
-                                        >
-                                            <option value="Paid">{lang === 'km' ? 'បានបង់ (Paid)' : 'Paid'}</option>
-                                            <option value="Unpaid">{lang === 'km' ? 'មិនទាន់បង់ (Unpaid)' : 'Unpaid'}</option>
-                                        </select>
-                                        <FaChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-300 pointer-events-none text-xs" />
-                                    </div>
+                                    <CustomDropdown
+                                        options={[
+                                            { value: 'Paid', label: lang === 'km' ? 'បានបង់ (Paid)' : 'Paid' },
+                                            { value: 'Unpaid', label: lang === 'km' ? 'មិនទាន់បង់ (Unpaid)' : 'Unpaid' }
+                                        ]}
+                                        value={formData.waterStatus}
+                                        onChange={(val: string) => setFormData(prev => ({ ...prev, waterStatus: val as any }))}
+                                    />
                                 </div>
                             </div>
                         </div>
