@@ -55,7 +55,17 @@ const Header: React.FC<HeaderProps> = ({ onMobileMenuToggle }) => {
             .filter((r) => {
                 const name = (r.ClientName || "").toLowerCase();
                 const room = (r.roomNumber || "").toLowerCase();
-                return name.includes(normalized) || room.includes(normalized);
+                const phone = (r.clientPhone || "").toLowerCase();
+                const email = (r.clientEmail || "").toLowerCase();
+                const idCard = (r.clientIDCard || "").toLowerCase();
+
+                return (
+                    name.includes(normalized) ||
+                    room.includes(normalized) ||
+                    phone.includes(normalized) ||
+                    email.includes(normalized) ||
+                    idCard.includes(normalized)
+                );
             })
             .sort((a, b) => {
                 const aName = a.ClientName.toLowerCase();
@@ -115,7 +125,7 @@ const Header: React.FC<HeaderProps> = ({ onMobileMenuToggle }) => {
                         <FaSearch className="w-4 h-4 text-gray-400 group-hover:text-violet-500 transition-colors mr-3" />
                         <input
                             type="text"
-                            placeholder={lang === 'en' ? 'Search rentals...' : 'ស្វែងរកការជួល...'}
+                            placeholder={lang === 'en' ? 'Search name, room, phone...' : 'ស្វែងរកឈ្មោះ, បន្ទប់, លេខទូរស័ព្ទ...'}
                             className="bg-transparent border-none outline-none text-sm font-medium text-gray-700 w-full placeholder-gray-400 transition-all"
                             value={searchQuery}
                             onChange={(e) => handleSearch(e.target.value)}
@@ -136,13 +146,20 @@ const Header: React.FC<HeaderProps> = ({ onMobileMenuToggle }) => {
                                         onClick={() => handleSelectResult(r.id)}
                                         className="w-full flex items-center gap-4 p-3 rounded-2xl hover:bg-violet-50/80 transition-all group text-left"
                                     >
-                                        <div className="w-10 h-10 rounded-xl bg-violet-100/50 text-violet-600 flex items-center justify-center group-hover:bg-violet-600 group-hover:text-white transition-all shadow-sm">
+                                        <div className="w-10 h-10 rounded-xl bg-violet-100/50 text-violet-600 flex items-center justify-center group-hover:bg-violet-600 group-hover:text-white transition-all shadow-sm flex-shrink-0">
                                             <FaUser size={14} />
                                         </div>
                                         <div className="flex-1 min-w-0">
-                                            <p className="text-sm font-bold text-gray-800 truncate group-hover:text-violet-700 transition-colors">
-                                                {r.ClientName}
-                                            </p>
+                                            <div className="flex justify-between items-start">
+                                                <p className="text-sm font-bold text-gray-800 truncate group-hover:text-violet-700 transition-colors">
+                                                    {r.ClientName}
+                                                </p>
+                                                {r.clientPhone && (
+                                                    <span className="text-[10px] text-gray-400 font-medium ml-2">
+                                                        {r.clientPhone}
+                                                    </span>
+                                                )}
+                                            </div>
                                             <div className="flex items-center gap-2 text-[10px] text-gray-500 font-medium mt-0.5">
                                                 <span className="flex items-center gap-1.5 bg-white px-2 py-0.5 rounded-md shadow-sm border border-gray-100">
                                                     <FaDoorOpen size={9} className="text-gray-400" />

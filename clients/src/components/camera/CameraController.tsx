@@ -337,7 +337,8 @@ const CameraController: React.FC<CameraControllerProps> = ({
     return (
         <div className="max-w-7xl mx-auto space-y-10">
             {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 bg-white/40 backdrop-blur-md p-8 sm:p-10 rounded-[2.5rem] border border-white shadow-xl shadow-blue-900/5">
+            {/* Header */}
+            <div className="relative z-20 flex flex-col md:flex-row md:items-end justify-between gap-8 bg-white/40 backdrop-blur-md p-8 sm:p-10 rounded-[2.5rem] border border-white shadow-xl shadow-blue-900/5">
                 <div className="space-y-4">
                     <div className="inline-flex items-center gap-2 bg-blue-500/10 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 border border-blue-200/50">
                         <FaVideo size={10} />
@@ -363,7 +364,16 @@ const CameraController: React.FC<CameraControllerProps> = ({
                         <CustomDropdown
                             options={[
                                 { value: 'All Floors', label: lang === 'km' ? 'គ្រប់ជាន់' : 'All Floors' },
-                                ...floors.map(f => ({ value: f, label: f }))
+                                ...floors.map(f => {
+                                    let label = f;
+                                    if (lang === 'km') {
+                                        if (f === 'Ground Floor') label = 'ជាន់ផ្ទាល់ដី';
+                                        else if (f === '1st Floor') label = 'ជាន់ទី ១';
+                                        else if (f === '2nd Floor') label = 'ជាន់ទី ២';
+                                        else if (f === '3rd Floor') label = 'ជាន់ទី ៣';
+                                    }
+                                    return { value: f, label };
+                                })
                             ]}
                             value={selectedFloor}
                             onChange={(val) => setSelectedFloor(val)}
@@ -389,12 +399,17 @@ const CameraController: React.FC<CameraControllerProps> = ({
 
             {/* Camera Grid */}
             {filteredCameras.length === 0 ? (
-                <div className="bg-white/40 backdrop-blur-md rounded-[2.5rem] p-20 text-center border border-white">
-                    <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6 text-gray-300">
-                        <FaVideo size={32} />
+                <div className="bg-white/60 backdrop-blur-xl rounded-[2.5rem] p-24 text-center border border-white shadow-xl shadow-blue-900/5 flex flex-col items-center justify-center">
+                    <div className="w-24 h-24 bg-gradient-to-tr from-gray-100 to-gray-50 rounded-full flex items-center justify-center mb-8 shadow-inner ring-8 ring-white">
+                        <FaVideo size={36} className="text-gray-300" />
                     </div>
-                    <p className="text-gray-400 text-xl font-black uppercase tracking-widest">
-                        {lang === 'km' ? 'មិនមានកាមេរ៉ាសម្រាប់ជម្រើសនេះទេ' : 'No cameras available for this selection'}
+                    <h3 className="text-2xl font-black text-gray-900 tracking-tight mb-2">
+                        {lang === 'km' ? 'មិនមានកាមេរ៉ា' : 'No Cameras Found'}
+                    </h3>
+                    <p className="text-gray-400 font-medium text-sm max-w-md mx-auto leading-relaxed">
+                        {lang === 'km'
+                            ? 'មិនមានកាមេរ៉ាសម្រាប់ជម្រើសនេះទេ។ សូមជ្រើសរើសជាន់ផ្សេង ឬបន្ថែមឧបករណ៍ថ្មី។'
+                            : 'There are no active camera feeds available for the selected floor. Please check your device configuration.'}
                     </p>
                 </div>
             ) : (
@@ -419,16 +434,26 @@ const CameraController: React.FC<CameraControllerProps> = ({
                                         autoPlay={false}
                                     />
 
-                                    {/* Glassmorphism Status Badge */}
-                                    <div className="absolute top-4 right-4 flex items-center gap-2 px-3 py-1.5 bg-[#0b0e14]/40 backdrop-blur-xl rounded-full border border-white/10 shadow-2xl">
-                                        <FaCircle
-                                            className={`text-[8px] ${cam.isActive ? 'text-emerald-400 animate-pulse' : 'text-rose-400'}`}
-                                        />
-                                        <span className="text-white text-[10px] font-black uppercase tracking-widest">
-                                            {cam.isActive
-                                                ? (lang === 'km' ? 'អនឡាញ' : 'Online')
-                                                : (lang === 'km' ? 'អសកម្ម' : 'Offline')}
-                                        </span>
+                                    {/* Live Status Indicators */}
+                                    <div className="absolute top-4 left-4 flex items-center gap-2">
+                                        <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg backdrop-blur-md border border-white/10 shadow-lg ${cam.isActive ? 'bg-red-500/80 text-white' : 'bg-black/60 text-gray-400'}`}>
+                                            <div className={`w-2 h-2 rounded-full ${cam.isActive ? 'bg-white animate-pulse' : 'bg-gray-500'}`}></div>
+                                            <span className="text-[10px] font-black uppercase tracking-widest leading-none">
+                                                {cam.isActive ? 'LIVE' : 'OFFLINE'}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div className="absolute top-4 right-4 flex items-center gap-2">
+                                        {cam.isActive && (
+                                            <div className="px-2 py-1 rounded bg-black/60 backdrop-blur-md border border-white/10 text-white flex items-center gap-1.5">
+                                                <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></div>
+                                                <span className="text-[9px] font-mono tracking-wider opacity-90">REC</span>
+                                            </div>
+                                        )}
+                                        <div className="px-2 py-1 rounded bg-black/60 backdrop-blur-md border border-white/10 text-white">
+                                            <span className="text-[9px] font-mono tracking-wider opacity-80">{cam.floor}</span>
+                                        </div>
                                     </div>
 
                                     {/* Loading Overlay */}
@@ -466,61 +491,71 @@ const CameraController: React.FC<CameraControllerProps> = ({
                                 </div>
 
                                 {/* Info & Controls */}
-                                <div className="p-6">
-                                    <div className="flex justify-between items-start mb-6">
-                                        <div>
-                                            <h2 className="text-lg font-black text-gray-900 tracking-tight group-hover:text-blue-600 transition-colors">
-                                                {cam.name}
-                                            </h2>
-                                            <div className="flex items-center gap-2 mt-1">
-                                                <div className="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
-                                                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none">
-                                                    {cam.floor}
-                                                </span>
+                                <div className="p-5">
+                                    <div className="flex items-center justify-between mb-5">
+                                        <div className="flex items-center gap-3">
+                                            <div className={`w-2 h-8 rounded-full ${cam.isActive ? 'bg-gradient-to-b from-blue-500 to-indigo-600' : 'bg-gray-200'}`}></div>
+                                            <div>
+                                                <h2 className="text-base font-black text-gray-900 tracking-tight leading-none group-hover:text-blue-600 transition-colors">
+                                                    {cam.name}
+                                                </h2>
+                                                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mt-1.5">
+                                                    {lang === 'km' ? 'កាមេរ៉ាសុវត្ថិភាព IP' : 'IP Security Camera'}
+                                                </p>
                                             </div>
                                         </div>
-                                        <div className="bg-gray-50 px-3 py-1.5 rounded-xl border border-gray-100">
-                                            <FaBuilding className="text-gray-300" size={12} />
-                                        </div>
+                                        {cam.isActive && (
+                                            <div className="h-6 w-6 rounded-full bg-emerald-50 border border-emerald-100 flex items-center justify-center animate-pulse">
+                                                <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
+                                            </div>
+                                        )}
                                     </div>
 
-                                    <div className="grid grid-cols-4 gap-3">
-                                        <Tooltip text={lang === 'km' ? 'ចាប់ផ្តើម' : "Start"}>
-                                            <button
-                                                onClick={() => handleStart(cam.id)}
-                                                disabled={!cam.isActive || state.loading}
-                                                className="flex flex-col items-center justify-center gap-1.5 py-4 rounded-2xl bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white disabled:opacity-30 disabled:hover:bg-emerald-50 disabled:hover:text-emerald-600 transition-all active:scale-90"
-                                            >
-                                                <FaVideo size={16} />
-                                            </button>
-                                        </Tooltip>
-                                        <Tooltip text={lang === 'km' ? 'បញ្ឈប់' : "Stop"}>
-                                            <button
-                                                onClick={() => handleStop(cam.id)}
-                                                disabled={!cam.isActive || state.loading}
-                                                className="flex flex-col items-center justify-center gap-1.5 py-4 rounded-2xl bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white disabled:opacity-30 disabled:hover:bg-rose-50 disabled:hover:text-rose-600 transition-all active:scale-90"
-                                            >
-                                                <FaStop size={16} />
-                                            </button>
-                                        </Tooltip>
-                                        <Tooltip text={lang === 'km' ? 'ថតរូប' : "Capture"}>
-                                            <button
-                                                onClick={() => handleCapture(cam.id)}
-                                                disabled={!cam.isActive || state.loading || state.error !== null}
-                                                className="flex flex-col items-center justify-center gap-1.5 py-4 rounded-2xl bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white disabled:opacity-30 disabled:hover:bg-blue-50 disabled:hover:text-blue-600 transition-all active:scale-90"
-                                            >
-                                                <FaCamera size={16} />
-                                            </button>
-                                        </Tooltip>
-                                        <Tooltip text={lang === 'km' ? 'ពេញអេក្រង់' : "Fullscreen"}>
-                                            <button
-                                                onClick={() => handleFullscreen(cam.id)}
-                                                disabled={!cam.isActive || state.loading || state.error !== null}
-                                                className="flex flex-col items-center justify-center gap-1.5 py-4 rounded-2xl bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white disabled:opacity-30 disabled:hover:bg-indigo-50 disabled:hover:text-indigo-600 transition-all active:scale-90"
-                                            >
-                                                <FaExpand size={16} />
-                                            </button>
-                                        </Tooltip>
+                                    {/* Control Toolbar */}
+                                    <div className="flex items-center justify-between bg-gray-50/80 p-1.5 rounded-xl border border-gray-100">
+                                        <div className="flex items-center gap-1">
+                                            <Tooltip text={lang === 'km' ? 'ចាប់ផ្តើម' : "Start"}>
+                                                <button
+                                                    onClick={() => handleStart(cam.id)}
+                                                    disabled={!cam.isActive || state.loading}
+                                                    className="w-10 h-10 flex items-center justify-center rounded-lg text-emerald-600 hover:bg-white hover:shadow-sm disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:shadow-none transition-all active:scale-90"
+                                                >
+                                                    <FaVideo size={14} />
+                                                </button>
+                                            </Tooltip>
+                                            <Tooltip text={lang === 'km' ? 'បញ្ឈប់' : "Stop"}>
+                                                <button
+                                                    onClick={() => handleStop(cam.id)}
+                                                    disabled={!cam.isActive || state.loading}
+                                                    className="w-10 h-10 flex items-center justify-center rounded-lg text-rose-600 hover:bg-white hover:shadow-sm disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:shadow-none transition-all active:scale-90"
+                                                >
+                                                    <FaStop size={14} />
+                                                </button>
+                                            </Tooltip>
+                                        </div>
+
+                                        <div className="w-px h-6 bg-gray-200"></div>
+
+                                        <div className="flex items-center gap-1">
+                                            <Tooltip text={lang === 'km' ? 'ថតរូប' : "Capture"}>
+                                                <button
+                                                    onClick={() => handleCapture(cam.id)}
+                                                    disabled={!cam.isActive || state.loading || state.error !== null}
+                                                    className="w-10 h-10 flex items-center justify-center rounded-lg text-blue-600 hover:bg-white hover:shadow-sm disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:shadow-none transition-all active:scale-90"
+                                                >
+                                                    <FaCamera size={14} />
+                                                </button>
+                                            </Tooltip>
+                                            <Tooltip text={lang === 'km' ? 'ពេញអេក្រង់' : "Fullscreen"}>
+                                                <button
+                                                    onClick={() => handleFullscreen(cam.id)}
+                                                    disabled={!cam.isActive || state.loading || state.error !== null}
+                                                    className="w-10 h-10 flex items-center justify-center rounded-lg text-indigo-600 hover:bg-white hover:shadow-sm disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:shadow-none transition-all active:scale-90"
+                                                >
+                                                    <FaExpand size={14} />
+                                                </button>
+                                            </Tooltip>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

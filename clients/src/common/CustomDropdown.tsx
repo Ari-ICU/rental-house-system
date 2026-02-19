@@ -50,14 +50,14 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
             )}
             <div
                 onClick={() => setIsOpen(!isOpen)}
-                className={`w-full px-4 py-3 border rounded-xl flex justify-between items-center cursor-pointer transition-all duration-200 outline-none
+                className={`group w-full px-4 py-3 border rounded-xl flex justify-between items-center cursor-pointer transition-all duration-200 outline-none
                     ${isOpen ? 'ring-2 ring-violet-500/20 border-violet-400 bg-white' : 'border-gray-200 bg-gray-50/50 hover:bg-white hover:border-gray-300'}
                     ${selectedOption?.bg || ''} ${selectedOption?.color || 'text-gray-800'} ${selectedOption?.border || ''}`}
             >
-                <span className="text-sm font-medium">
+                <span className="text-sm font-black translate-no notranslate" translate="no">
                     {selectedOption ? selectedOption.label : placeholder}
                 </span>
-                <FaChevronDown className={`text-xs transition-transform duration-300 ${isOpen ? 'rotate-180' : ''} ${selectedOption ? 'opacity-70' : 'text-gray-400'}`} />
+                <FaChevronDown className={`text-xs transition-transform duration-300 ${isOpen ? 'rotate-180 text-violet-500' : 'text-gray-400 group-hover:text-gray-600'}`} />
             </div>
 
             {isOpen && (
