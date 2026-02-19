@@ -114,7 +114,7 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
                 clientImageCardFront: formData.clientImageCard?.front ?? '',
                 clientImageCardBack: formData.clientImageCard?.back ?? '',
             };
-            const { clientImageCard: _unused, ...rest } = payload;
+            const { clientImageCard: _, ...rest } = payload;
             await updateRental(id, rest);
             setToast({
                 type: 'success',

@@ -8,5 +8,7 @@ export interface Report {
     reportBill?: Bill;
     reportRents?: Rental;
     generatedAt: string;
+    startDate?: string;
+    endDate?: string;
     status: "Completed" | "In-Review";
 }

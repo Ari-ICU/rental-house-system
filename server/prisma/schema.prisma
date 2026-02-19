@@ -48,3 +48,17 @@ model Bill {
 
   @@map("bills")
 }
+
+model Report {
+  id          Int      @id @default(autoincrement())
+  name        String
+  type        String
+  status      String   // "Completed" | "In-Review"
+  startDate   DateTime?
+  endDate     DateTime?
+  generatedAt DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("reports")
+}
