@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from 'next/link';
 import MetricCard from "@/components/MetricCard";
 import RecentRentalsTable from "@/components/RecentRentalsTable";
 import { FaBed, FaUser } from "react-icons/fa";
@@ -56,9 +57,9 @@ export default function DashboardPage() {
                     <h2 className="text-lg font-bold text-gray-800">
                         {lang === "en" ? "Recent Rentals" : "ការជួលថ្មីៗ"}
                     </h2>
-                    <button className="text-sm font-medium text-purple-600 hover:text-purple-700 transition-colors">
+                    <Link href="/dashboard/rentals" className="text-sm font-medium text-purple-600 hover:text-purple-700 transition-colors">
                         {lang === "en" ? "View All" : "មើលទាំងអស់"} &rarr;
-                    </button>
+                    </Link>
                 </div>
 
                 {loading ? (

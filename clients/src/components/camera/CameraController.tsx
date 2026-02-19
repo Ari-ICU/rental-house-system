@@ -6,7 +6,9 @@ import { FaVideo, FaStop, FaExpand, FaCamera, FaBuilding, FaCircle, FaExclamatio
 import Hls from 'hls.js';
 import CameraSettings from '@/components/setting/CameraSettings';
 import { Camera } from '@/types/camera';
-import { toast } from 'react-hot-toast'; // npm install react-hot-toast
+import { useLang } from '@/context/LangContext';
+import CustomDropdown from '@/common/CustomDropdown';
+import { toast } from 'react-hot-toast';
 
 interface CameraControllerProps {
     cameras?: Camera[];
@@ -19,6 +21,7 @@ const CameraController: React.FC<CameraControllerProps> = ({
     cameras: initialCameras = [],
     floors = defaultFloors,
 }) => {
+    const { lang } = useLang();
     const [selectedFloor, setSelectedFloor] = useState('All Floors');
     const [cameras, setCameras] = useState<Camera[]>(initialCameras);
     const [streams, setStreams] = useState<Record<number, MediaStream | null>>({});
@@ -55,7 +58,7 @@ const CameraController: React.FC<CameraControllerProps> = ({
             cam.id === id ? { ...cam, deviceId: deviceId || undefined, streamUrl: undefined } : cam
         ));
         toast.dismiss();
-        toast.success('Device selected successfully');
+        toast.success(lang === 'km' ? 'បានជ្រើសរើសឧបករណ៍ដោយជោគជ័យ' : 'Device selected successfully');
     };
 
     const handleUpdateStreamUrl = (id: number, url: string) => {
@@ -63,7 +66,7 @@ const CameraController: React.FC<CameraControllerProps> = ({
             cam.id === id ? { ...cam, streamUrl: url || undefined, deviceId: undefined } : cam
         ));
         toast.dismiss();
-        toast.success('Stream URL updated');
+        toast.success(lang === 'km' ? 'បានធ្វើបច្ចុប្បន្នភាពតំណភ្ជាប់ស្ទ្រីម' : 'Stream URL updated');
     };
 
     const handleToggleActive = (id: number) => {
@@ -72,7 +75,9 @@ const CameraController: React.FC<CameraControllerProps> = ({
         ));
         const newActive = !cameras.find(c => c.id === id)?.isActive;
         toast.dismiss();
-        toast.success(`Camera ${newActive ? 'activated' : 'deactivated'}`);
+        toast.success(lang === 'km'
+            ? `កាមេរ៉ា ${newActive ? 'ត្រូវបានបើក' : 'ត្រូវបានបិទ'}`
+            : `Camera ${newActive ? 'activated' : 'deactivated'}`);
         // Optionally stop or start based on new state
         if (newActive) {
             handleStart(id);
@@ -85,7 +90,7 @@ const CameraController: React.FC<CameraControllerProps> = ({
         const cam = cameras.find((c) => c.id === id);
         if (!cam) {
             toast.dismiss();
-            toast.error('Camera not found');
+            toast.error(lang === 'km' ? 'រកមិនឃើញកាមេរ៉ា' : 'Camera not found');
             return;
         }
 
@@ -126,7 +131,7 @@ const CameraController: React.FC<CameraControllerProps> = ({
                         console.error('HLS Error:', data);
                         updateCameraState(id, { loading: false, error: `HLS Error: ${data.details || 'Unknown'}` });
                         toast.dismiss();
-                        toast.error(`HLS Error: ${data.details || 'Unknown'}`);
+                        toast.error(lang === 'km' ? `កំហុស HLS: ${data.details || 'មិនស្គាល់'}` : `HLS Error: ${data.details || 'Unknown'}`);
                     });
                 } catch (err) {
                     console.error('Error setting up HLS:', err);
@@ -320,7 +325,7 @@ const CameraController: React.FC<CameraControllerProps> = ({
             hlsRefs.current = {};
             setCameraStates({});
         };
-    }, [cameras, handleStart, streams]);
+    }, [cameras, handleStart, streams, lang]);
 
     const getCameraState = (id: number) => cameraStates[id] || { loading: false, error: null };
 
@@ -330,30 +335,42 @@ const CameraController: React.FC<CameraControllerProps> = ({
             : cameras.filter((cam) => cam.floor === selectedFloor);
 
     return (
-        <div className="p-6 max-w-7xl mx-auto">
+        <div className="max-w-7xl mx-auto space-y-10">
             {/* Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
-                <div className="flex items-center gap-3">
-                    <div className="p-2 bg-blue-100 rounded-xl">
-                        <FaBuilding className="text-blue-600 text-xl" />
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 bg-white/40 backdrop-blur-md p-8 sm:p-10 rounded-[2.5rem] border border-white shadow-xl shadow-blue-900/5">
+                <div className="space-y-4">
+                    <div className="inline-flex items-center gap-2 bg-blue-500/10 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 border border-blue-200/50">
+                        <FaVideo size={10} />
+                        {lang === 'km' ? 'ប្រព័ន្ធត្រួតពិនិត្យសុវត្ថិភាព' : 'Security Monitoring System'}
                     </div>
-                    <h1 className="text-2xl font-bold text-gray-800">Camera Center</h1>
+                    <div className="flex items-center gap-4">
+                        <div className="w-14 h-14 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/30">
+                            <FaBuilding className="text-white text-2xl" />
+                        </div>
+                        <div>
+                            <h1 className="text-4xl font-black text-gray-900 tracking-tight leading-tight">
+                                {lang === 'km' ? 'មជ្ឈមណ្ឌលកាមេរ៉ា' : 'Camera Center'}
+                            </h1>
+                            <p className="text-gray-500 font-bold text-sm">
+                                {lang === 'km' ? 'ការផ្សាយបន្តផ្ទាល់ និងការគ្រប់គ្រងផ្នែកសន្តិសុខ' : 'Live stream surveillance and security management'}
+                            </p>
+                        </div>
+                    </div>
                 </div>
 
-                <div className="flex items-center gap-3">
-                    <select
-                        value={selectedFloor}
-                        onChange={(e) => setSelectedFloor(e.target.value)}
-                        className="px-4 py-2.5 text-gray-700 bg-white border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                    >
-                        <option value="All Floors">All Floors</option>
-                        {floors.map((floor) => (
-                            <option key={floor} value={floor}>
-                                {floor}
-                            </option>
-                        ))}
-                    </select>
-                    <Tooltip text="Settings">
+                <div className="flex items-center gap-4 bg-white/60 p-2.5 rounded-[1.5rem] border border-white shadow-inner">
+                    <div className="w-56">
+                        <CustomDropdown
+                            options={[
+                                { value: 'All Floors', label: lang === 'km' ? 'គ្រប់ជាន់' : 'All Floors' },
+                                ...floors.map(f => ({ value: f, label: f }))
+                            ]}
+                            value={selectedFloor}
+                            onChange={(val) => setSelectedFloor(val)}
+                            className="!rounded-2xl !bg-white !border-gray-100/50 !shadow-sm hover:!border-blue-400 transition-all font-bold text-sm"
+                        />
+                    </div>
+                    <Tooltip text={lang === 'km' ? 'ការកំណត់' : 'Settings'}>
                         <button
                             onClick={async () => {
                                 if (!hasPermission && availableDevices.length === 0) {
@@ -361,10 +378,10 @@ const CameraController: React.FC<CameraControllerProps> = ({
                                 }
                                 setIsSettingsOpen(true);
                             }}
-                            className="p-2.5 rounded-xl bg-gray-50 hover:bg-gray-100 text-gray-700 transition-colors"
+                            className="w-12 h-12 flex items-center justify-center rounded-2xl bg-white border border-gray-100 text-gray-700 hover:text-blue-600 hover:border-blue-200 transition-all shadow-sm active:scale-90"
                             aria-label="Open settings"
                         >
-                            <FaCog className="text-lg" />
+                            <FaCog className="text-xl" />
                         </button>
                     </Tooltip>
                 </div>
@@ -372,8 +389,13 @@ const CameraController: React.FC<CameraControllerProps> = ({
 
             {/* Camera Grid */}
             {filteredCameras.length === 0 ? (
-                <div className="text-center py-12">
-                    <p className="text-gray-500 text-lg">No cameras available for this selection.</p>
+                <div className="bg-white/40 backdrop-blur-md rounded-[2.5rem] p-20 text-center border border-white">
+                    <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6 text-gray-300">
+                        <FaVideo size={32} />
+                    </div>
+                    <p className="text-gray-400 text-xl font-black uppercase tracking-widest">
+                        {lang === 'km' ? 'មិនមានកាមេរ៉ាសម្រាប់ជម្រើសនេះទេ' : 'No cameras available for this selection'}
+                    </p>
                 </div>
             ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -382,99 +404,121 @@ const CameraController: React.FC<CameraControllerProps> = ({
                         return (
                             <div
                                 key={cam.id}
-                                className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow duration-200"
+                                className="group bg-white rounded-[2rem] shadow-2xl shadow-blue-900/5 border border-white overflow-hidden hover:shadow-blue-500/10 transition-all duration-500 hover:-translate-y-1 animate-in fade-in zoom-in-95 duration-500"
                             >
                                 {/* Video Container */}
-                                <div className="relative bg-gray-900 aspect-video">
+                                <div className="relative bg-[#0b0e14] aspect-video">
                                     <video
                                         ref={(el: HTMLVideoElement | null) => {
                                             videoRefs.current[cam.id] = el;
                                         }}
-                                        className="w-full h-full object-cover"
+                                        className="w-full h-full object-cover transition-opacity duration-700 group-hover:opacity-90"
                                         controls={false}
                                         muted
                                         playsInline
                                         autoPlay={false}
                                     />
-                                    {/* Status Badge */}
-                                    <div className="absolute top-3 right-3 flex items-center gap-1.5 px-2 py-1 bg-black/60 backdrop-blur-sm rounded-full">
+
+                                    {/* Glassmorphism Status Badge */}
+                                    <div className="absolute top-4 right-4 flex items-center gap-2 px-3 py-1.5 bg-[#0b0e14]/40 backdrop-blur-xl rounded-full border border-white/10 shadow-2xl">
                                         <FaCircle
-                                            className={`text-xs ${cam.isActive ? 'text-green-400' : 'text-red-400'}`}
+                                            className={`text-[8px] ${cam.isActive ? 'text-emerald-400 animate-pulse' : 'text-rose-400'}`}
                                         />
-                                        <span className="text-white text-xs font-medium">
-                                            {cam.isActive ? 'Online' : 'Offline'}
+                                        <span className="text-white text-[10px] font-black uppercase tracking-widest">
+                                            {cam.isActive
+                                                ? (lang === 'km' ? 'អនឡាញ' : 'Online')
+                                                : (lang === 'km' ? 'អសកម្ម' : 'Offline')}
                                         </span>
                                     </div>
+
                                     {/* Loading Overlay */}
                                     {state.loading && (
-                                        <div className="absolute inset-0 flex items-center justify-center bg-black/20">
-                                            <div className="text-white text-sm">Loading...</div>
+                                        <div className="absolute inset-0 flex items-center justify-center bg-[#0b0e14]/40 backdrop-blur-sm">
+                                            <div className="flex flex-col items-center gap-4">
+                                                <div className="w-10 h-10 border-[3px] border-white/10 border-t-blue-500 rounded-full animate-spin"></div>
+                                                <span className="text-white text-[10px] font-black uppercase tracking-widest bg-black/40 px-3 py-1 rounded-full">
+                                                    {lang === 'km' ? 'កំពុងផ្ទុក...' : 'Loading Stream'}
+                                                </span>
+                                            </div>
                                         </div>
                                     )}
+
                                     {/* Error Overlay */}
                                     {state.error && (
-                                        <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/50 text-white text-center p-4">
-                                            <FaExclamationTriangle className="text-yellow-400 text-2xl mb-2" />
-                                            <p className="text-sm font-medium mb-2">Stream Error</p>
-                                            <p className="text-xs opacity-90">{state.error}</p>
+                                        <div className="absolute inset-0 flex flex-col items-center justify-center bg-rose-500/20 backdrop-blur-md text-white text-center p-8">
+                                            <div className="bg-rose-500/40 p-4 rounded-3xl mb-4 border border-rose-500/30">
+                                                <FaExclamationTriangle className="text-white text-3xl" />
+                                            </div>
+                                            <p className="text-lg font-black tracking-tight mb-1">
+                                                {lang === 'km' ? 'កំហុសស្ទ្រីម' : 'Stream Interrupted'}
+                                            </p>
+                                            <p className="text-[11px] font-medium opacity-80 max-w-[200px] mb-6 leading-relaxed">
+                                                {lang === 'km' ? 'បរាជ័យក្នុងការផ្ទុកស្ទ្រីម: ប្រភពមិនត្រឹមត្រូវ' : 'Failed to synchronize with the remote video source'}
+                                            </p>
                                             <button
                                                 onClick={() => handleStart(cam.id)}
-                                                className="mt-2 px-3 py-1 text-xs bg-blue-600 hover:bg-blue-700 rounded text-white"
+                                                className="px-8 py-2.5 bg-white text-[#0b0e14] rounded-xl text-xs font-black uppercase tracking-widest hover:bg-blue-500 hover:text-white transition-all active:scale-95 shadow-xl shadow-black/20"
                                             >
-                                                Retry
+                                                {lang === 'km' ? 'ព្យាយាមម្តងទៀត' : 'Retry Connection'}
                                             </button>
                                         </div>
                                     )}
                                 </div>
 
                                 {/* Info & Controls */}
-                                <div className="p-4">
-                                    <div className="flex justify-between items-start mb-3">
-                                        <h2 className="font-semibold text-gray-800">{cam.name}</h2>
-                                        <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
-                                            {cam.floor}
-                                        </span>
+                                <div className="p-6">
+                                    <div className="flex justify-between items-start mb-6">
+                                        <div>
+                                            <h2 className="text-lg font-black text-gray-900 tracking-tight group-hover:text-blue-600 transition-colors">
+                                                {cam.name}
+                                            </h2>
+                                            <div className="flex items-center gap-2 mt-1">
+                                                <div className="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
+                                                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none">
+                                                    {cam.floor}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div className="bg-gray-50 px-3 py-1.5 rounded-xl border border-gray-100">
+                                            <FaBuilding className="text-gray-300" size={12} />
+                                        </div>
                                     </div>
 
-                                    <div className="flex justify-center gap-2 pt-2">
-                                        <Tooltip text="Start">
+                                    <div className="grid grid-cols-4 gap-3">
+                                        <Tooltip text={lang === 'km' ? 'ចាប់ផ្តើម' : "Start"}>
                                             <button
                                                 onClick={() => handleStart(cam.id)}
                                                 disabled={!cam.isActive || state.loading}
-                                                className="p-2.5 rounded-xl bg-green-50 hover:bg-green-100 disabled:opacity-40 disabled:cursor-not-allowed text-green-700 transition-colors"
-                                                aria-label="Start stream"
+                                                className="flex flex-col items-center justify-center gap-1.5 py-4 rounded-2xl bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white disabled:opacity-30 disabled:hover:bg-emerald-50 disabled:hover:text-emerald-600 transition-all active:scale-90"
                                             >
-                                                <FaVideo className="text-lg" />
+                                                <FaVideo size={16} />
                                             </button>
                                         </Tooltip>
-                                        <Tooltip text="Stop">
+                                        <Tooltip text={lang === 'km' ? 'បញ្ឈប់' : "Stop"}>
                                             <button
                                                 onClick={() => handleStop(cam.id)}
                                                 disabled={!cam.isActive || state.loading}
-                                                className="p-2.5 rounded-xl bg-red-50 hover:bg-red-100 disabled:opacity-40 disabled:cursor-not-allowed text-red-700 transition-colors"
-                                                aria-label="Stop stream"
+                                                className="flex flex-col items-center justify-center gap-1.5 py-4 rounded-2xl bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white disabled:opacity-30 disabled:hover:bg-rose-50 disabled:hover:text-rose-600 transition-all active:scale-90"
                                             >
-                                                <FaStop className="text-lg" />
+                                                <FaStop size={16} />
                                             </button>
                                         </Tooltip>
-                                        <Tooltip text="Capture">
+                                        <Tooltip text={lang === 'km' ? 'ថតរូប' : "Capture"}>
                                             <button
                                                 onClick={() => handleCapture(cam.id)}
                                                 disabled={!cam.isActive || state.loading || state.error !== null}
-                                                className="p-2.5 rounded-xl bg-blue-50 hover:bg-blue-100 disabled:opacity-40 disabled:cursor-not-allowed text-blue-700 transition-colors"
-                                                aria-label="Capture snapshot"
+                                                className="flex flex-col items-center justify-center gap-1.5 py-4 rounded-2xl bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white disabled:opacity-30 disabled:hover:bg-blue-50 disabled:hover:text-blue-600 transition-all active:scale-90"
                                             >
-                                                <FaCamera className="text-lg" />
+                                                <FaCamera size={16} />
                                             </button>
                                         </Tooltip>
-                                        <Tooltip text="Fullscreen">
+                                        <Tooltip text={lang === 'km' ? 'ពេញអេក្រង់' : "Fullscreen"}>
                                             <button
                                                 onClick={() => handleFullscreen(cam.id)}
                                                 disabled={!cam.isActive || state.loading || state.error !== null}
-                                                className="p-2.5 rounded-xl bg-gray-50 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed text-gray-700 transition-colors"
-                                                aria-label="View fullscreen"
+                                                className="flex flex-col items-center justify-center gap-1.5 py-4 rounded-2xl bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white disabled:opacity-30 disabled:hover:bg-indigo-50 disabled:hover:text-indigo-600 transition-all active:scale-90"
                                             >
-                                                <FaExpand className="text-lg" />
+                                                <FaExpand size={16} />
                                             </button>
                                         </Tooltip>
                                     </div>
