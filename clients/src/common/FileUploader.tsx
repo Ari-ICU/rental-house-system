@@ -3,6 +3,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { FaCloudUploadAlt, FaTimes, FaFilePdf, FaFileImage } from 'react-icons/fa';
 import { useLang } from '@/context/LangContext';
+import Image from 'next/image';
 
 interface FileUploaderProps {
     label?: string;
@@ -122,11 +123,14 @@ const FileUploader: React.FC<FileUploaderProps> = ({ label, accept, onFileSelect
             {preview && (
                 <div className="mt-3 relative inline-block group">
                     {preview.startsWith('data:image') || preview.includes('/image/') ? (
-                        <img
-                            src={preview}
-                            alt="Preview"
-                            className="w-32 h-32 object-cover rounded-xl border shadow-sm"
-                        />
+                        <div className="w-32 h-32 relative overflow-hidden rounded-xl border shadow-sm">
+                            <Image
+                                src={preview}
+                                alt="Preview"
+                                fill
+                                className="object-cover"
+                            />
+                        </div>
                     ) : (
                         <div className="w-32 h-32 flex items-center justify-center bg-gray-100 rounded-xl border shadow-sm">
                             {renderPreviewIcon()}

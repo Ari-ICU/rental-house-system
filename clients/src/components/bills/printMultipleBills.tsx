@@ -1,6 +1,5 @@
 import { Bill } from "@/types/bill";
 import { formatKhmerDate } from "@/utils/dateFormatter";
-import { title } from "process";
 
 // Escape HTML for security
 const escapeHtml = (str: string): string => {
@@ -73,7 +72,7 @@ const generateBillHtml = (bill: Bill, lang: "en" | "km", signatureSrc?: string):
     return str;
   };
 
-  const signatureHtml = signatureSrc ? 
+  const signatureHtml = signatureSrc ?
     `<img src="${escapeHtml(signatureSrc)}" alt="Signature" style="width: 80px; height: auto; vertical-align: middle;" />` :
     '<div class="signature-line"></div>';
 

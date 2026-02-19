@@ -1,7 +1,7 @@
 // src/components/camera/CameraController.tsx
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { FaVideo, FaStop, FaExpand, FaCamera, FaBuilding, FaCircle, FaExclamationTriangle, FaCog } from 'react-icons/fa';
 import Hls from 'hls.js';
 import CameraSettings from '@/components/setting/CameraSettings';
@@ -51,7 +51,7 @@ const CameraController: React.FC<CameraControllerProps> = ({
     };
 
     const handleDeviceSelect = (id: number, deviceId: string) => {
-        setCameras(prev => prev.map(cam => 
+        setCameras(prev => prev.map(cam =>
             cam.id === id ? { ...cam, deviceId: deviceId || undefined, streamUrl: undefined } : cam
         ));
         toast.dismiss();
@@ -59,7 +59,7 @@ const CameraController: React.FC<CameraControllerProps> = ({
     };
 
     const handleUpdateStreamUrl = (id: number, url: string) => {
-        setCameras(prev => prev.map(cam => 
+        setCameras(prev => prev.map(cam =>
             cam.id === id ? { ...cam, streamUrl: url || undefined, deviceId: undefined } : cam
         ));
         toast.dismiss();
@@ -67,7 +67,7 @@ const CameraController: React.FC<CameraControllerProps> = ({
     };
 
     const handleToggleActive = (id: number) => {
-        setCameras(prev => prev.map(cam => 
+        setCameras(prev => prev.map(cam =>
             cam.id === id ? { ...cam, isActive: !cam.isActive } : cam
         ));
         const newActive = !cameras.find(c => c.id === id)?.isActive;
@@ -81,7 +81,7 @@ const CameraController: React.FC<CameraControllerProps> = ({
         }
     };
 
-    const handleStart = async (id: number) => {
+    const handleStart = useCallback(async (id: number) => {
         const cam = cameras.find((c) => c.id === id);
         if (!cam) {
             toast.dismiss();
@@ -151,7 +151,7 @@ const CameraController: React.FC<CameraControllerProps> = ({
                     toast.success('Remote stream started');
                 };
 
-                const onError = (e: Event) => {
+                const onError = () => {
                     updateCameraState(id, { loading: false, error: 'Failed to load stream: Invalid or unsupported source' });
                     toast.dismiss();
                     toast.error('Failed to load stream: Invalid or unsupported source');
@@ -194,7 +194,7 @@ const CameraController: React.FC<CameraControllerProps> = ({
             toast.dismiss();
             toast.error('No stream URL or device ID configured');
         }
-    };
+    }, [cameras, updateCameraState]);
 
     const handleStop = (id: number) => {
         const video = videoRefs.current[id];
@@ -276,6 +276,9 @@ const CameraController: React.FC<CameraControllerProps> = ({
 
     // Auto-connect active cameras on mount
     useEffect(() => {
+        const currentVideoRefs = videoRefs.current;
+        const currentHlsRefs = hlsRefs.current;
+
         const connectActiveCameras = async () => {
             for (const cam of cameras) {
                 if (cam.isActive) {
@@ -292,7 +295,7 @@ const CameraController: React.FC<CameraControllerProps> = ({
             Object.entries(streams).forEach(([idStr, stream]) => {
                 if (stream) {
                     const id = Number(idStr);
-                    const video = videoRefs.current[id];
+                    const video = currentVideoRefs[id];
                     if (video) {
                         video.srcObject = null;
                     }
@@ -300,13 +303,13 @@ const CameraController: React.FC<CameraControllerProps> = ({
                 }
             });
             // Cleanup HLS instances
-            Object.keys(hlsRefs.current).forEach((idStr) => {
+            Object.keys(currentHlsRefs).forEach((idStr) => {
                 const id = Number(idStr);
-                const hls = hlsRefs.current[id];
+                const hls = currentHlsRefs[id];
                 if (hls) {
                     hls.destroy();
                 }
-                const video = videoRefs.current[id];
+                const video = currentVideoRefs[id];
                 if (video) {
                     video.src = '';
                     video.srcObject = null;
@@ -317,7 +320,7 @@ const CameraController: React.FC<CameraControllerProps> = ({
             hlsRefs.current = {};
             setCameraStates({});
         };
-    }, [cameras]);
+    }, [cameras, handleStart, streams]);
 
     const getCameraState = (id: number) => cameraStates[id] || { loading: false, error: null };
 

@@ -114,7 +114,7 @@ const RentalForm: React.FC = () => {
                 clientImageCardFront: formData.clientImageCard?.front ?? '',
                 clientImageCardBack: formData.clientImageCard?.back ?? '',
             };
-            const { clientImageCard: _ignored, ...rest } = payload;
+            const { clientImageCard: _, ...rest } = payload;
             await createRental(rest);
             setToast({
                 type: 'success',

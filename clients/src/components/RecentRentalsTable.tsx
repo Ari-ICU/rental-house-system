@@ -2,7 +2,6 @@
 
 import { Rental } from "@/types/rents";
 import { useLang } from "@/context/LangContext";
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 interface RecentRentalsTableProps {

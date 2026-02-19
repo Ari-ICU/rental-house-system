@@ -12,7 +12,6 @@ import {
     FaBars,
     FaLifeRing,
     FaChevronDown,
-    FaChevronUp,
     FaTimes,
     FaHome
 } from "react-icons/fa";
@@ -133,8 +132,8 @@ const Sidebar: React.FC<{ isMobileOpen: boolean; onClose: () => void }> = ({ isM
                                                     key={subLink.name}
                                                     href={subLink.href || "#"}
                                                     className={`flex items-center gap-3 pl-11 pr-3 py-2 rounded-lg text-sm transition-colors ${isActive(subLink.href)
-                                                            ? "bg-purple-600/10 text-purple-400"
-                                                            : "text-gray-400 hover:text-white hover:bg-white/5"
+                                                        ? "bg-purple-600/10 text-purple-400"
+                                                        : "text-gray-400 hover:text-white hover:bg-white/5"
                                                         }`}
                                                     onClick={onLinkClick}
                                                 >

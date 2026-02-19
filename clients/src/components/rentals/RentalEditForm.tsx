@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import {
     FaCalendarAlt, FaArrowLeft, FaUser, FaDoorOpen, FaPhone, FaEnvelope,
     FaMapMarkerAlt, FaIdCard, FaExclamationTriangle, FaStickyNote,
-    FaDollarSign, FaCheckCircle, FaTimesCircle, FaSpinner, FaHome, FaSave,
+    FaDollarSign, FaCheckCircle, FaTimesCircle, FaSpinner, FaSave,
 } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
 import { Rental } from '@/types/rents';
@@ -113,7 +113,7 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
                 clientImageCardFront: formData.clientImageCard?.front ?? '',
                 clientImageCardBack: formData.clientImageCard?.back ?? '',
             };
-            const { clientImageCard: _ignored, ...rest } = payload;
+            const { clientImageCard: _, ...rest } = payload;
             await updateRental(id, rest);
             setToast({
                 type: 'success',

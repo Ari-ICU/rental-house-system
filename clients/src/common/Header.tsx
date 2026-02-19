@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
-import { FaUserCircle, FaBars, FaSearch, FaUser, FaDoorOpen } from "react-icons/fa";
+import { FaBars, FaSearch, FaUser, FaDoorOpen } from "react-icons/fa";
 import { useLang } from "@/context/LangContext";
 import { Rental } from "@/types/rents";
 import { getAllRentals } from "@/services/rentalService";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 interface HeaderProps {
     onMobileMenuToggle: () => void;
@@ -167,10 +168,11 @@ const Header: React.FC<HeaderProps> = ({ onMobileMenuToggle }) => {
                     aria-label="Switch language"
                 >
                     <div className="w-5 h-5 rounded-full overflow-hidden relative shadow-sm border border-gray-200">
-                        <img
+                        <Image
                             src={lang === 'en' ? flags.km : flags.en}
                             alt={lang === 'en' ? 'Khmer' : 'English'}
-                            className="w-full h-full object-cover"
+                            fill
+                            className="object-cover"
                         />
                     </div>
                 </button>

@@ -5,11 +5,12 @@ import { useRouter } from 'next/navigation';
 import {
     FaArrowLeft, FaPhoneAlt, FaEnvelope, FaMapMarkerAlt, FaEdit,
     FaDoorOpen, FaDollarSign, FaCalendarAlt, FaIdCard,
-    FaExclamationTriangle, FaStickyNote, FaUser, FaHome,
+    FaExclamationTriangle, FaStickyNote, FaUser,
 } from 'react-icons/fa';
 import { Rental, RentalStatus } from '@/types/rents';
 import { useLang } from '@/context/LangContext';
 import { formatKhmerDate } from '@/utils/dateFormatter';
+import Image from 'next/image';
 
 interface RentalViewProps {
     rental: Rental;
@@ -91,11 +92,14 @@ const RentalView: React.FC<RentalViewProps> = ({ rental }) => {
                     {/* Avatar */}
                     <div className="flex-shrink-0">
                         {rental.image ? (
-                            <img
-                                src={rental.image}
-                                alt={rental.ClientName}
-                                className="w-20 h-20 rounded-2xl object-cover border-2 border-white/30 shadow-lg"
-                            />
+                            <div className="w-20 h-20 relative overflow-hidden rounded-2xl border-2 border-white/30 shadow-lg">
+                                <Image
+                                    src={rental.image}
+                                    alt={rental.ClientName}
+                                    fill
+                                    className="object-cover"
+                                />
+                            </div>
                         ) : (
                             <div className={`w-20 h-20 rounded-2xl bg-gradient-to-br ${gradient} flex items-center justify-center shadow-lg border-2 border-white/20`}>
                                 <span className="text-white text-2xl font-bold">{initials}</span>
@@ -181,11 +185,14 @@ const RentalView: React.FC<RentalViewProps> = ({ rental }) => {
                             {label('Front Side', 'ខាងមុខ')}
                         </p>
                         {rental.clientImageCard?.front ? (
-                            <img
-                                src={rental.clientImageCard.front}
-                                alt="Front ID"
-                                className="w-full rounded-xl border border-gray-200 shadow-sm object-cover max-h-48"
-                            />
+                            <div className="relative w-full h-48 overflow-hidden rounded-xl border border-gray-200 shadow-sm">
+                                <Image
+                                    src={rental.clientImageCard.front}
+                                    alt="Front ID"
+                                    fill
+                                    className="object-cover"
+                                />
+                            </div>
                         ) : (
                             <div className="w-full h-32 rounded-xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center gap-2 bg-gray-50">
                                 <FaIdCard className="text-gray-300 text-2xl" />
@@ -199,11 +206,14 @@ const RentalView: React.FC<RentalViewProps> = ({ rental }) => {
                             {label('Back Side', 'ខាងក្រោយ')}
                         </p>
                         {rental.clientImageCard?.back ? (
-                            <img
-                                src={rental.clientImageCard.back}
-                                alt="Back ID"
-                                className="w-full rounded-xl border border-gray-200 shadow-sm object-cover max-h-48"
-                            />
+                            <div className="relative w-full h-48 overflow-hidden rounded-xl border border-gray-200 shadow-sm">
+                                <Image
+                                    src={rental.clientImageCard.back}
+                                    alt="Back ID"
+                                    fill
+                                    className="object-cover"
+                                />
+                            </div>
                         ) : (
                             <div className="w-full h-32 rounded-xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center gap-2 bg-gray-50">
                                 <FaIdCard className="text-gray-300 text-2xl" />

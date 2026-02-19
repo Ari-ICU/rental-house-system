@@ -1,12 +1,11 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, Suspense } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import RentalHeader from "@/components/rentals/RentalHeader";
 import RentalList from "@/components/rentals/RentalList";
 import { Rental, RentalStatus } from "@/types/rents";
 import { getAllRentals } from "@/services/rentalService";
-import { formatKhmerDate } from "@/utils/dateFormatter";
 import { FaHome, FaCheckCircle, FaClock, FaTimesCircle } from "react-icons/fa";
 import { useLang } from "@/context/LangContext";
 
@@ -17,7 +16,7 @@ const statusMap: { [key: string]: RentalStatus } = {
     "maintenance": "Maintenance",
 };
 
-const RentalPage: React.FC = () => {
+const RentalPageContent: React.FC = () => {
     const params = useParams();
     const router = useRouter();
     const { lang } = useLang();
@@ -247,6 +246,22 @@ const RentalPage: React.FC = () => {
 
             <RentalList rentals={rentals} />
         </div>
+    );
+};
+
+const RentalPage: React.FC = () => {
+    return (
+        <Suspense fallback={
+            <div className="min-h-[60vh] flex items-center justify-center">
+                <div className="flex flex-col items-center gap-4">
+                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-violet-200 animate-pulse">
+                        <FaHome className="text-white text-lg" />
+                    </div>
+                </div>
+            </div>
+        }>
+            <RentalPageContent />
+        </Suspense>
     );
 };
 
