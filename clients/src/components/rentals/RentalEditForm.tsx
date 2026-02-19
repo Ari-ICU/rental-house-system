@@ -27,7 +27,7 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
         ClientName: rental.ClientName ?? '',
         image: rental.image ?? '',
         roomNumber: rental.roomNumber ?? '',
-        status: rental.status ?? 'In-Active',
+        status: rental.status ?? 'Active',
         rentAmount: rental.rentAmount ?? 0,
         startDate: rental.startDate ?? '',
         endDate: rental.endDate ?? '',
@@ -134,9 +134,10 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
     };
 
     const statusOptions = [
-        { value: 'In-Active', label: lang === 'km' ? 'សកម្ម' : 'Active', color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-300' },
-        { value: 'Non-Active', label: lang === 'km' ? 'មិនសកម្ម' : 'Inactive', color: 'text-gray-500', bg: 'bg-gray-50', border: 'border-gray-300' },
-        { value: 'Past', label: lang === 'km' ? 'កន្លងផុត' : 'Past', color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-300' },
+        { value: 'Active', label: lang === 'km' ? 'កំពុងជួល' : 'Active', color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-300' },
+        { value: 'Reserved', label: lang === 'km' ? 'កក់ទុក' : 'Reserved', color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-300' },
+        { value: 'Completed', label: lang === 'km' ? 'បានបញ្ចប់' : 'Completed', color: 'text-gray-500', bg: 'bg-gray-50', border: 'border-gray-300' },
+        { value: 'Maintenance', label: lang === 'km' ? 'កំពុងជួសជុល' : 'Maintenance', color: 'text-rose-600', bg: 'bg-rose-50', border: 'border-rose-300' },
     ];
 
     const currentStatus = statusOptions.find(s => s.value === formData.status) || statusOptions[0];
@@ -147,8 +148,8 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
             {/* Toast */}
             {toast && (
                 <div className={`flex items-center gap-3 px-5 py-4 rounded-2xl text-sm font-semibold shadow-lg border animate-fadeIn ${toast.type === 'success'
-                        ? 'bg-emerald-50 text-emerald-700 border-emerald-200 shadow-emerald-100'
-                        : 'bg-red-50 text-red-700 border-red-200 shadow-red-100'
+                    ? 'bg-emerald-50 text-emerald-700 border-emerald-200 shadow-emerald-100'
+                    : 'bg-red-50 text-red-700 border-red-200 shadow-red-100'
                     }`}>
                     {toast.type === 'success'
                         ? <FaCheckCircle className="text-emerald-500 text-lg flex-shrink-0" />

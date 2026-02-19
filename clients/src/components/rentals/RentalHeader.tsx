@@ -7,11 +7,12 @@ import { useLang } from "@/context/LangContext";
 interface RentalHeaderProps {
     onSearch?: (query: string) => void;
     onAdd?: () => void;
+    onBackup?: () => void;
     totalCount?: number;
     activeCount?: number;
 }
 
-const RentalHeader: React.FC<RentalHeaderProps> = ({ onSearch, onAdd, totalCount = 0, activeCount = 0 }) => {
+const RentalHeader: React.FC<RentalHeaderProps> = ({ onSearch, onAdd, onBackup, totalCount = 0, activeCount = 0 }) => {
     const { lang } = useLang();
     const [searchQuery, setSearchQuery] = useState("");
 
@@ -59,17 +60,31 @@ const RentalHeader: React.FC<RentalHeaderProps> = ({ onSearch, onAdd, totalCount
                         />
                     </div>
 
-                    {/* Add Button */}
-                    {onAdd && (
-                        <button
-                            onClick={onAdd}
-                            className="flex items-center gap-2 bg-gradient-to-r from-violet-600 to-indigo-600 text-white px-4 py-2.5 rounded-xl hover:from-violet-700 hover:to-indigo-700 transition-all text-sm font-semibold shadow-md shadow-violet-200 hover:shadow-violet-300 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 whitespace-nowrap"
-                            aria-label={lang === "en" ? "Add new rental" : "បន្ថែមការជួលថ្មី"}
-                        >
-                            <FaPlus className="text-xs" />
-                            {lang === "en" ? "Add Rental" : "បន្ថែម"}
-                        </button>
-                    )}
+                    <div className="flex items-center gap-2">
+                        {/* Backup Button */}
+                        {onBackup && (
+                            <button
+                                onClick={onBackup}
+                                className="flex items-center gap-2 bg-white border border-gray-200 text-gray-700 px-4 py-2.5 rounded-xl hover:bg-gray-50 transition-all text-sm font-semibold shadow-sm whitespace-nowrap"
+                                title={lang === "en" ? "Backup Data" : "ចម្លងទិន្នន័យទុក"}
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-500"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" /></svg>
+                                <span className="hidden md:inline">{lang === "en" ? "Backup" : "បម្រុងទុក"}</span>
+                            </button>
+                        )}
+
+                        {/* Add Button */}
+                        {onAdd && (
+                            <button
+                                onClick={onAdd}
+                                className="flex items-center gap-2 bg-gradient-to-r from-violet-600 to-indigo-600 text-white px-4 py-2.5 rounded-xl hover:from-violet-700 hover:to-indigo-700 transition-all text-sm font-semibold shadow-md shadow-violet-200 hover:shadow-violet-300 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 whitespace-nowrap"
+                                aria-label={lang === "en" ? "Add new rental" : "បន្ថែមការជួលថ្មី"}
+                            >
+                                <FaPlus className="text-xs" />
+                                {lang === "en" ? "Add Rental" : "បន្ថែម"}
+                            </button>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>

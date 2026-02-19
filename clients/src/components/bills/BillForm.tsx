@@ -17,8 +17,8 @@ const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
     const { lang } = useLang();
     const router = useRouter();
 
-    // Filter out non-active rentals
-    const activeRentals = rentals.filter(r => r.status !== 'Non-Active');
+    // Filter out inactive rentals (Completed or Maintenance)
+    const activeRentals = rentals.filter(r => r.status === 'Active' || r.status === 'Reserved');
 
     // Initialize form data (use existing bill if editing)
     const [formData, setFormData] = useState<Omit<Bill, 'id'>>({
@@ -118,8 +118,8 @@ const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
                             ? 'កែប្រែវិក័យប័ត្រ'
                             : 'បង្កើតវិក័យប័ត្រ'
                         : bill
-                        ? 'Edit Bill'
-                        : 'Create Bill'}
+                            ? 'Edit Bill'
+                            : 'Create Bill'}
                 </h2>
                 <p className="text-sm text-gray-500 mt-1">
                     {lang === 'km'
@@ -127,8 +127,8 @@ const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
                             ? 'កែប្រែព័ត៌មានវិក័យប័ត្រនេះ។'
                             : 'បំពេញព័ត៌មានខាងក្រោមដើម្បីបង្កើតវិក័យប័ត្រថ្មី។'
                         : bill
-                        ? 'Edit the bill details below.'
-                        : 'Fill in the details below to create a new bill.'}
+                            ? 'Edit the bill details below.'
+                            : 'Fill in the details below to create a new bill.'}
                 </p>
             </div>
 
@@ -164,8 +164,8 @@ const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
                             {formData.month
                                 ? formData.month
                                 : lang === 'km'
-                                ? 'ជ្រើសរើសខែ'
-                                : 'Select Month'}
+                                    ? 'ជ្រើសរើសខែ'
+                                    : 'Select Month'}
                         </span>
                         <FaCalendarAlt className="text-gray-500" />
                     </button>
@@ -257,23 +257,22 @@ const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
             <button
                 type="submit"
                 disabled={isSubmitting}
-                className={`w-full py-3 px-4 rounded-lg font-medium text-white transition-colors ${
-                    isSubmitting
+                className={`w-full py-3 px-4 rounded-lg font-medium text-white transition-colors ${isSubmitting
                         ? 'bg-gray-400 cursor-not-allowed'
                         : 'bg-blue-600 hover:bg-blue-700 active:bg-blue-800'
-                }`}
+                    }`}
             >
                 {isSubmitting
                     ? lang === 'km'
                         ? 'កំពុងដាក់ស្នើ...'
                         : 'Submitting...'
                     : bill
-                    ? lang === 'km'
-                        ? 'កែប្រែវិក័យប័ត្រ'
-                        : 'Update Bill'
-                    : lang === 'km'
-                    ? 'បង្កើតវិក័យប័ត្រ'
-                    : 'Create Bill'}
+                        ? lang === 'km'
+                            ? 'កែប្រែវិក័យប័ត្រ'
+                            : 'Update Bill'
+                        : lang === 'km'
+                            ? 'បង្កើតវិក័យប័ត្រ'
+                            : 'Create Bill'}
             </button>
 
             {/* Khmer Calendar Popup */}

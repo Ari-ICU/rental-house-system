@@ -1,8 +1,9 @@
-'use client';
-
-import React from "react";
-import { FaUserCircle, FaBars } from "react-icons/fa";
+import React, { useState, useEffect, useRef } from "react";
+import { FaUserCircle, FaBars, FaSearch, FaUser, FaDoorOpen } from "react-icons/fa";
 import { useLang } from "@/context/LangContext";
+import { Rental } from "@/types/rents";
+import { getAllRentals } from "@/services/rentalService";
+import { useRouter } from "next/navigation";
 
 interface HeaderProps {
     onMobileMenuToggle: () => void;
@@ -10,6 +11,73 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ onMobileMenuToggle }) => {
     const { lang, toggleLang } = useLang();
+    const router = useRouter();
+    const [searchQuery, setSearchQuery] = useState("");
+    const [allRentals, setAllRentals] = useState<Rental[]>([]);
+    const [results, setResults] = useState<Rental[]>([]);
+    const [showResults, setShowResults] = useState(false);
+    const searchRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const fetchRentals = async () => {
+            try {
+                const data = await getAllRentals();
+                setAllRentals(data);
+            } catch (err) {
+                console.error("Failed to fetch rentals for global search", err);
+            }
+        };
+        fetchRentals();
+    }, []);
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+                setShowResults(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    const handleSearch = (query: string) => {
+        setSearchQuery(query);
+        const normalized = query.toLowerCase().trim();
+
+        if (!normalized) {
+            setResults([]);
+            setShowResults(false);
+            return;
+        }
+
+        const filtered = allRentals
+            .filter((r) => {
+                const name = (r.ClientName || "").toLowerCase();
+                const room = (r.roomNumber || "").toLowerCase();
+                return name.includes(normalized) || room.includes(normalized);
+            })
+            .sort((a, b) => {
+                const aName = a.ClientName.toLowerCase();
+                const bName = b.ClientName.toLowerCase();
+                const aStarts = aName.startsWith(normalized);
+                const bStarts = bName.startsWith(normalized);
+
+                if (aStarts && !bStarts) return -1;
+                if (!aStarts && bStarts) return 1;
+
+                return a.ClientName.localeCompare(b.ClientName, lang === 'km' ? 'km' : 'en');
+            })
+            .slice(0, 5); // Show top 5 only for header search
+
+        setResults(filtered);
+        setShowResults(true);
+    };
+
+    const handleSelectResult = (id: number) => {
+        router.push(`/dashboard/rentals/${id}`);
+        setShowResults(false);
+        setSearchQuery("");
+    };
 
     // You can replace these URLs with your own local SVGs if needed
     const flags = {
@@ -40,10 +108,54 @@ const Header: React.FC<HeaderProps> = ({ onMobileMenuToggle }) => {
 
             {/* Right */}
             <div className="flex items-center gap-4">
-                {/* Search Bar - hidden on mobile for simplicity */}
-                <div className="hidden md:flex items-center px-3 py-2 bg-gray-100/50 hover:bg-gray-100 rounded-full border border-transparent hover:border-gray-200 transition-all w-64">
-                    <svg className="w-4 h-4 text-gray-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                    <input type="text" placeholder="Search..." className="bg-transparent border-none outline-none text-sm text-gray-700 w-full placeholder-gray-400" />
+                <div className="hidden md:block relative" ref={searchRef}>
+                    <div className="flex items-center px-4 py-2 bg-gray-100/50 hover:bg-gray-100 rounded-full border border-gray-100 hover:border-violet-200 transition-all w-72 focus-within:ring-2 focus-within:ring-violet-500/10 focus-within:border-violet-300">
+                        <FaSearch className="w-3.5 h-3.5 text-gray-400 mr-2.5" />
+                        <input
+                            type="text"
+                            placeholder={lang === 'en' ? 'Search rentals...' : 'ស្វែងរកការជួល...'}
+                            className="bg-transparent border-none outline-none text-sm text-gray-700 w-full placeholder-gray-400"
+                            value={searchQuery}
+                            onChange={(e) => handleSearch(e.target.value)}
+                            onFocus={() => searchQuery && setShowResults(true)}
+                        />
+                    </div>
+
+                    {/* Search Results Dropdown */}
+                    {showResults && results.length > 0 && (
+                        <div className="absolute top-full mt-2 left-0 right-0 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                            <div className="p-2">
+                                {results.map((r) => (
+                                    <button
+                                        key={r.id}
+                                        onClick={() => handleSelectResult(r.id)}
+                                        className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-violet-50 transition-colors text-left"
+                                    >
+                                        <div className="w-8 h-8 rounded-lg bg-violet-100 text-violet-600 flex items-center justify-center">
+                                            <FaUser size={12} />
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <p className="text-sm font-semibold text-gray-800 truncate">{r.ClientName}</p>
+                                            <div className="flex items-center gap-2 text-[10px] text-gray-500 font-medium">
+                                                <span className="flex items-center gap-1"><FaDoorOpen size={10} /> {r.roomNumber}</span>
+                                                <span className="w-1 h-1 rounded-full bg-gray-300" />
+                                                <span>{r.status}</span>
+                                            </div>
+                                        </div>
+                                    </button>
+                                ))}
+                            </div>
+                            <button
+                                onClick={() => {
+                                    router.push(`/dashboard/rentals?search=${searchQuery}`);
+                                    setShowResults(false);
+                                }}
+                                className="w-full py-3 bg-gray-50 hover:bg-gray-100 text-xs font-bold text-violet-600 border-t border-gray-100 transition-colors uppercase tracking-wider"
+                            >
+                                {lang === 'en' ? 'View all results' : 'មើលលទ្ធផលទាំងអស់'}
+                            </button>
+                        </div>
+                    )}
                 </div>
 
                 <div className="h-6 w-px bg-gray-200 mx-1 hidden md:block"></div>

@@ -1,7 +1,8 @@
 export type RentalStatus =
-    | "In-Active"
-    | "Non-Active"
-    | "Past";
+    | "Active"
+    | "Reserved"
+    | "Completed"
+    | "Maintenance";
 
 export interface ClientImageCard {
     front?: string;

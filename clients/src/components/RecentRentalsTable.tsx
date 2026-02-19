@@ -10,9 +10,10 @@ interface RecentRentalsTableProps {
 }
 
 const statusColors: Record<string, string> = {
-    "In-Active": "bg-blue-50 text-blue-700 border border-blue-100",
-    "Non-Active": "bg-gray-100 text-gray-600 border border-gray-200",
-    "Past": "bg-green-50 text-green-700 border border-green-100",
+    "Active": "bg-emerald-50 text-emerald-700 border border-emerald-100",
+    "Reserved": "bg-blue-50 text-blue-700 border border-blue-100",
+    "Completed": "bg-gray-100 text-gray-600 border border-gray-200",
+    "Maintenance": "bg-rose-50 text-rose-700 border border-rose-100",
 };
 
 const RecentRentalsTable = ({ rentals }: RecentRentalsTableProps) => {
@@ -79,19 +80,22 @@ const RecentRentalsTable = ({ rentals }: RecentRentalsTableProps) => {
                                         className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusColors[rental.status] || "bg-gray-100 text-gray-800"
                                             }`}
                                     >
-                                        <span className={`w-1.5 h-1.5 mr-1.5 rounded-full ${rental.status === 'In-Active' ? 'bg-blue-400' :
-                                            rental.status === 'Past' ? 'bg-green-400' :
-                                                'bg-gray-400'
+                                        <span className={`w-1.5 h-1.5 mr-1.5 rounded-full ${rental.status === 'Active' ? 'bg-emerald-400' :
+                                            rental.status === 'Reserved' ? 'bg-blue-400' :
+                                                rental.status === 'Maintenance' ? 'bg-rose-400' :
+                                                    'bg-gray-400'
                                             }`}></span>
                                         {lang === "en"
                                             ? rental.status
-                                            : rental.status === "Past"
-                                                ? "បញ្ចប់"
-                                                : rental.status === "In-Active"
-                                                    ? "សកម្ម"
-                                                    : rental.status === "Non-Active"
-                                                        ? "មិនសកម្ម"
-                                                        : rental.status}
+                                            : rental.status === "Active"
+                                                ? "កំពុងជួល"
+                                                : rental.status === "Reserved"
+                                                    ? "កក់ទុក"
+                                                    : rental.status === "Completed"
+                                                        ? "បានបញ្ចប់"
+                                                        : rental.status === "Maintenance"
+                                                            ? "កំពុងជួសជុល"
+                                                            : rental.status}
                                     </span>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">

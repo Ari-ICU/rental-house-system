@@ -72,10 +72,31 @@ const deleteRental = async (req, res) => {
     }
 };
 
+// ─── GET /api/rentals/export ─────────────────────────────────────────────────
+const exportRentals = async (req, res) => {
+    try {
+        const rentals = await rentalService.getAllRentals();
+        const backupData = {
+            version: '1.0',
+            exportedAt: new Date().toISOString(),
+            rentals: rentals,
+        };
+
+        const fileName = `rental_backup_${new Date().toISOString().split('T')[0]}.json`;
+
+        res.setHeader('Content-Type', 'application/json');
+        res.setHeader('Content-Disposition', `attachment; filename=${fileName}`);
+        return res.send(JSON.stringify(backupData, null, 2));
+    } catch (error) {
+        return errorResponse(res, 'Failed to export rentals', error);
+    }
+};
+
 module.exports = {
     getRentals,
     getRentalById,
     createRental,
     updateRental,
     deleteRental,
+    exportRentals,
 };

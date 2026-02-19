@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import RentalHeader from "@/components/rentals/RentalHeader";
 import RentalList from "@/components/rentals/RentalList";
 import { Rental, RentalStatus } from "@/types/rents";
@@ -11,9 +11,10 @@ import { FaHome, FaCheckCircle, FaClock, FaTimesCircle } from "react-icons/fa";
 import { useLang } from "@/context/LangContext";
 
 const statusMap: { [key: string]: RentalStatus } = {
-    "in-active": "In-Active",
-    "non-active": "Non-Active",
-    past: "Past",
+    "active": "Active",
+    "reserved": "Reserved",
+    "completed": "Completed",
+    "maintenance": "Maintenance",
 };
 
 const RentalPage: React.FC = () => {
@@ -30,14 +31,32 @@ const RentalPage: React.FC = () => {
     const [rentals, setRentals] = useState<Rental[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const searchParams = useSearchParams();
+    const urlSearchQuery = searchParams.get('search') || "";
 
     useEffect(() => {
         const fetchRentals = async () => {
             try {
                 setLoading(true);
                 const data = await getAllRentals();
-                setAllRentals(data);
-                setRentals(status ? data.filter((r) => r.status === status) : data);
+                // Initially sort by name alphabetically
+                const sortedData = data.sort((a, b) =>
+                    a.ClientName.localeCompare(b.ClientName, lang === 'km' ? 'km' : 'en')
+                );
+                setAllRentals(sortedData);
+
+                // If there's a search query in URL, filter immediately
+                if (urlSearchQuery) {
+                    const normalized = urlSearchQuery.toLowerCase().trim();
+                    const filtered = sortedData.filter(r => {
+                        if (status && r.status !== status) return false;
+                        return r.ClientName.toLowerCase().includes(normalized) ||
+                            r.roomNumber.toLowerCase().includes(normalized);
+                    });
+                    setRentals(filtered);
+                } else {
+                    setRentals(status ? sortedData.filter((r) => r.status === status) : sortedData);
+                }
             } catch (err) {
                 setError(err instanceof Error ? err.message : 'Failed to load rentals');
             } finally {
@@ -45,44 +64,75 @@ const RentalPage: React.FC = () => {
             }
         };
         fetchRentals();
-    }, [status]);
+    }, [status, lang, urlSearchQuery]);
 
     const handleSearch = useCallback((query: string) => {
-        const normalizedQuery = query
-            .toLowerCase()
-            .replace(/\//g, "-")
-            .replace(/\s+/g, " ")
-            .trim();
+        const normalizedQuery = query.toLowerCase().trim();
+
+        if (!normalizedQuery) {
+            setRentals(status ? allRentals.filter(r => r.status === status) : allRentals);
+            return;
+        }
 
         const filtered = allRentals.filter((r) => {
             if (status && r.status !== status) return false;
-            const tenantName = r.ClientName.toLowerCase().replace(/\s+/g, " ").trim();
-            const roomNumber = r.roomNumber.toLowerCase().replace(/\s+/g, " ").trim();
-            const startDate = r.startDate?.toLowerCase().replace(/\s+/g, " ").trim() || "";
-            const endDate = r.endDate?.toLowerCase().replace(/\s+/g, " ").trim() || "";
-            const khStartDate = r.startDate ? formatKhmerDate(r.startDate, "km").toLowerCase().replace(/\s+/g, " ").trim() : "";
-            const khEndDate = r.endDate ? formatKhmerDate(r.endDate, "km").toLowerCase().replace(/\s+/g, " ").trim() : "";
+
+            const tenantName = (r.ClientName || "").toLowerCase();
+            const roomNumber = (r.roomNumber || "").toLowerCase();
+            const phone = (r.clientPhone || "").toLowerCase();
+
             return (
                 tenantName.includes(normalizedQuery) ||
                 roomNumber.includes(normalizedQuery) ||
-                startDate.includes(normalizedQuery) ||
-                endDate.includes(normalizedQuery) ||
-                khStartDate.includes(normalizedQuery) ||
-                khEndDate.includes(normalizedQuery)
+                phone.includes(normalizedQuery)
             );
+        }).sort((a, b) => {
+            // Priority 1: Exact matches or starts with the query
+            const aName = a.ClientName.toLowerCase();
+            const bName = b.ClientName.toLowerCase();
+            const aStarts = aName.startsWith(normalizedQuery);
+            const bStarts = bName.startsWith(normalizedQuery);
+
+            if (aStarts && !bStarts) return -1;
+            if (!aStarts && bStarts) return 1;
+
+            // Priority 2: Standard alphabetical sort (respecting Khmer/English rules)
+            return a.ClientName.localeCompare(b.ClientName, lang === 'km' ? 'km' : 'en');
         });
+
         setRentals(filtered);
-    }, [allRentals, status]);
+    }, [allRentals, status, lang]);
 
     const handleAdd = () => router.push("/dashboard/rentals/create");
 
-    const activeCount = allRentals.filter(r => r.status === "In-Active").length;
-    const inactiveCount = allRentals.filter(r => r.status === "Non-Active").length;
-    const pastCount = allRentals.filter(r => r.status === "Past").length;
+    const handleBackup = async () => {
+        try {
+            const response = await fetch('/api/rentals/export');
+            if (!response.ok) throw new Error('Backup failed');
+
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `rental_backup_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        } catch (err) {
+            console.error('Backup error:', err);
+            alert(lang === "en" ? "Failed to download backup" : "ការចម្លងទុកបានបរាជ័យ");
+        }
+    };
+
+    const activeCount = allRentals.filter(r => r.status === "Active").length;
+    const reservedCount = allRentals.filter(r => r.status === "Reserved").length;
+    const completedCount = allRentals.filter(r => r.status === "Completed").length;
+    const maintenanceCount = allRentals.filter(r => r.status === "Maintenance").length;
 
     const statCards = [
         {
-            label: lang === "en" ? "Total Rentals" : "ការជួលសរុប",
+            label: lang === "en" ? "Total Units" : "យូនីតសរុប",
             value: allRentals.length,
             icon: FaHome,
             color: "from-violet-500 to-indigo-600",
@@ -91,7 +141,7 @@ const RentalPage: React.FC = () => {
             text: "text-violet-700",
         },
         {
-            label: lang === "en" ? "Active" : "សកម្ម",
+            label: lang === "en" ? "Renting" : "កំពុងជួល",
             value: activeCount,
             icon: FaCheckCircle,
             color: "from-emerald-500 to-teal-600",
@@ -100,22 +150,31 @@ const RentalPage: React.FC = () => {
             text: "text-emerald-700",
         },
         {
-            label: lang === "en" ? "Inactive" : "មិនសកម្ម",
-            value: inactiveCount,
-            icon: FaTimesCircle,
+            label: lang === "en" ? "Reserved" : "បានកក់",
+            value: reservedCount,
+            icon: FaClock,
+            color: "from-blue-500 to-indigo-500",
+            shadow: "shadow-blue-200",
+            bg: "bg-blue-50",
+            text: "text-blue-700",
+        },
+        {
+            label: lang === "en" ? "Completed" : "បានបញ្ចប់",
+            value: completedCount,
+            icon: FaHome,
             color: "from-gray-400 to-gray-500",
             shadow: "shadow-gray-200",
             bg: "bg-gray-50",
             text: "text-gray-600",
         },
         {
-            label: lang === "en" ? "Past" : "កន្លងផុត",
-            value: pastCount,
-            icon: FaClock,
-            color: "from-amber-500 to-orange-500",
-            shadow: "shadow-amber-200",
-            bg: "bg-amber-50",
-            text: "text-amber-700",
+            label: lang === "en" ? "Maintenance" : "ការជួសជុល",
+            value: maintenanceCount,
+            icon: FaTimesCircle,
+            color: "from-rose-500 to-pink-500",
+            shadow: "shadow-rose-200",
+            bg: "bg-rose-50",
+            text: "text-rose-700",
         },
     ];
 
@@ -160,6 +219,7 @@ const RentalPage: React.FC = () => {
             <RentalHeader
                 onSearch={handleSearch}
                 onAdd={handleAdd}
+                onBackup={handleBackup}
                 totalCount={allRentals.length}
                 activeCount={activeCount}
             />
