@@ -24,7 +24,7 @@ const CameraController: React.FC<CameraControllerProps> = ({
     const { lang } = useLang();
     const [selectedFloor, setSelectedFloor] = useState('All Floors');
     const [cameras, setCameras] = useState<Camera[]>(initialCameras);
-    const [streams, setStreams] = useState<Record<number, MediaStream | null>>({});
+    const streamsRef = useRef<Record<number, MediaStream | null>>({});
     const [cameraStates, setCameraStates] = useState<Record<number, { loading: boolean; error: string | null }>>({});
     const [availableDevices, setAvailableDevices] = useState<MediaDeviceInfo[]>([]);
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -178,7 +178,7 @@ const CameraController: React.FC<CameraControllerProps> = ({
                     video: { deviceId: { exact: cam.deviceId } },
                 });
                 video.srcObject = stream;
-                setStreams((prev) => ({ ...prev, [id]: stream }));
+                streamsRef.current = { ...streamsRef.current, [id]: stream };
                 updateCameraState(id, { loading: false });
                 video.play().catch((err) => {
                     console.error('Error playing local stream:', err);
@@ -217,10 +217,10 @@ const CameraController: React.FC<CameraControllerProps> = ({
             video.src = '';
         } else if (video.srcObject) {
             // For local streams
-            const stream = streams[id];
+            const stream = streamsRef.current[id];
             if (stream) {
                 stream.getTracks().forEach((track) => track.stop());
-                setStreams((prev) => ({ ...prev, [id]: null }));
+                streamsRef.current = { ...streamsRef.current, [id]: null };
             }
             video.srcObject = null;
         } else {
@@ -297,7 +297,7 @@ const CameraController: React.FC<CameraControllerProps> = ({
         // Cleanup on unmount
         return () => {
             // Cleanup local streams
-            Object.entries(streams).forEach(([idStr, stream]) => {
+            Object.entries(streamsRef.current).forEach(([idStr, stream]) => {
                 if (stream) {
                     const id = Number(idStr);
                     const video = currentVideoRefs[id];
@@ -321,11 +321,11 @@ const CameraController: React.FC<CameraControllerProps> = ({
                     video.load();
                 }
             });
-            setStreams({});
+            streamsRef.current = {};
             hlsRefs.current = {};
             setCameraStates({});
         };
-    }, [cameras, handleStart, streams, lang]);
+    }, [cameras, handleStart]);
 
     const getCameraState = (id: number) => cameraStates[id] || { loading: false, error: null };
 
