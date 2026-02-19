@@ -1,5 +1,5 @@
 import React from "react";
-import { FaTimes, FaUser, FaCalendarAlt, FaBolt, FaTint, FaDollarSign, FaHome, FaInfoCircle } from "react-icons/fa";
+import { FaTimes, FaUser, FaCalendarAlt, FaBolt, FaTint, FaHome, FaInfoCircle } from "react-icons/fa";
 import { Bill } from "@/types/bill";
 import { useLang } from "@/context/LangContext";
 

@@ -29,9 +29,9 @@ const CameraController: React.FC<CameraControllerProps> = ({
     const videoRefs = useRef<Record<number, HTMLVideoElement | null>>({});
     const hlsRefs = useRef<Record<number, Hls | null>>({});
 
-    const updateCameraState = (id: number, updates: Partial<{ loading: boolean; error: string | null }>) => {
+    const updateCameraState = useCallback((id: number, updates: Partial<{ loading: boolean; error: string | null }>) => {
         setCameraStates(prev => ({ ...prev, [id]: { ...prev[id], ...updates } }));
-    };
+    }, []);
 
     const requestCameraPermission = async () => {
         try {

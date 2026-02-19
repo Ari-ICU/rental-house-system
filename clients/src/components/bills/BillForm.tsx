@@ -347,7 +347,7 @@ const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
                                             { value: 'Unpaid', label: lang === 'km' ? 'មិនទាន់បង់ (Unpaid)' : 'Unpaid' }
                                         ]}
                                         value={formData.electricityStatus}
-                                        onChange={(val: string) => setFormData(prev => ({ ...prev, electricityStatus: val as any }))}
+                                        onChange={(val: string) => setFormData(prev => ({ ...prev, electricityStatus: val as 'Paid' | 'Unpaid' }))}
                                     />
                                 </div>
                             </div>
@@ -384,7 +384,7 @@ const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
                                             { value: 'Unpaid', label: lang === 'km' ? 'មិនទាន់បង់ (Unpaid)' : 'Unpaid' }
                                         ]}
                                         value={formData.waterStatus}
-                                        onChange={(val: string) => setFormData(prev => ({ ...prev, waterStatus: val as any }))}
+                                        onChange={(val: string) => setFormData(prev => ({ ...prev, waterStatus: val as 'Paid' | 'Unpaid' }))}
                                     />
                                 </div>
                             </div>

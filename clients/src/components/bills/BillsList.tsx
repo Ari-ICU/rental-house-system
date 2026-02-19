@@ -126,7 +126,7 @@ const BillsList: React.FC<BillsListProps> = ({
                             }))}
                             value={statusFilter}
                             onChange={(val) => {
-                                setStatusFilter(val as any);
+                                setStatusFilter(val as 'Paid' | 'Unpaid' | 'All');
                                 setCurrentPage(1);
                             }}
                             className="w-40"
@@ -184,7 +184,7 @@ const BillsList: React.FC<BillsListProps> = ({
                                 </td>
                             </tr>
                         ) : (
-                            currentBills.map((bill, idx) => {
+                            currentBills.map((bill) => {
                                 const totalAmount = (bill.rental?.rentAmount || 0) + (bill.electricityAmount || 0) + (bill.waterAmount || 0);
                                 return (
                                     <tr

@@ -7,7 +7,7 @@ import {
     FaDollarSign, FaCheckCircle, FaTimesCircle, FaSpinner, FaSave,
 } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
-import { Rental } from '@/types/rents';
+import { Rental, RentalStatus } from '@/types/rents';
 import { useLang } from '@/context/LangContext';
 import KhmerCalendar from '@/utils/KhmerCalendar';
 import FileUploader from '@/common/FileUploader';
@@ -114,7 +114,7 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
                 clientImageCardFront: formData.clientImageCard?.front ?? '',
                 clientImageCardBack: formData.clientImageCard?.back ?? '',
             };
-            const { clientImageCard: _, ...rest } = payload;
+            const { clientImageCard: _unused, ...rest } = payload;
             await updateRental(id, rest);
             setToast({
                 type: 'success',
@@ -141,7 +141,6 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
         { value: 'Maintenance', label: lang === 'km' ? 'កំពុងជួសជុល' : 'Maintenance', color: 'text-rose-600', bg: 'bg-rose-50', border: 'border-rose-300' },
     ];
 
-    const currentStatus = statusOptions.find(s => s.value === formData.status) || statusOptions[0];
 
     return (
         <div className="max-w-5xl mx-auto space-y-6 pb-10">
@@ -271,7 +270,7 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
                             label={lang === 'km' ? 'ស្ថានភាព' : 'Status'}
                             options={statusOptions}
                             value={formData.status}
-                            onChange={(val: string) => setFormData(prev => ({ ...prev, status: val as any }))}
+                            onChange={(val: string) => setFormData(prev => ({ ...prev, status: val as RentalStatus }))}
                         />
 
                         {/* Rent Amount */}

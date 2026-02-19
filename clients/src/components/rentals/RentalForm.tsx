@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { FaCalendarAlt, FaArrowLeft, FaUser, FaDoorOpen, FaPhone, FaEnvelope, FaMapMarkerAlt, FaIdCard, FaExclamationTriangle, FaStickyNote, FaDollarSign, FaCheckCircle, FaTimesCircle, FaSpinner, FaHome } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
-import { Rental } from '@/types/rents';
+import { Rental, RentalStatus } from '@/types/rents';
 import { useLang } from '@/context/LangContext';
 import KhmerCalendar from '@/utils/KhmerCalendar';
 import FileUploader from '@/common/FileUploader';
@@ -115,7 +115,7 @@ const RentalForm: React.FC = () => {
                 clientImageCardFront: formData.clientImageCard?.front ?? '',
                 clientImageCardBack: formData.clientImageCard?.back ?? '',
             };
-            const { clientImageCard: _, ...rest } = payload;
+            const { clientImageCard: _unused, ...rest } = payload;
             await createRental(rest);
             setToast({
                 type: 'success',
@@ -142,7 +142,6 @@ const RentalForm: React.FC = () => {
         { value: 'Maintenance', label: lang === 'km' ? 'កំពុងជួសជុល' : 'Maintenance', color: 'text-rose-600', bg: 'bg-rose-50', border: 'border-rose-300' },
     ];
 
-    const currentStatus = statusOptions.find(s => s.value === formData.status) || statusOptions[0];
 
     return (
         <div className="max-w-5xl mx-auto space-y-6 pb-10">
@@ -280,7 +279,7 @@ const RentalForm: React.FC = () => {
                             label={lang === 'km' ? 'ស្ថានភាព' : 'Status'}
                             options={statusOptions}
                             value={formData.status}
-                            onChange={(val: string) => setFormData(prev => ({ ...prev, status: val as any }))}
+                            onChange={(val: string) => setFormData(prev => ({ ...prev, status: val as RentalStatus }))}
                         />
 
                         {/* Rent Amount */}

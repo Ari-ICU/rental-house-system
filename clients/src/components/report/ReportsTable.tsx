@@ -83,7 +83,7 @@ const ReportsTable: React.FC<ReportsTableProps> = ({
                         options={[{ value: "All", label: "All" }, ...allStatuses.map(status => ({ value: status, label: status }))]}
                         value={statusFilter}
                         onChange={(val) => {
-                            setStatusFilter(val as any);
+                            setStatusFilter(val as Report["status"] | "All");
                             setCurrentPage(1);
                         }}
                         className="w-full sm:w-40"
