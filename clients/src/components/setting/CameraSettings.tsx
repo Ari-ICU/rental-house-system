@@ -4,7 +4,6 @@
 import React from 'react';
 import { FaTimes, FaVideo, FaLink, FaToggleOn, FaToggleOff } from 'react-icons/fa';
 import { Camera } from '@/types/camera';
-import CustomDropdown from '@/common/CustomDropdown';
 
 interface CameraSettingsProps {
     isOpen: boolean;
@@ -128,18 +127,18 @@ const CameraSettings: React.FC<CameraSettingsProps> = ({
                                                         <FaVideo className="text-blue-500" />
                                                         <label className="text-sm font-medium text-gray-700">Local Device</label>
                                                     </div>
-                                                    <CustomDropdown
-                                                        options={[
-                                                            { value: '', label: 'Select camera device' },
-                                                            ...availableDevices.map((device) => ({
-                                                                value: device.deviceId,
-                                                                label: device.label || `Camera ${device.deviceId.slice(0, 6)}...`
-                                                            }))
-                                                        ]}
+                                                    <select
                                                         value={cam.deviceId || ''}
-                                                        onChange={(val) => onDeviceSelect(cam.id, val)}
-                                                        className="w-full"
-                                                    />
+                                                        onChange={(e) => onDeviceSelect(cam.id, e.target.value)}
+                                                        className="w-full px-3.5 py-2.5 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none"
+                                                    >
+                                                        <option value="">Select camera device</option>
+                                                        {availableDevices.map((device) => (
+                                                            <option key={device.deviceId} value={device.deviceId}>
+                                                                {device.label || `Camera ${device.deviceId.slice(0, 6)}...`}
+                                                            </option>
+                                                        ))}
+                                                    </select>
                                                 </div>
                                             )}
                                         </div>

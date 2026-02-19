@@ -1,5 +1,8 @@
+// components/UserList.tsx
+"use client";
+
 import React, { useState, useEffect } from "react";
-import CustomDropdown from "@/common/CustomDropdown";
+import CustomDropdown from "@/common/CustomDropdown"; from "react";
 
 export type UserRole = "Admin" | "User" | "Manager" | "Guest";
 export type UserStatus = "Active" | "Inactive" | "Pending" | "Suspended";
