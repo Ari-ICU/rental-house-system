@@ -1,0 +1,33 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Rental {
+  id                    Int      @id @default(autoincrement())
+  ClientName            String
+  roomNumber            String
+  status                String
+  rentAmount            Decimal
+  startDate             String?
+  endDate               String?
+  notes                 String?
+  clientPhone           String?
+  clientEmail           String?
+  clientAddress         String?
+  clientIDCard          String?
+  clientImageCardFront  String?
+  clientImageCardBack   String?
+  emergencyContactName  String?
+  emergencyContactPhone String?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  image                 String?
+
+  @@map("rentals")
+}
