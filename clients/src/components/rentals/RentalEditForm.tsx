@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import {
     FaCalendarAlt, FaArrowLeft, FaUser, FaDoorOpen, FaPhone, FaEnvelope,
     FaMapMarkerAlt, FaIdCard, FaExclamationTriangle, FaStickyNote,
-    FaDollarSign, FaCheckCircle, FaTimesCircle, FaSpinner, FaSave,
+    FaDollarSign, FaCheckCircle, FaTimesCircle, FaSpinner, FaSave, FaTelegramPlane
 } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
 import { Rental, RentalStatus } from '@/types/rents';
@@ -39,6 +39,7 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
         clientIDCard: rental.clientIDCard ?? '',
         emergencyContactName: rental.emergencyContactName ?? '',
         emergencyContactPhone: rental.emergencyContactPhone ?? '',
+        telegramChatId: rental.telegramChatId ?? '',
         clientImageCard: {
             front: rental.clientImageCard?.front ?? '',
             back: rental.clientImageCard?.back ?? '',
@@ -387,6 +388,29 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
                                 />
                             </div>
                         </div>
+
+                        {/* Telegram Chat ID */}
+                        <div className="space-y-1.5 md:col-span-2">
+                            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                {lang === 'km' ? 'លេខសម្គាល់ Telegram' : 'Telegram Chat ID'}
+                            </label>
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                                    <FaTelegramPlane className="text-gray-300 text-sm" />
+                                </div>
+                                <input
+                                    type="text"
+                                    name="telegramChatId"
+                                    value={formData.telegramChatId}
+                                    onChange={handleChange}
+                                    placeholder={lang === 'km' ? 'ឧទាហរណ៍ៈ 123456789' : 'e.g. 123456789'}
+                                    className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 outline-none transition-all text-sm text-gray-800 placeholder-gray-300 bg-gray-50/50 hover:bg-white hover:border-gray-300"
+                                />
+                            </div>
+                            <p className="text-[10px] text-gray-400 mt-1 italic">
+                                {lang === 'km' ? '* ប្រើដើម្បីផ្ញើវិក្កយបត្រផ្ទាល់ខ្លួនទៅកាន់អតិថិជន។' : '* Used to send personal invoices directly to the tenant.'}
+                            </p>
+                        </div>
                     </div>
                 </div>
 
@@ -463,7 +487,7 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
                             </div>
                         </div>
                     </div>
-                </div>
+                </div >
 
                 {/* Section: Notes */}
                 <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
@@ -484,7 +508,7 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
                             className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 outline-none transition-all text-sm text-gray-800 placeholder-gray-300 bg-gray-50/50 hover:bg-white hover:border-gray-300 resize-none"
                         />
                     </div>
-                </div>
+                </div >
 
                 {/* Submit */}
                 <button
@@ -495,35 +519,38 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
                             : 'bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 shadow-violet-200 hover:shadow-violet-300 hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0'
                         }`}
                 >
-                    {isSubmitting ? (
-                        <>
-                            <FaSpinner className="animate-spin text-gray-400" />
-                            <span className="text-gray-400">{lang === 'km' ? 'កំពុងរក្សាទុក...' : 'Saving...'}</span>
-                        </>
-                    ) : (
-                        <>
-                            <FaSave className="text-white/80" />
-                            <span>{lang === 'km' ? 'រក្សាទុកការផ្លាស់ប្តូរ' : 'Save Changes'}</span>
-                        </>
-                    )}
+                    {
+                        isSubmitting ? (
+                            <>
+                                <FaSpinner className="animate-spin text-gray-400" />
+                                <span className="text-gray-400">{lang === 'km' ? 'កំពុងរក្សាទុក...' : 'Saving...'}</span>
+                            </>
+                        ) : (
+                            <>
+                                <FaSave className="text-white/80" />
+                                <span>{lang === 'km' ? 'រក្សាទុកការផ្លាស់ប្តូរ' : 'Save Changes'}</span>
+                            </>
+                        )}
                 </button>
 
             </form>
 
             {/* Khmer Calendar Popup */}
-            {showDatePopup && editingDateField && (
-                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md">
-                        <KhmerCalendar
-                            selectedDate={formData[editingDateField]}
-                            onChange={handleDateChange}
-                            lang={lang}
-                            onClose={() => setShowDatePopup(false)}
-                            isPopup={true}
-                        />
+            {
+                showDatePopup && editingDateField && (
+                    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md">
+                            <KhmerCalendar
+                                selectedDate={formData[editingDateField]}
+                                onChange={handleDateChange}
+                                lang={lang}
+                                onClose={() => setShowDatePopup(false)}
+                                isPopup={true}
+                            />
+                        </div>
                     </div>
-                </div>
-            )}
+                )
+            }
         </div>
     );
 };

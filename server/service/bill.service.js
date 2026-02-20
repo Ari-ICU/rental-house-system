@@ -61,8 +61,25 @@ const triggerUnpaidAlertIfNeeded = async (bill, isNew = false) => {
             message += `\n\nPlease follow up with the customer.`;
         }
 
-        // Fire and forget
+        // Send to Admin Group
         telegramSender.sendMessage(settings.telegramBotToken, settings.telegramChatId, message).catch(console.error);
+
+        // Send to individual tenant if they have a telegramChatId
+        if (bill.rental?.telegramChatId) {
+            let tenantMessage = '';
+            if (lang === 'km') {
+                tenantMessage = `📢 <b>សួស្តី ${clientName}!</b>\n\nនេះគឺជាការរំលឹកអំពីវិក្កយបត្រសម្រាប់ខែ <b>${bill.month}</b> បន្ទប់ <b>${roomStr}</b> ។\n`;
+                if (unpaidElectricity) tenantMessage += `\n⚡ <b>អគ្គិសនី:</b> មិនទាន់បង់ ($${bill.electricityAmount || 0})`;
+                if (unpaidWater) tenantMessage += `\n💧 <b>ទឹកស្អាត:</b> មិនទាន់បង់ ($${bill.waterAmount || 0})`;
+                tenantMessage += `\n\nសូមធ្វើការទូទាត់ឱ្យបានឆាប់តាមដែលអាចធ្វើទៅបាន។ សូមអរគុណ!`;
+            } else {
+                tenantMessage = `📢 <b>Hello ${clientName}!</b>\n\nThis is a reminder for your bill of <b>${bill.month}</b> for Room <b>${roomStr}</b>.\n`;
+                if (unpaidElectricity) tenantMessage += `\n⚡ <b>Electricity:</b> Unpaid ($${bill.electricityAmount || 0})`;
+                if (unpaidWater) tenantMessage += `\n💧 <b>Water:</b> Unpaid ($${bill.waterAmount || 0})`;
+                tenantMessage += `\n\nPlease proceed with the payment at your earliest convenience. Thank you!`;
+            }
+            telegramSender.sendMessage(settings.telegramBotToken, bill.rental.telegramChatId, tenantMessage).catch(console.error);
+        }
     }
 };
 

@@ -126,6 +126,17 @@ const paymentWebhook = async (req, res) => {
                         tgMsg = `✅ <b>Payment Received Successfully</b>\n\nBill for Room <b>${bill.rental.roomNumber}</b> has been paid ($${amount}). Electricity/Water statuses are automatically updated to "Paid".`;
                     }
                     telegramSender.sendMessage(settings.telegramBotToken, settings.telegramChatId, tgMsg).catch(console.error);
+
+                    // Also notify the tenant directly if they have a telegramChatId
+                    if (bill.rental?.telegramChatId) {
+                        let tenantSuccessMsg = '';
+                        if (lang === 'km') {
+                            tenantSuccessMsg = `✅ <b>ការបង់ប្រាក់ទទួលបានជោគជ័យ!</b>\n\nសូមអរគុណ ${bill.rental.ClientName}! ការបង់ប្រាក់ចំនួន <b>$${amount}</b> សម្រាប់ខែ <b>${bill.month}</b> ត្រូវបានទទួលរួចរាល់ហើយ។`;
+                        } else {
+                            tenantSuccessMsg = `✅ <b>Payment Successful!</b>\n\nThank you ${bill.rental.ClientName}! Your payment of <b>$${amount}</b> for <b>${bill.month}</b> has been received.`;
+                        }
+                        telegramSender.sendMessage(settings.telegramBotToken, bill.rental.telegramChatId, tenantSuccessMsg).catch(console.error);
+                    }
                 }
             }
         }

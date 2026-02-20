@@ -27,6 +27,7 @@ export interface Rental {
     clientImageCard?: ClientImageCard;
     emergencyContactName?: string;
     emergencyContactPhone?: string;
+    telegramChatId?: string;
 
     bills?: import("./bill").Bill[];
     createdAt?: string;

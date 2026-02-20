@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { FaCalendarAlt, FaArrowLeft, FaUser, FaDoorOpen, FaPhone, FaEnvelope, FaMapMarkerAlt, FaIdCard, FaExclamationTriangle, FaStickyNote, FaDollarSign, FaCheckCircle, FaTimesCircle, FaSpinner, FaHome } from 'react-icons/fa';
+import { FaCalendarAlt, FaArrowLeft, FaUser, FaDoorOpen, FaPhone, FaEnvelope, FaMapMarkerAlt, FaIdCard, FaExclamationTriangle, FaStickyNote, FaDollarSign, FaCheckCircle, FaTimesCircle, FaSpinner, FaHome, FaTelegramPlane } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
 import { Rental, RentalStatus } from '@/types/rents';
 import { useLang } from '@/context/LangContext';
@@ -30,6 +30,7 @@ const RentalForm: React.FC = () => {
         clientIDCard: '',
         emergencyContactName: '',
         emergencyContactPhone: '',
+        telegramChatId: '',
         clientImageCard: {
             front: '',
             back: '',
@@ -413,6 +414,29 @@ const RentalForm: React.FC = () => {
                                     className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 outline-none transition-all text-sm text-gray-800 placeholder-gray-300 bg-gray-50/50 hover:bg-white hover:border-gray-300"
                                 />
                             </div>
+                        </div>
+
+                        {/* Telegram Chat ID */}
+                        <div className="space-y-1.5 md:col-span-2">
+                            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                {lang === 'km' ? 'លេខសម្គាល់ Telegram' : 'Telegram Chat ID'}
+                            </label>
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                                    <FaTelegramPlane className="text-gray-300 text-sm" />
+                                </div>
+                                <input
+                                    type="text"
+                                    name="telegramChatId"
+                                    value={formData.telegramChatId}
+                                    onChange={handleChange}
+                                    placeholder={lang === 'km' ? 'ឧទាហរណ៍ៈ 123456789' : 'e.g. 123456789'}
+                                    className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 outline-none transition-all text-sm text-gray-800 placeholder-gray-300 bg-gray-50/50 hover:bg-white hover:border-gray-300"
+                                />
+                            </div>
+                            <p className="text-[10px] text-gray-400 mt-1 italic">
+                                {lang === 'km' ? '* ប្រើដើម្បីផ្ញើវិក្កយបត្រផ្ទាល់ខ្លួនទៅកាន់អតិថិជន។' : '* Used to send personal invoices directly to the tenant.'}
+                            </p>
                         </div>
                     </div>
                 </div>
