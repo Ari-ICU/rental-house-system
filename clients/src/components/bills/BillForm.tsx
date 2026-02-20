@@ -39,12 +39,12 @@ const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
 
     const activeRentals = rentals.filter(r => r.status === 'Active' || r.status === 'Reserved');
 
-    const [formData, setFormData] = useState<Omit<Bill, 'id' | 'rentAmount'> & { rentAmount?: number | string }>({
+    const [formData, setFormData] = useState<Omit<Bill, 'id' | 'rentAmount' | 'electricityAmount' | 'waterAmount'> & { rentAmount?: number | string; electricityAmount: number | string; waterAmount: number | string }>({
         rental: bill?.rental || (activeRentals.length > 0 ? activeRentals[0] : {} as Rental),
         month: bill?.month || '',
         rentAmount: bill?.rentAmount ?? bill?.rental?.rentAmount ?? '',
-        electricityAmount: bill?.electricityAmount || 0,
-        waterAmount: bill?.waterAmount || 0,
+        electricityAmount: bill?.electricityAmount ?? '',
+        waterAmount: bill?.waterAmount ?? '',
         electricityStatus: bill?.electricityStatus || 'Unpaid',
         waterStatus: bill?.waterStatus || 'Unpaid',
         notes: bill?.notes || '',
@@ -86,10 +86,7 @@ const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
         const { name, value } = e.target;
         setFormData(prev => ({
             ...prev,
-            [name]:
-                name === 'electricityAmount' || name === 'waterAmount' || name === 'rentAmount'
-                    ? Number(value)
-                    : value,
+            [name]: value,
         }));
     };
 
@@ -116,8 +113,8 @@ const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
                 rentalId: formData.rental.id,
                 month: formData.month,
                 rentAmount: (formData.rentAmount !== '' && formData.rentAmount !== undefined) ? Number(formData.rentAmount) : undefined,
-                electricityAmount: formData.electricityAmount,
-                waterAmount: formData.waterAmount,
+                electricityAmount: formData.electricityAmount !== '' ? Number(formData.electricityAmount) : 0,
+                waterAmount: formData.waterAmount !== '' ? Number(formData.waterAmount) : 0,
                 electricityStatus: formData.electricityStatus,
                 waterStatus: formData.waterStatus,
                 notes: formData.notes
@@ -340,6 +337,7 @@ const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
                                             onChange={handleChange}
                                             className="w-full pl-12 pr-4 py-4 bg-white border border-gray-100 rounded-2xl text-lg font-black text-gray-800 focus:outline-none focus:ring-4 focus:ring-amber-50 focus:border-amber-200 transition-all placeholder:text-gray-300"
                                             placeholder="0.00"
+                                            step="any"
                                         />
                                         <FaMoneyBillWave className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 text-xl" />
                                         <div className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-gray-400">$</div>
@@ -366,10 +364,11 @@ const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
                                         <input
                                             type="number"
                                             name="electricityAmount"
-                                            value={formData.electricityAmount || ''}
+                                            value={formData.electricityAmount !== undefined && formData.electricityAmount !== null ? formData.electricityAmount : ''}
                                             onChange={handleChange}
                                             className="w-full pl-12 pr-4 py-4 bg-white border border-gray-100 rounded-2xl text-lg font-black text-gray-800 focus:outline-none focus:ring-4 focus:ring-violet-50 focus:border-violet-200 transition-all placeholder:text-gray-300"
                                             placeholder="0.00"
+                                            step="any"
                                             required
                                         />
                                         <FaMoneyBillWave className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 text-xl" />
@@ -403,10 +402,11 @@ const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
                                         <input
                                             type="number"
                                             name="waterAmount"
-                                            value={formData.waterAmount || ''}
+                                            value={formData.waterAmount !== undefined && formData.waterAmount !== null ? formData.waterAmount : ''}
                                             onChange={handleChange}
                                             className="w-full pl-12 pr-4 py-4 bg-white border border-gray-100 rounded-2xl text-lg font-black text-gray-800 focus:outline-none focus:ring-4 focus:ring-blue-50 focus:border-blue-200 transition-all placeholder:text-gray-300"
                                             placeholder="0.00"
+                                            step="any"
                                             required
                                         />
                                         <FaMoneyBillWave className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 text-xl" />
