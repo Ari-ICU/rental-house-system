@@ -65,20 +65,25 @@ const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
 
     useEffect(() => {
         if (bill) {
-            setFormData({
+            setFormData(prev => ({
+                ...prev,
                 rental: bill.rental,
                 month: bill.month,
                 rentAmount: bill.rentAmount ?? bill.rental?.rentAmount ?? '',
-                electricityAmount: bill.electricityAmount,
-                waterAmount: bill.waterAmount,
+                electricityAmount: bill.electricityAmount ?? '',
+                waterAmount: bill.waterAmount ?? '',
                 electricityStatus: bill.electricityStatus,
                 waterStatus: bill.waterStatus,
                 notes: bill.notes || '',
-            });
-        } else if (!formData.rental?.id && activeRentals.length > 0) {
-            setFormData(prev => ({ ...prev, rental: activeRentals[0], rentAmount: activeRentals[0]?.rentAmount ?? '' }));
+            }));
+        } else if (!formData.rental?.id && rentals.length > 0) {
+            const firstActive = rentals.find(r => r.status === 'Active' || r.status === 'Reserved');
+            if (firstActive) {
+                setFormData(prev => ({ ...prev, rental: firstActive, rentAmount: firstActive.rentAmount ?? '' }));
+            }
         }
-    }, [bill, activeRentals, formData.rental?.id]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [bill?.id, rentals.length]);
 
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
