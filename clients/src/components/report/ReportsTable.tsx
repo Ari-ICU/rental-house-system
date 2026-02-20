@@ -6,6 +6,7 @@ import { Report } from "@/types/report";
 import React, { useState, useEffect } from "react";
 import { FaEdit, FaTrash, FaFileExport, FaEye, FaSave, FaTimes, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import CustomDropdown from "@/common/CustomDropdown";
+import { formatKhmerDate } from "@/utils/dateFormatter";
 
 interface ReportsTableProps {
     reports: Report[];
@@ -210,13 +211,13 @@ const ReportsTable: React.FC<ReportsTableProps> = ({
                                             </td>
                                             <td className="px-8 py-6">
                                                 <div className="flex flex-col gap-0.5">
-                                                    <span className="text-sm font-medium text-gray-800">{new Date(report.generatedAt).toLocaleDateString()}</span>
+                                                    <span className="text-sm font-medium text-gray-800">{formatKhmerDate(report.generatedAt as unknown as string, lang)}</span>
                                                     <div className="flex flex-col">
                                                         <span className="text-xs text-gray-400">{new Date(report.generatedAt).toLocaleTimeString()}</span>
                                                         {report.startDate && report.endDate && (
                                                             <span className="text-[10px] text-blue-500 font-bold mt-1">
                                                                 {lang === 'km' ? 'រយៈពេល: ' : 'Period: '}
-                                                                {new Date(report.startDate).toLocaleDateString()} - {new Date(report.endDate).toLocaleDateString()}
+                                                                {formatKhmerDate(report.startDate, lang)} - {formatKhmerDate(report.endDate, lang)}
                                                             </span>
                                                         )}
                                                     </div>

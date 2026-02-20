@@ -2,6 +2,7 @@ import React from "react";
 import { FaTimes, FaUser, FaCalendarAlt, FaBolt, FaTint, FaHome, FaInfoCircle } from "react-icons/fa";
 import { Bill } from "@/types/bill";
 import { useLang } from "@/context/LangContext";
+import { formatKhmerDate } from "@/utils/dateFormatter";
 
 interface BillViewModalProps {
     bill: Bill | null;
@@ -76,7 +77,7 @@ export default function BillViewModal({ bill, onClose }: BillViewModalProps) {
                                     <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{lang === 'en' ? 'Billing Period' : 'រយៈពេលវិក្កយបត្រ'}</p>
                                     <div className="flex items-center gap-2">
                                         <FaCalendarAlt className="text-violet-500 text-xs" />
-                                        <p className="text-sm font-bold text-gray-700">{bill.month}</p>
+                                        <p className="text-sm font-bold text-gray-700">{formatKhmerDate(bill.month, lang)}</p>
                                     </div>
                                 </div>
                                 <div className="text-right">

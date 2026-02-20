@@ -3,6 +3,7 @@
 import { Rental } from "@/types/rents";
 import { useLang } from "@/context/LangContext";
 import { useRouter } from "next/navigation";
+import { formatKhmerDate } from "@/utils/dateFormatter";
 
 interface RecentRentalsTableProps {
     rentals: Rental[];
@@ -72,7 +73,7 @@ const RecentRentalsTable = ({ rentals }: RecentRentalsTableProps) => {
                                     </span>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    {rental.startDate || "N/A"}
+                                    {formatKhmerDate(rental.startDate, lang) || "N/A"}
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     <span

@@ -29,4 +29,6 @@ export interface Rental {
     emergencyContactPhone?: string;
 
     bills?: import("./bill").Bill[];
+    createdAt?: string;
+    updatedAt?: string;
 }

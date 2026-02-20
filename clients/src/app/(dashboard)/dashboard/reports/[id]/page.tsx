@@ -6,6 +6,7 @@ import { useLang } from "@/context/LangContext";
 import { Report } from "@/types/report";
 import { FaArrowLeft, FaFileAlt, FaCalendarAlt, FaTag, FaCheckCircle, FaPrint, FaDownload } from "react-icons/fa";
 import * as reportService from "@/services/reportService";
+import { formatKhmerDate } from "@/utils/dateFormatter";
 
 const ReportViewPage: React.FC = () => {
     const params = useParams();
@@ -133,7 +134,7 @@ const ReportViewPage: React.FC = () => {
                                 <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
                                     {lang === 'km' ? 'ថ្ងៃបង្កើត' : 'Generated On'}
                                 </p>
-                                <p className="text-lg font-extrabold text-gray-800">{new Date(report.generatedAt).toLocaleDateString()}</p>
+                                <p className="text-lg font-extrabold text-gray-800">{formatKhmerDate(report.generatedAt as unknown as string, lang)}</p>
                             </div>
                         </div>
                         <div className="p-8 flex items-center gap-4">
@@ -146,7 +147,7 @@ const ReportViewPage: React.FC = () => {
                                 </p>
                                 <p className="text-sm font-extrabold text-gray-800">
                                     {report.startDate && report.endDate
-                                        ? `${new Date(report.startDate).toLocaleDateString()} - ${new Date(report.endDate).toLocaleDateString()}`
+                                        ? `${formatKhmerDate(report.startDate, lang)} - ${formatKhmerDate(report.endDate, lang)}`
                                         : (lang === 'km' ? 'មិ​នកំណត់' : 'Not specified')}
                                 </p>
                             </div>

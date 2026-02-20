@@ -18,6 +18,7 @@ import { useLang } from '@/context/LangContext';
 import KhmerCalendar from '@/utils/KhmerCalendar';
 import { useRouter } from 'next/navigation';
 import CustomDropdown from '@/common/CustomDropdown';
+import { formatKhmerDate } from '@/utils/dateFormatter';
 
 import { createBill, updateBill } from '@/services/billService';
 import { toast } from 'react-hot-toast';
@@ -296,7 +297,7 @@ const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
                                             <FaCalendarAlt />
                                         </div>
                                         <span>
-                                            {formData.month || (lang === 'km' ? 'សូមជ្រើសរើសខែ' : 'Select Month')}
+                                            {formData.month ? formatKhmerDate(formData.month, lang) : (lang === 'km' ? 'សូមជ្រើសរើសខែ' : 'Select Month')}
                                         </span>
                                     </div>
                                     <FaRegClock className="text-gray-300 text-lg opacity-40" />
