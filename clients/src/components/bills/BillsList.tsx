@@ -185,7 +185,8 @@ const BillsList: React.FC<BillsListProps> = ({
                             </tr>
                         ) : (
                             currentBills.map((bill) => {
-                                const totalAmount = (bill.rental?.rentAmount || 0) + (bill.electricityAmount || 0) + (bill.waterAmount || 0);
+                                const activeRentAmount = bill.rentAmount ?? bill.rental?.rentAmount ?? 0;
+                                const totalAmount = activeRentAmount + (bill.electricityAmount || 0) + (bill.waterAmount || 0);
                                 return (
                                     <tr
                                         key={bill.id}
@@ -218,7 +219,7 @@ const BillsList: React.FC<BillsListProps> = ({
 
                                         {/* Room Price */}
                                         <td className="px-6 py-5 text-sm font-bold text-gray-700">
-                                            ${bill.rental?.rentAmount?.toFixed(2) || '0.00'}
+                                            ${(bill.rentAmount ?? bill.rental?.rentAmount ?? 0).toFixed(2)}
                                         </td>
 
                                         {/* Electricity Status */}

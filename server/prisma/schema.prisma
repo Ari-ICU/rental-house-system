@@ -38,6 +38,7 @@ model Bill {
   rentalId          Int
   rental            Rental   @relation(fields: [rentalId], references: [id])
   month             String
+  rentAmount        Decimal?
   electricityAmount Decimal
   waterAmount       Decimal
   electricityStatus String   // "Paid" | "Unpaid"

@@ -10,7 +10,8 @@ import {
     FaTint,
     FaMoneyBillWave,
     FaRegStickyNote,
-    FaRegClock
+    FaRegClock,
+    FaHome
 } from 'react-icons/fa';
 import { Bill } from '@/types/bill';
 import { Rental } from '@/types/rents';
@@ -38,9 +39,10 @@ const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
 
     const activeRentals = rentals.filter(r => r.status === 'Active' || r.status === 'Reserved');
 
-    const [formData, setFormData] = useState<Omit<Bill, 'id'>>({
+    const [formData, setFormData] = useState<Omit<Bill, 'id' | 'rentAmount'> & { rentAmount?: number | string }>({
         rental: bill?.rental || (activeRentals.length > 0 ? activeRentals[0] : {} as Rental),
         month: bill?.month || '',
+        rentAmount: bill?.rentAmount ?? bill?.rental?.rentAmount ?? '',
         electricityAmount: bill?.electricityAmount || 0,
         waterAmount: bill?.waterAmount || 0,
         electricityStatus: bill?.electricityStatus || 'Unpaid',
@@ -66,6 +68,7 @@ const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
             setFormData({
                 rental: bill.rental,
                 month: bill.month,
+                rentAmount: bill.rentAmount ?? bill.rental?.rentAmount ?? '',
                 electricityAmount: bill.electricityAmount,
                 waterAmount: bill.waterAmount,
                 electricityStatus: bill.electricityStatus,
@@ -73,7 +76,7 @@ const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
                 notes: bill.notes || '',
             });
         } else if (!formData.rental?.id && activeRentals.length > 0) {
-            setFormData(prev => ({ ...prev, rental: activeRentals[0] }));
+            setFormData(prev => ({ ...prev, rental: activeRentals[0], rentAmount: activeRentals[0]?.rentAmount ?? '' }));
         }
     }, [bill, activeRentals, formData.rental?.id]);
 
@@ -84,7 +87,7 @@ const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
         setFormData(prev => ({
             ...prev,
             [name]:
-                name === 'electricityAmount' || name === 'waterAmount'
+                name === 'electricityAmount' || name === 'waterAmount' || name === 'rentAmount'
                     ? Number(value)
                     : value,
         }));
@@ -112,6 +115,7 @@ const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
             const payload = {
                 rentalId: formData.rental.id,
                 month: formData.month,
+                rentAmount: (formData.rentAmount !== '' && formData.rentAmount !== undefined) ? Number(formData.rentAmount) : undefined,
                 electricityAmount: formData.electricityAmount,
                 waterAmount: formData.waterAmount,
                 electricityStatus: formData.electricityStatus,
@@ -259,7 +263,7 @@ const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
                                                     <div
                                                         key={r.id}
                                                         onClick={() => {
-                                                            setFormData(prev => ({ ...prev, rental: r }));
+                                                            setFormData(prev => ({ ...prev, rental: r, rentAmount: r.rentAmount }));
                                                             setIsOpen(false);
                                                             setRentalSearch('');
                                                         }}
@@ -315,7 +319,37 @@ const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
                             </h3>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10 mt-2">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-2">
+                            {/* Room Rent Column */}
+                            <div className="space-y-6">
+                                <div className="p-6 bg-amber-50/30 rounded-[32px] border border-amber-100/50 space-y-6 h-full">
+                                    <div className="flex items-center gap-3">
+                                        <div className="p-2 bg-amber-100 rounded-xl text-amber-600">
+                                            <FaHome size={14} />
+                                        </div>
+                                        <span className="text-xs font-black text-amber-700 uppercase tracking-wider">
+                                            {lang === 'km' ? 'ថ្លៃបន្ទប់' : 'Room Rent'}
+                                        </span>
+                                    </div>
+
+                                    <div className="relative">
+                                        <input
+                                            type="number"
+                                            name="rentAmount"
+                                            value={formData.rentAmount !== undefined && formData.rentAmount !== null ? formData.rentAmount : ''}
+                                            onChange={handleChange}
+                                            className="w-full pl-12 pr-4 py-4 bg-white border border-gray-100 rounded-2xl text-lg font-black text-gray-800 focus:outline-none focus:ring-4 focus:ring-amber-50 focus:border-amber-200 transition-all placeholder:text-gray-300"
+                                            placeholder="0.00"
+                                        />
+                                        <FaMoneyBillWave className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 text-xl" />
+                                        <div className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-gray-400">$</div>
+                                    </div>
+                                    <p className="text-xs text-gray-400 px-2 font-medium">
+                                        {lang === 'km' ? 'ទុកទទេដើម្បីប្រើតម្លៃដើមរបស់បន្ទប់' : 'Leave empty to use default room price'}
+                                    </p>
+                                </div>
+                            </div>
+
                             {/* Electricity Column */}
                             <div className="space-y-6">
                                 <div className="p-6 bg-violet-50/30 rounded-[32px] border border-violet-100/50 space-y-6">

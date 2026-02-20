@@ -15,7 +15,7 @@ const escapeHtml = (str: string): string => {
 
 // Generate bill HTML content
 const generateBillHtml = (bill: Bill, lang: "en" | "km", signatureSrc?: string): string => {
-  const rentAmount = bill.rental?.rentAmount || 0;
+  const rentAmount = bill.rentAmount ?? bill.rental?.rentAmount ?? 0;
   const electricityAmount = bill.electricityAmount || 0;
   const waterAmount = bill.waterAmount || 0;
   const totalAmount = rentAmount + electricityAmount + waterAmount;
@@ -68,7 +68,7 @@ const generateBillHtml = (bill: Bill, lang: "en" | "km", signatureSrc?: string):
     return str;
   };
 
-  const signatureHtml = signatureSrc ? 
+  const signatureHtml = signatureSrc ?
     `<img src="${escapeHtml(signatureSrc)}" alt="Signature" style="width: 80px; height: auto; vertical-align: middle;" />` :
     '<div class="signature-line"></div>';
 
@@ -88,9 +88,9 @@ const generateBillHtml = (bill: Bill, lang: "en" | "km", signatureSrc?: string):
         width: 90mm;
         margin: 0 auto;
         padding: 6mm 5mm;
-        font-family: ${isKhmer 
-          ? "'Noto Sans Khmer', 'Khmer OS', sans-serif" 
-          : "'Noto Sans', Arial, sans-serif"};
+        font-family: ${isKhmer
+      ? "'Noto Sans Khmer', 'Khmer OS', sans-serif"
+      : "'Noto Sans', Arial, sans-serif"};
         font-size: 10pt;
         line-height: 1.5;
         color: #000;

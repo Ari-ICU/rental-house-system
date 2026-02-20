@@ -4,6 +4,7 @@ const convertDecimalToNumber = (bill) => {
     if (!bill) return null;
     return {
         ...bill,
+        rentAmount: bill.rentAmount ? Number(bill.rentAmount) : null,
         electricityAmount: Number(bill.electricityAmount),
         waterAmount: Number(bill.waterAmount),
         rental: bill.rental ? {
@@ -44,14 +45,24 @@ const Bill = {
 
     create: async (billData) => {
         const {
-            rentalId, month, electricityAmount, waterAmount,
+            rentalId, month, rentAmount, electricityAmount, waterAmount,
             electricityStatus, waterStatus, notes
         } = billData;
+
+        let finalRentAmount = rentAmount;
+
+        if (finalRentAmount === undefined || finalRentAmount === null) {
+            const rental = await prisma.rental.findUnique({
+                where: { id: parseInt(rentalId) }
+            });
+            finalRentAmount = rental ? rental.rentAmount : null;
+        }
 
         const newBill = await prisma.bill.create({
             data: {
                 rentalId: parseInt(rentalId),
                 month,
+                rentAmount: finalRentAmount !== null ? Number(finalRentAmount) : null,
                 electricityAmount,
                 waterAmount,
                 electricityStatus,
@@ -72,7 +83,7 @@ const Bill = {
         }
 
         const allowedFields = [
-            'rentalId', 'month', 'electricityAmount', 'waterAmount',
+            'rentalId', 'month', 'rentAmount', 'electricityAmount', 'waterAmount',
             'electricityStatus', 'waterStatus', 'notes'
         ];
 

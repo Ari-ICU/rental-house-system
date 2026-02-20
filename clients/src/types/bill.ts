@@ -5,6 +5,7 @@ export interface Bill {
     id: number;
     rental: Rental;
     month: string;
+    rentAmount?: number;
     electricityAmount: number;
     waterAmount: number;
     electricityStatus: 'Paid' | 'Unpaid';

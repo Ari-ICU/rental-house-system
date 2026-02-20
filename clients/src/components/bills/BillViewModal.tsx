@@ -23,7 +23,8 @@ export default function BillViewModal({ bill, onClose }: BillViewModalProps) {
         return status === "Paid" ? "បានបង់" : "មិនទាន់បង់";
     };
 
-    const totalAmount = (bill.rental?.rentAmount || 0) + (bill.electricityAmount || 0) + (bill.waterAmount || 0);
+    const activeRentAmount = bill.rentAmount ?? bill.rental?.rentAmount ?? 0;
+    const totalAmount = activeRentAmount + (bill.electricityAmount || 0) + (bill.waterAmount || 0);
 
     return (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-md flex items-center justify-center z-50 p-4 transition-all animate-in fade-in duration-300">
@@ -97,7 +98,7 @@ export default function BillViewModal({ bill, onClose }: BillViewModalProps) {
                                 </div>
                                 <span className="text-gray-500 text-sm font-bold">{lang === 'en' ? 'Base Rent' : 'ថ្លៃបន្ទប់សរុប'}</span>
                             </div>
-                            <span className="text-gray-800 font-black">${bill.rental?.rentAmount?.toLocaleString() || '0.00'}</span>
+                            <span className="text-gray-800 font-black">${activeRentAmount.toLocaleString() || '0.00'}</span>
                         </div>
 
                         <div className="flex items-center justify-between group">
