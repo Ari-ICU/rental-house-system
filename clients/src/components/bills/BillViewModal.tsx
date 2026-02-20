@@ -28,9 +28,9 @@ export default function BillViewModal({ bill, onClose }: BillViewModalProps) {
 
     return (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-md flex items-center justify-center z-50 p-4 transition-all animate-in fade-in duration-300">
-            <div className="bg-white rounded-[40px] shadow-2xl w-full max-w-lg overflow-hidden relative animate-in zoom-in-95 duration-300">
+            <div className="bg-white rounded-[32px] sm:rounded-[40px] shadow-2xl w-full max-w-lg max-h-[90vh] flex flex-col overflow-hidden relative animate-in zoom-in-95 duration-300">
                 {/* Header with Background */}
-                <div className="bg-gradient-to-r from-violet-600 to-indigo-600 px-8 py-10 text-white relative">
+                <div className="flex-shrink-0 bg-gradient-to-r from-violet-600 to-indigo-600 px-6 py-8 sm:px-8 sm:py-10 text-white relative">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-2xl"></div>
                     <button
                         onClick={onClose}
@@ -55,9 +55,9 @@ export default function BillViewModal({ bill, onClose }: BillViewModalProps) {
                 </div>
 
                 {/* Details Section */}
-                <div className="p-10 space-y-8">
+                <div className="p-6 sm:p-10 space-y-6 sm:space-y-8 overflow-y-auto">
                     {/* Primary Info Area */}
-                    <div className="grid grid-cols-2 gap-6 bg-gray-50/50 p-6 rounded-3xl border border-gray-100 mb-2">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 bg-gray-50/50 p-4 sm:p-6 rounded-3xl border border-gray-100 mb-2">
                         <div className="space-y-1">
                             <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{lang === 'en' ? 'Client' : 'អតិថិជន'}</p>
                             <div className="flex items-center gap-2">
@@ -69,11 +69,11 @@ export default function BillViewModal({ bill, onClose }: BillViewModalProps) {
                             <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{lang === 'en' ? 'Room' : 'លេខបន្ទប់'}</p>
                             <div className="flex items-center gap-2">
                                 <FaHome className="text-violet-500 text-xs" />
-                                <p className="text-sm font-bold text-gray-800">Room {bill.rental?.roomNumber || "N/A"}</p>
+                                <p className="text-sm font-bold text-gray-800">{lang === 'en' ? 'Room' : 'បន្ទប់'} {bill.rental?.roomNumber || "N/A"}</p>
                             </div>
                         </div>
-                        <div className="col-span-2 pt-2 border-t border-gray-100 mt-2">
-                            <div className="flex items-center justify-between">
+                        <div className="col-span-1 sm:col-span-2 pt-2 border-t border-gray-100 mt-2">
+                            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
                                 <div className="space-y-1">
                                     <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{lang === 'en' ? 'Billing Period' : 'រយៈពេលវិក្កយបត្រ'}</p>
                                     <div className="flex items-center gap-2">
@@ -81,7 +81,7 @@ export default function BillViewModal({ bill, onClose }: BillViewModalProps) {
                                         <p className="text-sm font-bold text-gray-700">{formatKhmerDate(bill.month, lang)}</p>
                                     </div>
                                 </div>
-                                <div className="text-right">
+                                <div className="text-left sm:text-right">
                                     <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{lang === 'en' ? 'ID' : 'លេខសម្គាល់'}</p>
                                     <p className="text-xs font-mono font-bold text-gray-500">#{bill.id.toString().padStart(6, '0')}</p>
                                 </div>
@@ -135,8 +135,8 @@ export default function BillViewModal({ bill, onClose }: BillViewModalProps) {
                     </div>
 
                     {/* Total Summary */}
-                    <div className="pt-8 border-t border-dashed border-gray-200">
-                        <div className="flex items-center justify-between px-2">
+                    <div className="pt-6 sm:pt-8 border-t border-dashed border-gray-200">
+                        <div className="flex flex-col sm:flex-row items-center sm:justify-between px-2 gap-4 sm:gap-0 text-center sm:text-left">
                             <div>
                                 <h4 className="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em]">{lang === 'en' ? 'Grand Total Due' : 'ទឹកប្រាក់សរុប'}</h4>
                                 <p className="text-gray-400 text-[10px] mt-1 italic opacity-60">* {lang === 'en' ? 'Taxes may not be included' : 'មិនគិតបញ្ចូលពន្ធ'}</p>
