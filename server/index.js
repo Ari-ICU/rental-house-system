@@ -7,6 +7,7 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const hpp = require('hpp');
 const logger = require('./utils/logger');
+const cronJobs = require('./utils/cronJobs');
 
 dotenv.config();
 
@@ -100,4 +101,7 @@ app.listen(PORT, () => {
     logger.server(`Server is running on port ${logger.bold(String(PORT))}`);
     logger.info(`Environment : ${logger.colorize(logger.colors.FG.yellow, process.env.NODE_ENV || 'development')}`);
     logger.db(`Database    : ${logger.colorize(logger.colors.FG.cyan, process.env.DATABASE_URL ? 'Connected via env' : 'No DATABASE_URL set')}`);
+
+    // Start hourly/monthly auto checks
+    cronJobs.initializeCronJobs();
 });
