@@ -25,9 +25,9 @@ const RecentRentalsTable = ({ rentals }: RecentRentalsTableProps) => {
     };
 
     return (
-        <div className="overflow-hidden bg-white shadow-sm border border-gray-100 rounded-2xl">
-            <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-100">
+        <div className="overflow-hidden bg-white shadow-sm border border-gray-100 rounded-2xl w-full">
+            <div className="overflow-x-auto w-full">
+                <table className="min-w-[900px] w-full divide-y divide-gray-100">
                     <thead className="bg-gray-50/50">
                         <tr>
                             <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">

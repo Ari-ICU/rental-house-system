@@ -26,8 +26,8 @@ const statusColors: { [key in Room["status"]]: string } = {
 
 const RoomList: React.FC<RoomListProps> = ({ rooms, onEdit, onDelete }) => {
     return (
-        <div className="overflow-x-auto">
-            <table className="min-w-full bg-white border border-gray-200 rounded-md">
+        <div className="overflow-x-auto w-full">
+            <table className="min-w-[700px] w-full bg-white border border-gray-200 rounded-md">
                 <thead className="bg-gray-200">
                     <tr className="*:font-bold">
                         <th className="py-3 px-4 text-left text-gray-600 font-medium">Name</th>

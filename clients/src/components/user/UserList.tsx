@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import CustomDropdown from "@/common/CustomDropdown"; 
+import CustomDropdown from "@/common/CustomDropdown";
 
 export type UserRole = "Admin" | "User" | "Manager" | "Guest";
 export type UserStatus = "Active" | "Inactive" | "Pending" | "Suspended";
@@ -110,8 +110,8 @@ const UserList: React.FC<UserListProps> = ({
             </div>
 
             {/* Table */}
-            <div className="overflow-x-auto rounded-lg shadow-md">
-                <table className="min-w-full border border-gray-200 bg-white">
+            <div className="overflow-x-auto rounded-lg shadow-md w-full">
+                <table className="min-w-[800px] w-full border border-gray-200 bg-white">
                     <thead className="bg-gray-50">
                         <tr>
                             <th className="px-4 py-3 text-left text-gray-600 font-medium">Name</th>

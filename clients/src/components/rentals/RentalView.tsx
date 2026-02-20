@@ -265,8 +265,8 @@ const RentalView: React.FC<RentalViewProps> = ({ rental }) => {
                 title={label('Billing History', 'ប្រវត្តិនៃការបង់ប្រាក់')}
             >
                 {rental.bills && rental.bills.length > 0 ? (
-                    <div className="overflow-x-auto -mx-6 sm:mx-0">
-                        <table className="w-full text-xs text-left">
+                    <div className="overflow-x-auto w-full -mx-6 sm:mx-0">
+                        <table className="min-w-[600px] w-full text-xs text-left">
                             <thead className="bg-gray-50 text-gray-400 uppercase tracking-wider font-semibold">
                                 <tr>
                                     <th className="px-4 py-2">{label('Month', 'ខែ')}</th>

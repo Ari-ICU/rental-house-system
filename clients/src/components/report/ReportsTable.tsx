@@ -127,8 +127,8 @@ const ReportsTable: React.FC<ReportsTableProps> = ({
 
             {/* Table Container */}
             <div className="bg-white/70 backdrop-blur-xl rounded-3xl shadow-xl shadow-gray-200/50 border border-white overflow-hidden mx-4">
-                <div className="overflow-x-auto min-h-[400px]">
-                    <table className="w-full border-collapse">
+                <div className="overflow-x-auto w-full min-h-[400px]">
+                    <table className="min-w-[900px] w-full border-collapse">
                         <thead>
                             <tr className="bg-gray-50/50 border-b border-gray-100">
                                 {[

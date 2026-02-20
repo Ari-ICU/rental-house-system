@@ -153,8 +153,8 @@ const BillsList: React.FC<BillsListProps> = ({
             </div>
 
             {/* Table */}
-            <div className="relative overflow-hidden">
-                <table className="min-w-full border-separate border-spacing-0">
+            <div className="relative overflow-x-auto w-full">
+                <table className="min-w-[800px] w-full border-separate border-spacing-0">
                     <thead className="bg-gray-50/50">
                         <tr>
                             {[

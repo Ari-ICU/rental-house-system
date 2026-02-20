@@ -183,10 +183,9 @@ const RentalList: React.FC<RentalListProps> = ({
                 </div>
             </div>
 
-            {/* Table Card */}
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-                <div className="overflow-x-auto">
-                    <table className="min-w-full">
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden w-full">
+                <div className="overflow-x-auto w-full">
+                    <table className="min-w-[1000px] w-full">
                         <thead>
                             <tr className="border-b border-gray-100">
                                 <th className="px-5 py-3.5 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">#</th>
