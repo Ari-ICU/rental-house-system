@@ -69,10 +69,12 @@ const rentalRoutes = require('./routes/rental.route');
 const billRoutes = require('./routes/bill.route');
 const reportRoutes = require('./routes/report.route');
 const settingRoutes = require('./routes/settingRoutes');
+const paymentRoutes = require('./routes/paymentRoutes');
 app.use('/api/rentals', rentalRoutes);
 app.use('/api/bills', billRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/settings', settingRoutes);
+app.use('/api/payments', paymentRoutes);
 
 // ── Health check ──────────────────────────────────────────────────────────────
 app.get('/api/health', (req, res) => {

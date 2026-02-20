@@ -9,6 +9,9 @@ const SystemSetting = {
                     telegramBotToken: '',
                     telegramChatId: '',
                     telegramLanguage: 'en',
+                    paymentBakongAccountId: '',
+                    paywayMerchantId: '',
+                    paywayApiKey: '',
                 },
             });
         }
@@ -23,6 +26,9 @@ const SystemSetting = {
                 telegramBotToken: data.telegramBotToken !== undefined ? data.telegramBotToken : settings.telegramBotToken,
                 telegramChatId: data.telegramChatId !== undefined ? data.telegramChatId : settings.telegramChatId,
                 telegramLanguage: data.telegramLanguage || settings.telegramLanguage,
+                paymentBakongAccountId: data.paymentBakongAccountId !== undefined ? data.paymentBakongAccountId : settings.paymentBakongAccountId,
+                paywayMerchantId: data.paywayMerchantId !== undefined ? data.paywayMerchantId : settings.paywayMerchantId,
+                paywayApiKey: data.paywayApiKey !== undefined ? data.paywayApiKey : settings.paywayApiKey,
             },
         });
         return updated;

@@ -16,6 +16,9 @@ export default function SettingsForm() {
         telegramBotToken: '',
         telegramChatId: '',
         telegramLanguage: 'en',
+        paymentBakongAccountId: '',
+        paywayMerchantId: '',
+        paywayApiKey: '',
     });
 
     useEffect(() => {
@@ -29,6 +32,9 @@ export default function SettingsForm() {
                             telegramBotToken: data.data.telegramBotToken || '',
                             telegramChatId: data.data.telegramChatId || '',
                             telegramLanguage: data.data.telegramLanguage || 'en',
+                            paymentBakongAccountId: data.data.paymentBakongAccountId || '',
+                            paywayMerchantId: data.data.paywayMerchantId || '',
+                            paywayApiKey: data.data.paywayApiKey || '',
                         });
                     }
                 }
@@ -161,6 +167,66 @@ export default function SettingsForm() {
                             <p className="text-[10px] text-gray-400">
                                 {label('Language used for the automated Telegram alert messages', 'ភាសាដែលប្រើសម្រាប់សារដាស់តឿន Telegram ស្វ័យប្រវត្តិ')}
                             </p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Payment Integrations */}
+                <div className="space-y-6 pt-8 border-t border-gray-100">
+                    <div className="flex items-center gap-3 pb-4 border-b border-gray-100">
+                        <div className="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center">
+                            <span className="text-xl">🇰🇭</span>
+                        </div>
+                        <div>
+                            <h2 className="text-lg font-bold text-gray-800">{label('Payment Integration', 'ការរួមបញ្ចូលការបង់ប្រាក់')}</h2>
+                            <p className="text-xs font-medium text-gray-500 mt-0.5">{label('Configure KHQR & Payway for automatic bill payments', 'កំណត់ KHQR និង Payway សម្រាប់ការបង់វិក្កយបត្រដោយស្វ័យប្រវត្តិ')}</p>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* Bakong Account ID */}
+                        <div className="space-y-2 md:col-span-2">
+                            <label className="text-xs font-bold text-gray-600 uppercase tracking-wider block">
+                                {label('Bakong KHQR Account ID', 'លេខគណនី Bakong KHQR')}
+                            </label>
+                            <input
+                                type="text"
+                                value={formData.paymentBakongAccountId}
+                                onChange={(e) => setFormData({ ...formData, paymentBakongAccountId: e.target.value })}
+                                className="w-full bg-gray-50/50 border border-gray-200 text-gray-800 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none"
+                                placeholder="clientaccount@bank"
+                            />
+                            <p className="text-[10px] text-gray-400">
+                                {label('Your Bakong Account ID used to generate static payment QR codes.', 'លេខគណនី Bakong របស់អ្នកដែលប្រើសម្រាប់បង្កើតកូដ QR បង់ប្រាក់។')}
+                            </p>
+                        </div>
+
+                        {/* Payway Merchant ID */}
+                        <div className="space-y-2">
+                            <label className="text-xs font-bold text-gray-600 uppercase tracking-wider block">
+                                {label('Payway Merchant ID', 'លេខសម្គាល់អាជីវករ Payway')}
+                            </label>
+                            <input
+                                type="text"
+                                value={formData.paywayMerchantId}
+                                onChange={(e) => setFormData({ ...formData, paywayMerchantId: e.target.value })}
+                                className="w-full bg-gray-50/50 border border-gray-200 text-gray-800 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none"
+                                placeholder="rths_merchant"
+                            />
+                        </div>
+
+                        {/* Payway API Key */}
+                        <div className="space-y-2">
+                            <label className="text-xs font-bold text-gray-600 uppercase tracking-wider block">
+                                {label('Payway API Key', 'សោរ API Payway')}
+                            </label>
+                            <input
+                                type="password"
+                                value={formData.paywayApiKey}
+                                onChange={(e) => setFormData({ ...formData, paywayApiKey: e.target.value })}
+                                className="w-full bg-gray-50/50 border border-gray-200 text-gray-800 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none"
+                                placeholder="****************"
+                            />
                         </div>
                     </div>
                 </div>

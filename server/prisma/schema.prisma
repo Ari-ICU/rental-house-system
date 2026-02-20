@@ -65,12 +65,15 @@ model Report {
 }
 
 model SystemSetting {
-  id               Int      @id @default(1)
-  telegramBotToken String?
-  telegramChatId   String?
-  telegramLanguage String   @default("en")
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  id                     Int      @id @default(1)
+  telegramBotToken       String?
+  telegramChatId         String?
+  telegramLanguage       String   @default("en")
+  paymentBakongAccountId String?
+  paywayMerchantId       String?
+  paywayApiKey           String?
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
 
   @@map("system_settings")
 }
