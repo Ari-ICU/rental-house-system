@@ -1,0 +1,194 @@
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import { useLang } from '@/context/LangContext';
+import { FaSave, FaTelegramPlane } from 'react-icons/fa';
+import toast from 'react-hot-toast';
+import CustomDropdown from '@/common/CustomDropdown';
+
+export default function SettingsForm() {
+    const { lang } = useLang();
+    const label = (en: string, km: string) => (lang === 'km' ? km : en);
+
+    const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
+    const [formData, setFormData] = useState({
+        telegramBotToken: '',
+        telegramChatId: '',
+        telegramLanguage: 'en',
+    });
+
+    useEffect(() => {
+        const fetchSettings = async () => {
+            try {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api'}/settings`);
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.data) {
+                        setFormData({
+                            telegramBotToken: data.data.telegramBotToken || '',
+                            telegramChatId: data.data.telegramChatId || '',
+                            telegramLanguage: data.data.telegramLanguage || 'en',
+                        });
+                    }
+                }
+            } catch (error) {
+                toast.error(label('Failed to load settings', 'បរាជ័យក្នុងការទាញយកការកំណត់'));
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchSettings();
+    }, [lang]);
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setSaving(true);
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api'}/settings`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            });
+
+            if (res.ok) {
+                toast.success(label('Settings saved successfully', 'ការកំណត់ត្រូវបានរក្សាទុកដោយជោគជ័យ'));
+            } else {
+                toast.error(label('Failed to save settings', 'បរាជ័យក្នុងការរក្សាទុកការកំណត់'));
+            }
+        } catch (error) {
+            toast.error(label('Error saving settings', 'មានបញ្ហាក្នុងការរក្សាទុកការកំណត់'));
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    if (loading) {
+        return (
+            <div className="flex h-64 items-center justify-center">
+                <div className="h-8 w-8 animate-spin rounded-full border-4 border-indigo-500 border-t-transparent"></div>
+            </div>
+        );
+    }
+
+    const languageOptions = [
+        { value: 'en', label: 'English', icon: '🇺🇸' },
+        { value: 'km', label: 'Khmer (ខ្មែរ)', icon: '🇰🇭' },
+    ];
+
+    return (
+        <div className="max-w-4xl mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            {/* Header section */}
+            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-900 via-slate-900 to-violet-950 p-8 shadow-xl">
+                <div className="absolute -top-24 -right-24 w-64 h-64 bg-indigo-500/20 blur-3xl rounded-full pointer-events-none" />
+                <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                    <div>
+                        <h1 className="text-3xl font-black text-white flex items-center gap-3 tracking-tight">
+                            {label('System Settings', 'ការកំណត់ប្រព័ន្ធ')}
+                        </h1>
+                        <p className="text-indigo-200 mt-2 text-sm max-w-xl leading-relaxed opacity-90">
+                            {label('Manage your global system configurations and notification integrations.', 'គ្រប់គ្រងការកំណត់ប្រព័ន្ធទូទៅរបស់អ្នក និងការរួមបញ្ចូលការជូនដំណឹង។')}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            {/* Form */}
+            <form onSubmit={handleSubmit} className="bg-white rounded-3xl p-6 sm:p-10 shadow-xl shadow-gray-200/50 border border-gray-100 flex flex-col gap-8">
+                {/* Telegram Settings Group */}
+                <div className="space-y-6">
+                    <div className="flex items-center gap-3 pb-4 border-b border-gray-100">
+                        <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center">
+                            <FaTelegramPlane className="text-blue-500 text-xl" />
+                        </div>
+                        <div>
+                            <h2 className="text-lg font-bold text-gray-800">{label('Telegram Bot Integration', 'ការរួមបញ្ចូល Telegram Bot')}</h2>
+                            <p className="text-xs font-medium text-gray-500 mt-0.5">{label('Required for unpaid utility alerts', 'ចាំបាច់សម្រាប់ការដាស់តឿនវិក្កយបត្រមិនទាន់បង់ប្រាក់')}</p>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* Bot Token */}
+                        <div className="space-y-2">
+                            <label className="text-xs font-bold text-gray-600 uppercase tracking-wider block">
+                                {label('Bot Token', 'លេខកូដសម្ងាត់ Bot')} <span className="text-red-500">*</span>
+                            </label>
+                            <input
+                                type="text"
+                                required
+                                value={formData.telegramBotToken}
+                                onChange={(e) => setFormData({ ...formData, telegramBotToken: e.target.value })}
+                                className="w-full bg-gray-50/50 border border-gray-200 text-gray-800 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none"
+                                placeholder="123456789:ABCDefGHIJKlmnOpQrstuVWxYZ"
+                            />
+                            <p className="text-[10px] text-gray-400">
+                                {label('Get this from @BotFather in Telegram', 'ទទួលបានវាពី @BotFather នៅក្នុង Telegram')}
+                            </p>
+                        </div>
+
+                        {/* Chat ID */}
+                        <div className="space-y-2">
+                            <label className="text-xs font-bold text-gray-600 uppercase tracking-wider block">
+                                {label('Chat ID', 'លេខសម្គាល់ក្រុម Chat')} <span className="text-red-500">*</span>
+                            </label>
+                            <input
+                                type="text"
+                                required
+                                value={formData.telegramChatId}
+                                onChange={(e) => setFormData({ ...formData, telegramChatId: e.target.value })}
+                                className="w-full bg-gray-50/50 border border-gray-200 text-gray-800 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none"
+                                placeholder="-100123456789"
+                            />
+                            <p className="text-[10px] text-gray-400">
+                                {label('The group or user ID where alerts will be sent', 'លេខសម្គាល់ក្រុម ឬអ្នកប្រើប្រាស់ដែលការដាស់តឿននឹងត្រូវបញ្ជូនទៅ')}
+                            </p>
+                        </div>
+
+                        {/* Alert Language */}
+                        <div className="space-y-2 md:col-span-2">
+                            <label className="text-xs font-bold text-gray-600 uppercase tracking-wider block">
+                                {label('Alert Language', 'ភាសាដាស់តឿន')}
+                            </label>
+                            <CustomDropdown
+                                options={languageOptions}
+                                value={formData.telegramLanguage}
+                                onChange={(val) => setFormData({ ...formData, telegramLanguage: val })}
+                                placeholder={label('Select language', 'ជ្រើសរើសភាសា')}
+                            />
+                            <p className="text-[10px] text-gray-400">
+                                {label('Language used for the automated Telegram alert messages', 'ភាសាដែលប្រើសម្រាប់សារដាស់តឿន Telegram ស្វ័យប្រវត្តិ')}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Submit Action */}
+                <div className="pt-6 border-t border-gray-100 flex justify-end">
+                    <button
+                        type="submit"
+                        disabled={saving}
+                        className={`
+                            relative flex items-center justify-center gap-3 px-8 py-4 rounded-xl font-bold text-white text-sm shadow-lg overflow-hidden transition-all duration-300
+                            ${saving ? 'bg-indigo-400 cursor-not-allowed' : 'bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 hover:shadow-indigo-500/25 active:scale-95'}
+                        `}
+                    >
+                        {saving ? (
+                            <>
+                                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                {label('Saving...', 'កំពុងរក្សាទុក...')}
+                            </>
+                        ) : (
+                            <>
+                                <FaSave className="text-lg" />
+                                <span>{label('Save Settings', 'រក្សាទុកការកំណត់')}</span>
+                            </>
+                        )}
+                    </button>
+                </div>
+            </form>
+        </div>
+    );
+}

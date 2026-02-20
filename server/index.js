@@ -67,9 +67,11 @@ app.use(cors());
 const rentalRoutes = require('./routes/rental.route');
 const billRoutes = require('./routes/bill.route');
 const reportRoutes = require('./routes/report.route');
+const settingRoutes = require('./routes/settingRoutes');
 app.use('/api/rentals', rentalRoutes);
 app.use('/api/bills', billRoutes);
 app.use('/api/reports', reportRoutes);
+app.use('/api/settings', settingRoutes);
 
 // ── Health check ──────────────────────────────────────────────────────────────
 app.get('/api/health', (req, res) => {

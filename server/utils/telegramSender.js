@@ -1,9 +1,6 @@
-const sendMessage = async (text) => {
-    const botToken = process.env.TELEGRAM_BOT_TOKEN;
-    const chatId = process.env.TELEGRAM_CHAT_ID;
-
+const sendMessage = async (botToken, chatId, text) => {
     if (!botToken || !chatId) {
-        console.log('Telegram bot is not configured properly in .env variables.');
+        console.log('Telegram bot is not configured in settings.');
         return;
     }
 

@@ -1,38 +1,68 @@
 const Bill = require('../models/bill');
 const telegramSender = require('../utils/telegramSender');
 
+const SystemSetting = require('../models/systemSetting');
+
 const triggerUnpaidAlertIfNeeded = async (bill, isNew = false) => {
     if (!bill) return;
     const unpaidElectricity = bill.electricityStatus === 'Unpaid';
     const unpaidWater = bill.waterStatus === 'Unpaid';
 
-    // Alert if either is unpaid
     if (unpaidElectricity || unpaidWater) {
-        const clientName = bill.rental?.ClientName || 'Unknown Client';
-        const roomStr = bill.rental?.roomNumber || 'Unknown Room';
+        const settings = await SystemSetting.getSettings();
+        if (!settings.telegramBotToken || !settings.telegramChatId) {
+            return; // Not configured
+        }
 
-        let message = `🚨 <b>Rental Alert: Unpaid Utilities</b>\n\n`;
-        if (isNew) {
-            message += `A new bill was generated with outstanding charges.\n`;
+        const lang = settings.telegramLanguage === 'km' ? 'km' : 'en';
+
+        const clientName = bill.rental?.ClientName || (lang === 'km' ? 'មិនស្គាល់អតិថិជន' : 'Unknown Client');
+        const roomStr = bill.rental?.roomNumber || (lang === 'km' ? 'មិនស្គាល់បន្ទប់' : 'Unknown Room');
+
+        let message = '';
+        if (lang === 'km') {
+            message = `🚨 <b>ការដាស់តឿន៖ ការប្រើប្រាស់មិនទាន់បង់ប្រាក់</b>\n\n`;
+            if (isNew) {
+                message += `វិក្កយបត្រថ្មីមួយត្រូវបានបង្កើតដោយមានការគិតប្រាក់មិនទាន់បានបង់។\n`;
+            } else {
+                message += `វិក្កយបត្រត្រូវបានកែប្រែ ហើយស្ថានភាពទឹក/ភ្លើងមិនទាន់បានបង់។\n`;
+            }
+
+            message += `\n👤 <b>អតិថិជន:</b> ${clientName}`;
+            message += `\n🚪 <b>បន្ទប់:</b> ${roomStr}`;
+            message += `\n📅 <b>វិក្កយបត្រខែ:</b> ${bill.month}`;
+
+            if (unpaidElectricity) {
+                message += `\n⚡ <b>អគ្គិសនី:</b> មិនទាន់បង់ ($${bill.electricityAmount || 0})`;
+            }
+            if (unpaidWater) {
+                message += `\n💧 <b>ទឹកស្អាត:</b> មិនទាន់បង់ ($${bill.waterAmount || 0})`;
+            }
+            message += `\n\nសូមតាមដានជាមួយអតិថិជន។`;
+
         } else {
-            message += `A bill has been updated and utilities are marked as unpaid.\n`;
-        }
+            message = `🚨 <b>Rental Alert: Unpaid Utilities</b>\n\n`;
+            if (isNew) {
+                message += `A new bill was generated with outstanding charges.\n`;
+            } else {
+                message += `A bill has been updated and utilities are marked as unpaid.\n`;
+            }
 
-        message += `\n👤 <b>Client:</b> ${clientName}`;
-        message += `\n🚪 <b>Room:</b> ${roomStr}`;
-        message += `\n📅 <b>Billing Month:</b> ${bill.month}`;
+            message += `\n👤 <b>Client:</b> ${clientName}`;
+            message += `\n🚪 <b>Room:</b> ${roomStr}`;
+            message += `\n📅 <b>Billing Month:</b> ${bill.month}`;
 
-        if (unpaidElectricity) {
-            message += `\n⚡ <b>Electricity:</b> Unpaid ($${bill.electricityAmount || 0})`;
+            if (unpaidElectricity) {
+                message += `\n⚡ <b>Electricity:</b> Unpaid ($${bill.electricityAmount || 0})`;
+            }
+            if (unpaidWater) {
+                message += `\n💧 <b>Water:</b> Unpaid ($${bill.waterAmount || 0})`;
+            }
+            message += `\n\nPlease follow up with the customer.`;
         }
-        if (unpaidWater) {
-            message += `\n💧 <b>Water:</b> Unpaid ($${bill.waterAmount || 0})`;
-        }
-
-        message += `\n\nPlease follow up with the customer.`;
 
         // Fire and forget
-        telegramSender.sendMessage(message).catch(console.error);
+        telegramSender.sendMessage(settings.telegramBotToken, settings.telegramChatId, message).catch(console.error);
     }
 };
 
