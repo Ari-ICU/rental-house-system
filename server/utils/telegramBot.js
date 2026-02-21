@@ -3,6 +3,7 @@ const SystemSetting = require('../models/systemSetting');
 const logger = require('./logger');
 
 let botInstance = null;
+let currentToken = null;
 
 const initializeBot = async () => {
     try {
@@ -10,21 +11,37 @@ const initializeBot = async () => {
         const token = settings.telegramBotToken;
 
         if (!token) {
-            logger.info('Telegram Bot Token not found in settings. Bot helper is disabled.');
+            if (botInstance) {
+                logger.info('Removing Telegram bot as token was cleared.');
+                botInstance.stopPolling();
+                botInstance = null;
+                currentToken = null;
+            }
             return;
         }
 
-        // Avoid multiple instances
-        if (botInstance) return botInstance;
+        // Check if token changed or bot not started
+        if (botInstance && currentToken === token) {
+            return botInstance;
+        }
+
+        // If something old exists with a different token, stop it
+        if (botInstance) {
+            logger.info('Restarting Telegram bot helper with new token...');
+            botInstance.stopPolling();
+        }
 
         botInstance = new TelegramBot(token, { polling: true });
+        currentToken = token;
 
-        botInstance.on('message', (msg) => {
+        botInstance.on('message', async (msg) => {
             const chatId = msg.chat.id;
             const text = msg.text;
 
             if (text === '/start' || text === '/myid') {
-                const lang = settings.telegramLanguage === 'km' ? 'km' : 'en';
+                // Fetch fresh settings for language preference
+                const currentSettings = await SystemSetting.getSettings();
+                const lang = currentSettings.telegramLanguage === 'km' ? 'km' : 'en';
 
                 let reply = '';
                 if (lang === 'km') {

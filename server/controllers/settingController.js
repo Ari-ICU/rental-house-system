@@ -4,6 +4,8 @@ const {
     errorResponse,
 } = require('../utils/apiResponse');
 
+const telegramBot = require('../utils/telegramBot');
+
 const getSettings = async (req, res) => {
     try {
         const settings = await SystemSetting.getSettings();
@@ -16,6 +18,10 @@ const getSettings = async (req, res) => {
 const updateSettings = async (req, res) => {
     try {
         const updatedSettings = await SystemSetting.updateSettings(req.body);
+
+        // Refresh Telegram Bot if settings changed
+        telegramBot.initializeBot();
+
         return successResponse(res, updatedSettings, 'Settings updated successfully');
     } catch (error) {
         return errorResponse(res, 'Failed to update settings', error);
