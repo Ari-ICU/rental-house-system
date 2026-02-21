@@ -10,10 +10,10 @@ interface RecentRentalsTableProps {
 }
 
 const statusColors: Record<string, string> = {
-    "Active": "bg-emerald-50 text-emerald-700 border border-emerald-100",
-    "Reserved": "bg-blue-50 text-blue-700 border border-blue-100",
-    "Completed": "bg-gray-100 text-gray-600 border border-gray-200",
-    "Maintenance": "bg-rose-50 text-rose-700 border border-rose-100",
+    "Active": "bg-emerald-50 text-emerald-700",
+    "Reserved": "bg-blue-50 text-blue-700",
+    "Completed": "bg-slate-100 text-slate-600",
+    "Maintenance": "bg-rose-50 text-rose-700",
 };
 
 const RecentRentalsTable = ({ rentals }: RecentRentalsTableProps) => {
@@ -25,66 +25,59 @@ const RecentRentalsTable = ({ rentals }: RecentRentalsTableProps) => {
     };
 
     return (
-        <div className="overflow-hidden bg-white shadow-sm border border-gray-100 rounded-2xl w-full">
+        <div className="bg-white shadow-sm border border-slate-200 rounded-lg w-full overflow-hidden">
             <div className="overflow-x-auto w-full">
-                <table className="min-w-[900px] w-full divide-y divide-gray-100">
-                    <thead className="bg-gray-50/50">
+                <table className="w-full text-sm text-left">
+                    <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-medium">
                         <tr>
-                            <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                            <th className="px-6 py-3 font-medium">
                                 {lang === "en" ? "Client Name" : "អតិថិជន"}
                             </th>
-                            <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                            <th className="px-6 py-3 font-medium">
                                 {lang === "en" ? "Room" : "បន្ទប់"}
                             </th>
-                            <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                            <th className="px-6 py-3 font-medium">
                                 {lang === "en" ? "Start Date" : "កាលបរិច្ឆេទចាប់ផ្តើម"}
                             </th>
-                            <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                            <th className="px-6 py-3 font-medium">
                                 {lang === "en" ? "Status" : "ស្ថានភាព"}
                             </th>
-                            <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                            <th className="px-6 py-3 font-medium text-right">
                                 {lang === "en" ? "Rent Amount" : "តម្លៃជួល"}
                             </th>
-                            <th className="px-6 py-4 relative">
+                            <th className="px-6 py-3">
                                 <span className="sr-only">Actions</span>
                             </th>
                         </tr>
                     </thead>
-                    <tbody className="bg-white divide-y divide-gray-50">
+                    <tbody className="divide-y divide-slate-100">
                         {rentals.map((rental) => (
                             <tr
                                 key={rental.id}
-                                className="group hover:bg-purple-50/30 transition-colors duration-200 cursor-pointer"
+                                className="group hover:bg-slate-50 transition-colors duration-150 cursor-pointer"
                                 onClick={() => handleRowClick(rental)}
                             >
                                 <td className="px-6 py-4 whitespace-nowrap">
-                                    <div className="flex items-center">
-                                        <div className="flex-shrink-0 h-8 w-8 rounded-full bg-gradient-to-r from-purple-400 to-blue-400 flex items-center justify-center text-white font-bold text-xs uppercase shadow-sm">
-                                            {rental.ClientName ? rental.ClientName.charAt(0) : "?"}
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-8 h-8 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center font-medium text-xs">
+                                            {rental.ClientName ? rental.ClientName.charAt(0).toUpperCase() : "?"}
                                         </div>
-                                        <div className="ml-4">
-                                            <div className="text-sm font-medium text-gray-900">{rental.ClientName || "N/A"}</div>
-                                        </div>
+                                        <span className="font-medium text-slate-900">{rental.ClientName || "N/A"}</span>
                                     </div>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
-                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-gray-100 text-gray-800">
+                                    <span className="text-slate-600">
                                         {rental.roomNumber}
                                     </span>
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                <td className="px-6 py-4 whitespace-nowrap text-slate-500">
                                     {formatKhmerDate(rental.startDate, lang) || "N/A"}
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     <span
-                                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusColors[rental.status] || "bg-gray-100 text-gray-800"
+                                        className={`inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium ${statusColors[rental.status] || "bg-slate-100 text-slate-800"
                                             }`}
                                     >
-                                        <span className={`w-1.5 h-1.5 mr-1.5 rounded-full ${rental.status === 'Active' ? 'bg-emerald-400' :
-                                            rental.status === 'Reserved' ? 'bg-blue-400' :
-                                                rental.status === 'Maintenance' ? 'bg-rose-400' :
-                                                    'bg-gray-400'
-                                            }`}></span>
                                         {lang === "en"
                                             ? rental.status
                                             : rental.status === "Active"
@@ -98,11 +91,11 @@ const RecentRentalsTable = ({ rentals }: RecentRentalsTableProps) => {
                                                             : rental.status}
                                     </span>
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
+                                <td className="px-6 py-4 whitespace-nowrap text-right font-medium text-slate-900">
                                     ${rental.rentAmount?.toLocaleString() || "0"}
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium text-gray-400 group-hover:text-purple-600 transition-colors">
-                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
+                                <td className="px-6 py-4 whitespace-nowrap text-right text-slate-400 group-hover:text-indigo-600">
+                                    <svg className="w-4 h-4 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
                                 </td>
                             </tr>
                         ))}

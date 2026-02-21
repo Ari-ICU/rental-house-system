@@ -97,86 +97,75 @@ const Header: React.FC<HeaderProps> = ({ onMobileMenuToggle }) => {
     };
 
     return (
-        <header className="flex items-center justify-between px-8 py-5 sticky top-0 z-40 bg-white/70 backdrop-blur-2xl border-b border-slate-200/60 shadow-sm transition-all duration-500">
+        <header className="flex items-center justify-between px-6 py-4 sticky top-0 z-40 bg-white border-b border-slate-200 shadow-sm">
             {/* Left Section */}
-            <div className="flex items-center gap-6">
-                <motion.button
-                    whileTap={{ scale: 0.95 }}
+            <div className="flex items-center gap-4">
+                <button
                     onClick={onMobileMenuToggle}
-                    className="lg:hidden w-11 h-11 flex items-center justify-center text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-2xl transition-all border border-transparent hover:border-indigo-100 shadow-sm hover:shadow-indigo-500/10"
+                    className="lg:hidden w-10 h-10 flex items-center justify-center text-slate-500 hover:text-slate-700 hover:bg-slate-50 flex-shrink-0 rounded-md transition-colors"
                 >
-                    <FaBars size={18} />
-                </motion.button>
-                <div className="flex flex-col">
-                    <h1 className="text-2xl font-black text-slate-900 tracking-tight leading-none flex items-center gap-2">
+                    <FaBars className="w-5 h-5" />
+                </button>
+                <div className="hidden sm:flex flex-col">
+                    <h1 className="text-xl font-semibold text-slate-900 tracking-tight leading-none">
                         {lang === 'en' ? 'Dashboard' : 'ផ្ទាំងគ្រប់គ្រង'}
-                        <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 hidden sm:block" />
                     </h1>
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mt-2 hidden md:block">
-                        {lang === 'en' ? 'Real-time Property Analytics' : 'ការវិភាគលើអចលនទ្រព្យផ្ទាល់'}
-                    </p>
                 </div>
             </div>
 
             {/* Right Section */}
-            <div className="flex items-center gap-3 md:gap-5">
-                {/* Modern Search */}
-                <div className="hidden lg:block relative" ref={searchRef}>
+            <div className="flex items-center gap-4">
+                {/* Search */}
+                <div className="hidden md:block relative w-72" ref={searchRef}>
                     <div className={`
-                        group flex items-center px-4 py-3 bg-slate-100/50 hover:bg-white border transition-all duration-300 w-80 rounded-[1.25rem]
-                        ${showResults ? 'border-indigo-500 ring-4 ring-indigo-500/10 bg-white shadow-xl' : 'border-transparent hover:border-slate-300 focus-within:bg-white focus-within:border-indigo-500 focus-within:ring-4 focus-within:ring-indigo-500/10'}
+                        flex items-center px-3 py-2 bg-white border rounded-md transition-colors
+                        ${showResults ? 'border-indigo-500 ring-1 ring-indigo-500/20' : 'border-slate-300 hover:border-slate-400'}
                     `}>
-                        <FaSearch className={`w-3.5 h-3.5 mr-3 transition-colors ${showResults ? 'text-indigo-500' : 'text-slate-400 group-hover:text-slate-600'}`} />
+                        <FaSearch className="w-4 h-4 text-slate-400 mr-2" />
                         <input
                             type="text"
-                            placeholder={lang === 'en' ? 'Search anything...' : 'ស្វែងរកអ្វីៗគ្រប់យ៉ាង...'}
-                            className="bg-transparent border-none outline-none text-xs font-bold text-slate-700 w-full placeholder-slate-400 uppercase tracking-widest transition-all"
+                            placeholder={lang === 'en' ? 'Search...' : 'ស្វែងរក...'}
+                            className="bg-transparent border-none outline-none text-sm text-slate-900 w-full placeholder-slate-400"
                             value={searchQuery}
                             onChange={(e) => handleSearch(e.target.value)}
                             onFocus={() => searchQuery && setShowResults(true)}
                         />
                     </div>
 
-                    {/* Search Results */}
+                    {/* Search Results Dropdown */}
                     <AnimatePresence>
                         {showResults && results.length > 0 && (
                             <motion.div
-                                initial={{ opacity: 0, y: 10, scale: 0.98 }}
-                                animate={{ opacity: 1, y: 0, scale: 1 }}
-                                exit={{ opacity: 0, scale: 0.98 }}
-                                className="absolute top-full mt-4 left-0 right-0 bg-white rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-slate-100 overflow-hidden z-50 p-2"
+                                initial={{ opacity: 0, y: 5 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: 5 }}
+                                className="absolute top-full mt-2 left-0 right-0 bg-white rounded-md shadow-lg border border-slate-200 overflow-hidden z-50"
                             >
-                                <div className="px-4 py-3 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-50">
-                                    {lang === 'en' ? 'Smart Search Results' : 'លទ្ធផលស្វែងរក'}
+                                <div className="px-3 py-2 text-xs font-semibold text-slate-500 bg-slate-50 border-b border-slate-100">
+                                    {lang === 'en' ? 'Results' : 'លទ្ធផល'}
                                 </div>
-                                <div className="max-h-[350px] overflow-y-auto custom-scrollbar p-1">
+                                <div className="max-h-64 overflow-y-auto">
                                     {results.map((r) => (
                                         <button
                                             key={r.id}
                                             onClick={() => handleSelectResult(r.id)}
-                                            className="w-full flex items-center gap-4 p-3.5 rounded-2xl hover:bg-slate-50 transition-all group text-left border border-transparent hover:border-slate-100"
+                                            className="w-full flex items-center gap-3 p-3 hover:bg-slate-50 transition-colors text-left border-b border-slate-100 last:border-0"
                                         >
-                                            <div className="w-11 h-11 rounded-2xl bg-indigo-50 flex items-center justify-center group-hover:bg-indigo-600 group-hover:text-white transition-all shadow-sm">
-                                                <FaUser size={14} className="text-indigo-600 group-hover:text-white" />
+                                            <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 flex-shrink-0">
+                                                <FaUser className="w-4 h-4" />
                                             </div>
                                             <div className="flex-1 min-w-0">
-                                                <div className="flex justify-between items-center bg-transparent">
-                                                    <p className="text-sm font-black text-slate-800 truncate group-hover:text-indigo-600 transition-colors">
+                                                <div className="flex justify-between items-center">
+                                                    <p className="text-sm font-medium text-slate-900 truncate">
                                                         {r.ClientName}
                                                     </p>
-                                                    <span className="text-[9px] font-black text-slate-400 bg-slate-100 px-2 py-1 rounded-lg">
+                                                    <span className="text-xs text-slate-500">
                                                         {r.roomNumber}
                                                     </span>
                                                 </div>
-                                                <div className="flex items-center gap-2 text-[10px] text-slate-500 font-bold mt-1.5">
-                                                    <span className="flex items-center gap-1.5 bg-white px-2 py-0.5 rounded-lg shadow-sm border border-slate-100">
-                                                        {r.clientPhone || 'No Phone'}
-                                                    </span>
-                                                    <span className={`px-2 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-wider
-                                                        ${r.status === 'Active' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}`}>
-                                                        {r.status}
-                                                    </span>
-                                                </div>
+                                                <p className="text-xs text-slate-500 truncate mt-0.5">
+                                                    {r.clientPhone || 'No Phone'}
+                                                </p>
                                             </div>
                                         </button>
                                     ))}
@@ -186,49 +175,38 @@ const Header: React.FC<HeaderProps> = ({ onMobileMenuToggle }) => {
                                         router.push(`/dashboard/rentals?search=${searchQuery}`);
                                         setShowResults(false);
                                     }}
-                                    className="w-full mt-1 py-4 bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-2xl transition-all shadow-lg active:scale-[0.98]"
+                                    className="w-full py-2.5 bg-slate-50 hover:bg-slate-100 text-indigo-600 text-xs font-semibold transition-colors border-t border-slate-200"
                                 >
-                                    {lang === 'en' ? 'Show All Results' : 'បង្ហាញលទ្ធផលទាំងអស់'}
+                                    {lang === 'en' ? 'View All Results' : 'មើលទាំងអស់'}
                                 </button>
                             </motion.div>
                         )}
                     </AnimatePresence>
                 </div>
 
-                <div className="h-6 w-px bg-slate-200 mx-2 hidden lg:block" />
+                {/* Language Switch */}
+                <button
+                    onClick={toggleLang}
+                    className="flex items-center justify-center w-8 h-8 rounded-full border border-slate-200 hover:border-slate-300 hover:shadow-sm transition-all overflow-hidden"
+                >
+                    <div className="w-full h-full relative">
+                        <Image
+                            src={lang === 'en' ? flags.km : flags.en}
+                            alt={lang === 'en' ? 'Khmer' : 'English'}
+                            fill
+                            className="object-cover"
+                        />
+                    </div>
+                </button>
 
-                {/* Actions */}
-                <div className="flex items-center gap-2">
-                    {/* Language Switcher */}
-                    <motion.button
-                        whileTap={{ scale: 0.95 }}
-                        onClick={toggleLang}
-                        className="w-11 h-11 flex items-center justify-center rounded-2xl bg-slate-100/50 hover:bg-white border border-transparent hover:border-slate-200 hover:shadow-xl hover:shadow-indigo-500/5 transition-all group"
-                    >
-                        <div className="w-6 h-6 rounded-full overflow-hidden relative shadow-sm ring-2 ring-white group-hover:ring-indigo-100 transition-all">
-                            <Image
-                                src={lang === 'en' ? flags.km : flags.en}
-                                alt={lang === 'en' ? 'Khmer' : 'English'}
-                                fill
-                                className="object-cover"
-                            />
-                        </div>
-                    </motion.button>
-
-
-                    {/* User Profile */}
-                    <motion.button
-                        whileTap={{ scale: 0.95 }}
-                        className="flex items-center gap-3 p-1 rounded-2xl hover:bg-slate-100/50 transition-all border border-transparent hover:border-slate-200 group ml-2"
-                    >
-                        <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 text-white flex items-center justify-center text-sm font-black shadow-xl shadow-indigo-600/20 group-hover:rotate-12 transition-transform">
-                            A
-                        </div>
-                        <div className="hidden sm:block text-left mr-2">
-                            <p className="text-xs font-black text-slate-800 leading-none group-hover:text-indigo-600 transition-colors">Administrator</p>
-                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-1 opacity-70">Master Manager</p>
-                        </div>
-                    </motion.button>
+                {/* Profile */}
+                <div className="flex items-center gap-2 pl-4 border-l border-slate-200">
+                    <div className="w-8 h-8 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center text-sm font-semibold">
+                        A
+                    </div>
+                    <div className="hidden lg:block text-left">
+                        <p className="text-sm font-medium text-slate-900 leading-none">Admin</p>
+                    </div>
                 </div>
             </div>
         </header>
