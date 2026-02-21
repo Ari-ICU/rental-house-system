@@ -8,6 +8,7 @@ router.use(protect);
 
 router.get('/', billController.getBills);
 router.get('/:id', billController.getBillById);
+router.get('/:id/pdf', billController.downloadBillPdf);
 router.post('/', billValidationRules(), validate, billController.createBill);
 router.put('/:id', billValidationRules(), validate, billController.updateBill);
 router.delete('/:id', billController.deleteBill);

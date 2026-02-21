@@ -2,6 +2,7 @@ const Bill = require('../models/bill');
 const telegramSender = require('../utils/telegramSender');
 
 const SystemSetting = require('../models/systemSetting');
+const { generateBillPdfBuffer } = require('../utils/pdfGenerator');
 
 const triggerUnpaidAlertIfNeeded = async (bill, isNew = false) => {
     if (!bill) return;
@@ -95,9 +96,40 @@ const getBillById = async (id) => {
     return bill;
 };
 
+const autoSendInvoiceToTenant = async (bill) => {
+    try {
+        if (!bill || !bill.rental || !bill.rental.telegramChatId) return;
+        const settings = await SystemSetting.getSettings();
+        if (!settings || !settings.telegramBotToken) return;
+
+        console.log(`Generating PDF invoice for bill ${bill.id} to send to ${bill.rental.ClientName}...`);
+        const pdfBuffer = await generateBillPdfBuffer(bill, settings);
+        const fileName = `Invoice_Room_${bill.rental.roomNumber}_${bill.month}.pdf`;
+        const lang = settings.telegramLanguage === 'km' ? 'km' : 'en';
+
+        let caption = '';
+        if (lang === 'km') {
+            caption = `📄 <b>វិក្កយបត្រប្រចាំខែ: ${bill.month}</b>\nបន្ទប់: ${bill.rental.roomNumber}\n\nសូមមើលឯកសារភ្ជាប់សម្រាប់ព័ត៌មានលម្អិត។`;
+        } else {
+            caption = `📄 <b>Monthly Invoice: ${bill.month}</b>\nRoom: ${bill.rental.roomNumber}\n\nPlease find the attached PDF invoice for your details.`;
+        }
+
+        await telegramSender.sendDocument(
+            settings.telegramBotToken,
+            bill.rental.telegramChatId,
+            pdfBuffer,
+            fileName,
+            caption
+        );
+    } catch (error) {
+        console.error('Failed to auto-send invoice to tenant:', error);
+    }
+};
+
 const createBill = async (billData) => {
     const bill = await Bill.create(billData);
     await triggerUnpaidAlertIfNeeded(bill, true);
+    await autoSendInvoiceToTenant(bill);
     return bill;
 };
 
@@ -108,6 +140,7 @@ const updateBill = async (id, billData) => {
             throw new Error('No valid fields to update');
         }
         await triggerUnpaidAlertIfNeeded(bill, false);
+        await autoSendInvoiceToTenant(bill);
         return bill;
     } catch (error) {
         if (error.code === 'P2025') {

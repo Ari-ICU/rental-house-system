@@ -7,7 +7,8 @@ import {
     FaChevronLeft,
     FaChevronRight,
     FaEye,
-    FaPrint
+    FaPrint,
+    FaDownload
 } from "react-icons/fa";
 import { Bill } from "@/types/bill";
 import { formatKhmerDate } from "@/utils/dateFormatter";
@@ -15,7 +16,7 @@ import BillViewModal from "@/components/bills/BillViewModal";
 import { useLang } from "@/context/LangContext";
 import { printBill } from "@/components/bills/printBill";
 
-import { deleteBill } from "@/services/billService";
+import { deleteBill, downloadBillPdf } from "@/services/billService";
 import { toast } from "react-hot-toast";
 
 import { useRouter } from "next/navigation";
@@ -119,6 +120,24 @@ const BillsList: React.FC<BillsListProps> = ({
 
     const handlePrint = (bill: Bill) => {
         printBill(bill, lang, exchangeRate, '/signature.png');
+    };
+
+    const handleDownloadPdf = async (bill: Bill) => {
+        const toastId = toast.loading(lang === 'en' ? 'Generating PDF...' : 'កំពុងបង្កើតឯកសារ PDF...');
+        try {
+            const blob = await downloadBillPdf(bill.id);
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Invoice_Room_${bill.rental?.roomNumber || 'Unknown'}_${bill.month}.pdf`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            toast.success(lang === 'en' ? 'PDF downloaded' : 'ការទាញយកជោគជ័យ', { id: toastId });
+        } catch (error) {
+            toast.error(lang === 'en' ? 'Failed to download PDF' : 'ការទាញយក PDF បរាជ័យ', { id: toastId });
+        }
     };
 
     return (
@@ -293,6 +312,13 @@ const BillsList: React.FC<BillsListProps> = ({
                                                     title={lang === "en" ? "Print" : "បោះពុម្ព"}
                                                 >
                                                     <FaPrint size={13} />
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDownloadPdf(bill)}
+                                                    className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-slate-100 rounded transition-colors"
+                                                    title={lang === "en" ? "Download PDF" : "ទាញយក PDF"}
+                                                >
+                                                    <FaDownload size={13} />
                                                 </button>
                                             </div>
                                         </td>

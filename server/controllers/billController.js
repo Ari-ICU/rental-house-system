@@ -1,4 +1,6 @@
 const billService = require('../service/bill.service');
+const { generateBillPdfBuffer } = require('../utils/pdfGenerator');
+const SystemSetting = require('../models/systemSetting');
 const {
     successResponse,
     createdResponse,
@@ -67,10 +69,30 @@ const deleteBill = async (req, res) => {
     }
 };
 
+const downloadBillPdf = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const bill = await billService.getBillById(id);
+        const settings = await SystemSetting.getSettings();
+        const pdfBuffer = await generateBillPdfBuffer(bill, settings);
+
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', `attachment; filename=Invoice_Room_${bill.rental?.roomNumber || 'Unknown'}_${bill.month}.pdf`);
+        return res.send(pdfBuffer);
+    } catch (error) {
+        console.error('Error generating PDF:', error);
+        if (error.message === 'Bill not found') {
+            return notFoundResponse(res, 'Bill not found');
+        }
+        return errorResponse(res, 'Failed to generate PDF', error);
+    }
+};
+
 module.exports = {
     getBills,
     getBillById,
     createBill,
     updateBill,
     deleteBill,
+    downloadBillPdf,
 };

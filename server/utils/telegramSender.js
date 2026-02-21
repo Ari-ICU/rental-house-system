@@ -1,3 +1,5 @@
+const TelegramBot = require('node-telegram-bot-api');
+
 const sendMessage = async (botToken, chatId, text) => {
     if (!botToken || !chatId) {
         console.log('Telegram bot is not configured in settings.');
@@ -28,6 +30,27 @@ const sendMessage = async (botToken, chatId, text) => {
     }
 };
 
+const sendDocument = async (botToken, chatId, documentBuffer, filename, caption = '') => {
+    if (!botToken || !chatId) {
+        console.log('Telegram bot/chatId is missing for sending document.');
+        return;
+    }
+    try {
+        const tempBot = new TelegramBot(botToken, { polling: false });
+        await tempBot.sendDocument(chatId, documentBuffer, {
+            caption: caption,
+            parse_mode: 'HTML'
+        }, {
+            filename: filename,
+            contentType: 'application/pdf'
+        });
+        console.log('Document sent successfully.');
+    } catch (error) {
+        console.error('Error sending document via TelegramBot:', error.message);
+    }
+};
+
 module.exports = {
     sendMessage,
+    sendDocument
 };
