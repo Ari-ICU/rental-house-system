@@ -18,8 +18,8 @@ interface ReportsTableProps {
 }
 
 const statusColors: Record<Report["status"], string> = {
-    Completed: "bg-emerald-50 text-emerald-700 border-emerald-100",
-    "In-Review": "bg-amber-50 text-amber-700 border-amber-100"
+    Completed: "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400",
+    "In-Review": "bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400"
 };
 
 const ReportsTable: React.FC<ReportsTableProps> = ({
@@ -173,44 +173,43 @@ const ReportsTable: React.FC<ReportsTableProps> = ({
                                             </td>
                                             <td className="px-8 py-6">
                                                 <span
-                                                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold border ${statusColors[report.status]}`}
+                                                    className={`inline-flex px-2 py-0.5 rounded text-[11px] font-medium leading-tight ${statusColors[report.status]}`}
                                                 >
-                                                    <span className={`w-1.5 h-1.5 rounded-full ${report.status === 'Completed' ? 'bg-emerald-500' : 'bg-amber-500'}`}></span>
                                                     {report.status === 'Completed'
                                                         ? (lang === 'km' ? 'បានបញ្ចប់' : 'Completed')
                                                         : (lang === 'km' ? 'កំពុងពិនិត្យ' : 'In-Review')}
                                                 </span>
                                             </td>
                                             <td className="px-8 py-6">
-                                                <div className="flex items-center gap-2">
+                                                <div className="flex items-center gap-1">
                                                     <button
                                                         onClick={() => onView?.(report)}
-                                                        className="bg-indigo-50 hover:bg-indigo-100 text-indigo-600 p-2.5 rounded-xl transition-all active:scale-90"
+                                                        className="p-1.5 text-slate-400 dark:text-slate-500 hover:text-indigo-500 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded transition-colors"
                                                         title={lang === 'km' ? 'មើលលម្អិត' : 'View Details'}
                                                     >
-                                                        <FaEye size={16} />
+                                                        <FaEye size={14} />
                                                     </button>
                                                     <button
                                                         onClick={() => onEdit?.(report)}
-                                                        className="bg-blue-50 hover:bg-blue-100 text-blue-600 p-2.5 rounded-xl transition-all active:scale-90"
+                                                        className="p-1.5 text-slate-400 dark:text-slate-500 hover:text-indigo-500 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded transition-colors"
                                                         title="Edit Report"
                                                     >
-                                                        <FaEdit size={16} />
+                                                        <FaEdit size={14} />
                                                     </button>
                                                     <button
                                                         onClick={() => onExport?.(report)}
-                                                        className="bg-emerald-50 hover:bg-emerald-100 text-emerald-600 p-2.5 rounded-xl transition-all active:scale-90"
+                                                        className="p-1.5 text-slate-400 dark:text-slate-500 hover:text-emerald-500 dark:hover:text-emerald-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded transition-colors"
                                                         title="Export Data"
                                                     >
-                                                        <FaFileExport size={16} />
+                                                        <FaFileExport size={14} />
                                                     </button>
-                                                    <div className="w-px h-6 bg-gray-100 mx-1"></div>
+                                                    <div className="w-px h-4 bg-slate-200 dark:bg-slate-700 mx-1"></div>
                                                     <button
                                                         onClick={() => handleDelete(report)}
-                                                        className="bg-rose-50 hover:bg-rose-100 text-rose-500 p-2.5 rounded-xl transition-all active:scale-90"
+                                                        className="p-1.5 text-slate-400 dark:text-slate-500 hover:text-rose-500 dark:hover:text-rose-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded transition-colors"
                                                         title="Delete Report"
                                                     >
-                                                        <FaTrash size={16} />
+                                                        <FaTrash size={13} />
                                                     </button>
                                                 </div>
                                             </td>
