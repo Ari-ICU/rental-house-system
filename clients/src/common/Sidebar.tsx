@@ -16,9 +16,11 @@ import {
     FaPlug,
     FaCog,
     FaChevronLeft,
-    FaShieldAlt
+    FaShieldAlt,
+    FaSignOutAlt
 } from "react-icons/fa";
 import { useLang } from "@/context/LangContext";
+import { useAuth } from "@/context/AuthContext";
 
 interface LinkItem {
     name: string;
@@ -36,6 +38,7 @@ interface LinkGroup {
 
 const Sidebar: React.FC<{ isMobileOpen: boolean; onClose: () => void }> = ({ isMobileOpen, onClose }) => {
     const { lang } = useLang();
+    const { logout } = useAuth();
     const pathname = usePathname();
     const [isCollapsed, setIsCollapsed] = useState(false);
     const [scrolled, setScrolled] = useState(false);
@@ -164,6 +167,37 @@ const Sidebar: React.FC<{ isMobileOpen: boolean; onClose: () => void }> = ({ isM
                     </div>
                 </div>
             ))}
+
+            {/* Logout Button */}
+            <div className="pt-4 pb-8">
+                <button
+                    onClick={() => {
+                        if (confirm(lang === 'en' ? 'Are you sure you want to logout?' : 'តើអ្នកប្រាកដជាចង់ចាកចេញមែនទេ?')) {
+                            logout();
+                            if (onLinkClick) onLinkClick();
+                        }
+                    }}
+                    className={`
+                        group relative flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all duration-300 w-full
+                        ${collapsed ? "justify-center" : "justify-start"}
+                        text-rose-400 hover:text-white hover:bg-rose-500/10 border border-transparent hover:border-rose-500/20
+                    `}
+                >
+                    <span className="text-xl transition-all duration-300 group-hover:scale-110">
+                        <FaSignOutAlt />
+                    </span>
+                    {!collapsed && (
+                        <span className="text-[13.5px] font-bold tracking-wide">
+                            {lang === 'en' ? 'Logout' : 'ចាកចេញ'}
+                        </span>
+                    )}
+                    {collapsed && (
+                        <div className="absolute left-full ml-4 px-3 py-2 bg-slate-900 text-white text-xs font-bold rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 shadow-xl border border-slate-700 whitespace-nowrap z-50">
+                            {lang === 'en' ? 'Logout' : 'ចាកចេញ'}
+                        </div>
+                    )}
+                </button>
+            </div>
         </nav>
     );
 

@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 const billController = require('../controllers/billController');
 const { billValidationRules, validate } = require('../validator/bill.validator');
+const { protect } = require('../middleware/auth.middleware');
+
+router.use(protect);
 
 router.get('/', billController.getBills);
 router.get('/:id', billController.getBillById);

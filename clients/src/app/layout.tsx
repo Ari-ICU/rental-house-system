@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { LangProvider } from "@/context/LangContext";
+import { AuthProvider } from "@/context/AuthContext";
 import { Toaster } from 'react-hot-toast';
 
 export const metadata: Metadata = {
@@ -65,7 +66,9 @@ export default function RootLayout({
     <html lang="en">
       <body className="antialiased">
         <LangProvider>
-          {children}
+          <AuthProvider>
+            {children}
+          </AuthProvider>
         </LangProvider>
         <Toaster
           position="top-right"

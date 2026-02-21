@@ -3,11 +3,32 @@
 import React, { useState } from "react";
 import Sidebar from "@/common/Sidebar";
 import Header from "@/common/Header";
+import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+    const { user, loading } = useAuth();
+    const router = useRouter();
     const [isMobileOpen, setIsMobileOpen] = useState(false);
 
+    useEffect(() => {
+        if (!loading && !user) {
+            router.push('/login');
+        }
+    }, [user, loading, router]);
+
     const toggleMobileMenu = () => setIsMobileOpen(!isMobileOpen);
+
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-white">
+                <div className="w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+            </div>
+        );
+    }
+
+    if (!user) return null;
 
     return (
         <div className="flex min-h-screen">

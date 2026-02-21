@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 const rentalController = require('../controllers/rentalController');
 const { rentalValidationRules, validate } = require('../validator/rental.validator');
+const { protect } = require('../middleware/auth.middleware');
+
+router.use(protect); // Protect all rental routes
 
 router.get('/', rentalController.getRentals);
 router.get('/export', rentalController.exportRentals);
