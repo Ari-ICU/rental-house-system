@@ -106,8 +106,8 @@ const Sidebar: React.FC<{ isMobileOpen: boolean; onClose: () => void }> = ({ isM
                     group relative flex items-center gap-3 px-3 py-2 rounded-md transition-colors duration-200
                     ${collapsed ? "justify-center" : "justify-start"}
                     ${active
-                        ? "bg-slate-100 text-slate-900 font-medium"
-                        : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                        ? "bg-slate-100 dark:bg-indigo-500/10 text-slate-900 dark:text-indigo-400 font-medium"
+                        : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-200"
                     }
                 `}
             >
@@ -135,7 +135,7 @@ const Sidebar: React.FC<{ isMobileOpen: boolean; onClose: () => void }> = ({ isM
             {linkGroups.map((group) => (
                 <div key={group.title} className="relative">
                     {!collapsed && (
-                        <h3 className="px-3 mb-2 text-xs font-semibold text-slate-500 tracking-wider">
+                        <h3 className="px-3 mb-2 text-xs font-semibold text-slate-500 dark:text-slate-400 tracking-wider">
                             {lang === 'en' ? group.title : group.titleKh}
                         </h3>
                     )}
@@ -147,7 +147,7 @@ const Sidebar: React.FC<{ isMobileOpen: boolean; onClose: () => void }> = ({ isM
                 </div>
             ))}
 
-            <div className="pt-6 pb-8 border-t border-slate-100 mt-6 mx-3">
+            <div className="pt-6 pb-8 border-t border-slate-100 dark:border-slate-800 mt-6 mx-3">
                 <button
                     onClick={() => {
                         if (confirm(lang === 'en' ? 'Are you sure you want to logout?' : 'តើអ្នកប្រាកដជាចង់ចាកចេញមែនទេ?')) {
@@ -184,14 +184,14 @@ const Sidebar: React.FC<{ isMobileOpen: boolean; onClose: () => void }> = ({ isM
             {/* Desktop Sidebar */}
             <aside
                 className={`
-                    hidden lg:flex flex-col bg-white h-screen transition-all duration-300
-                    border-r border-slate-200 relative
+                    hidden lg:flex flex-col bg-white dark:bg-slate-950 h-screen transition-all duration-300
+                    border-r border-slate-200 dark:border-slate-800 relative
                     ${isCollapsed ? "w-[80px]" : "w-[260px]"}
                     sticky top-0 z-50
                 `}
             >
                 {/* Header / Logo */}
-                <div className={`h-16 flex items-center border-b border-slate-100 ${isCollapsed ? 'justify-center' : 'justify-between px-6'} transition-all duration-300`}>
+                <div className={`h-16 flex items-center border-b border-slate-100 dark:border-slate-800 ${isCollapsed ? 'justify-center' : 'justify-between px-6'} transition-all duration-300`}>
                     <div className="flex items-center gap-3 cursor-pointer">
                         <div className="w-8 h-8 rounded bg-indigo-600 flex items-center justify-center shadow-sm">
                             <span className="text-white font-bold text-lg">R</span>
@@ -199,7 +199,7 @@ const Sidebar: React.FC<{ isMobileOpen: boolean; onClose: () => void }> = ({ isM
 
                         {!isCollapsed && (
                             <div className="flex flex-col">
-                                <span className="font-semibold text-slate-900 tracking-tight leading-none text-lg">
+                                <span className="font-semibold text-slate-900 dark:text-slate-50 tracking-tight leading-none text-lg">
                                     RentFlow
                                 </span>
                             </div>
@@ -209,7 +209,7 @@ const Sidebar: React.FC<{ isMobileOpen: boolean; onClose: () => void }> = ({ isM
                     {!isCollapsed && (
                         <button
                             onClick={toggleCollapse}
-                            className="w-8 h-8 flex items-center justify-center rounded-md bg-white border border-slate-200 text-slate-500 hover:text-slate-700 hover:bg-slate-50 transition-colors shadow-sm"
+                            className="w-8 h-8 flex items-center justify-center rounded-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors shadow-sm"
                         >
                             <FaChevronLeft size={12} />
                         </button>

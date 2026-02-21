@@ -5,6 +5,7 @@ import { Rental } from "@/types/rents";
 import { getAllRentals } from "@/services/rentalService";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { useTheme } from "next-themes";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface HeaderProps {
@@ -13,6 +14,7 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ onMobileMenuToggle }) => {
     const { lang, toggleLang } = useLang();
+    const { theme, setTheme } = useTheme();
     const router = useRouter();
     const [searchQuery, setSearchQuery] = useState("");
     const [allRentals, setAllRentals] = useState<Rental[]>([]);
@@ -97,17 +99,17 @@ const Header: React.FC<HeaderProps> = ({ onMobileMenuToggle }) => {
     };
 
     return (
-        <header className="flex items-center justify-between px-6 py-4 sticky top-0 z-40 bg-white border-b border-slate-200 shadow-sm">
+        <header className="flex items-center justify-between px-6 py-4 sticky top-0 z-40 bg-white dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 shadow-sm transition-colors">
             {/* Left Section */}
             <div className="flex items-center gap-4">
                 <button
                     onClick={onMobileMenuToggle}
-                    className="lg:hidden w-10 h-10 flex items-center justify-center text-slate-500 hover:text-slate-700 hover:bg-slate-50 flex-shrink-0 rounded-md transition-colors"
+                    className="lg:hidden w-10 h-10 flex items-center justify-center text-slate-500 hover:text-slate-700 hover:bg-slate-50 dark:hover:bg-slate-900 flex-shrink-0 rounded-md transition-colors"
                 >
                     <FaBars className="w-5 h-5" />
                 </button>
                 <div className="hidden sm:flex flex-col">
-                    <h1 className="text-xl font-semibold text-slate-900 tracking-tight leading-none">
+                    <h1 className="text-xl font-semibold text-slate-900 dark:text-slate-50 tracking-tight leading-none">
                         {lang === 'en' ? 'Dashboard' : 'ផ្ទាំងគ្រប់គ្រង'}
                     </h1>
                 </div>
@@ -199,13 +201,30 @@ const Header: React.FC<HeaderProps> = ({ onMobileMenuToggle }) => {
                     </div>
                 </button>
 
+                {/* Theme Switch */}
+                <button
+                    onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                    className="flex items-center justify-center w-8 h-8 rounded-md bg-slate-50 dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-800 transition-colors"
+                    aria-label="Toggle Dark Mode"
+                >
+                    {theme === 'dark' ? (
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                        </svg>
+                    ) : (
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                        </svg>
+                    )}
+                </button>
+
                 {/* Profile */}
-                <div className="flex items-center gap-2 pl-4 border-l border-slate-200">
-                    <div className="w-8 h-8 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center text-sm font-semibold">
+                <div className="flex items-center gap-2 pl-4 border-l border-slate-200 dark:border-slate-800">
+                    <div className="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center text-sm font-semibold">
                         A
                     </div>
                     <div className="hidden lg:block text-left">
-                        <p className="text-sm font-medium text-slate-900 leading-none">Admin</p>
+                        <p className="text-sm font-medium text-slate-900 dark:text-slate-100 leading-none">Admin</p>
                     </div>
                 </div>
             </div>

@@ -3,6 +3,14 @@ import "./globals.css";
 import { LangProvider } from "@/context/LangContext";
 import { AuthProvider } from "@/context/AuthContext";
 import { Toaster } from 'react-hot-toast';
+import { ThemeProvider } from "@/context/ThemeProvider";
+
+export const viewport = {
+  themeColor: "#4f46e5",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'),
@@ -15,8 +23,6 @@ export const metadata: Metadata = {
   keywords: ["Rental Management", "PropTech", "SaaS", "Real Estate Dashboard", "Automated Billing", "Cambodia Property"],
   authors: [{ name: "RentFlow Team" }],
   manifest: "/manifest.json",
-  themeColor: "#4f46e5",
-  viewport: "width=device-width, initial-scale=1, maximum-scale=1",
   icons: {
     icon: "/favicon.ico",
     shortcut: "/favicon.ico",
@@ -69,22 +75,24 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
       </head>
-      <body className="antialiased">
-        <LangProvider>
-          <AuthProvider>
-            {children}
-          </AuthProvider>
-        </LangProvider>
-        <Toaster
-          position="top-right"
-          toastOptions={{
-            duration: 1000,
-            style: {
-              background: '#363636',
-              color: '#fff',
-            },
-          }}
-        />
+      <body className="antialiased dark:bg-slate-950 dark:text-slate-50">
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          <LangProvider>
+            <AuthProvider>
+              {children}
+            </AuthProvider>
+          </LangProvider>
+          <Toaster
+            position="top-right"
+            toastOptions={{
+              duration: 1000,
+              style: {
+                background: '#363636',
+                color: '#fff',
+              },
+            }}
+          />
+        </ThemeProvider>
       </body>
     </html>
   );

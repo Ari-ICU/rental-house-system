@@ -203,16 +203,16 @@ const RentalPageContent: React.FC = () => {
                     return (
                         <div
                             key={card.label}
-                            className="bg-white p-4 rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between"
+                            className="bg-white dark:bg-slate-900 p-4 rounded-lg border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between"
                         >
                             <div className="flex items-start justify-between mb-3">
                                 <div>
-                                    <h3 className="text-slate-500 text-xs font-medium uppercase tracking-wider">
+                                    <h3 className="text-slate-500 dark:text-slate-400 text-xs font-medium uppercase tracking-wider">
                                         {card.label}
                                     </h3>
-                                    <p className="text-2xl font-semibold text-slate-900 mt-1">{card.value}</p>
+                                    <p className="text-2xl font-semibold text-slate-900 dark:text-slate-50 mt-1">{card.value}</p>
                                 </div>
-                                <div className={`p-2.5 rounded-md ${card.wrapperClass}`}>
+                                <div className={`p-2.5 rounded-md ${card.wrapperClass} dark:bg-opacity-10 dark:text-opacity-90`}>
                                     <Icon className="text-lg" />
                                 </div>
                             </div>

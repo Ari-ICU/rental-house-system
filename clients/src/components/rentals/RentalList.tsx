@@ -17,10 +17,10 @@ interface RentalListProps {
 }
 
 const statusConfig: { [key in RentalStatus]: { label: string; labelKm: string; dot: string; badge: string } } = {
-    "Active": { label: "Active", labelKm: "កំពុងជួល", dot: "bg-emerald-400", badge: "bg-emerald-50 text-emerald-700 bg-opacity-70" },
-    "Reserved": { label: "Reserved", labelKm: "កក់ទុក", dot: "bg-blue-400", badge: "bg-blue-50 text-blue-700 bg-opacity-70" },
-    "Completed": { label: "Completed", labelKm: "បានបញ្ចប់", dot: "bg-slate-400", badge: "bg-slate-100 text-slate-700 bg-opacity-70" },
-    "Maintenance": { label: "Maintenance", labelKm: "កំពុងជួសជុល", dot: "bg-rose-400", badge: "bg-rose-50 text-rose-700 bg-opacity-70" },
+    "Active": { label: "Active", labelKm: "កំពុងជួល", dot: "bg-emerald-400", badge: "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400" },
+    "Reserved": { label: "Reserved", labelKm: "កក់ទុក", dot: "bg-blue-400", badge: "bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400" },
+    "Completed": { label: "Completed", labelKm: "បានបញ្ចប់", dot: "bg-slate-400", badge: "bg-slate-100 dark:bg-slate-500/10 text-slate-700 dark:text-slate-400" },
+    "Maintenance": { label: "Maintenance", labelKm: "កំពុងជួសជុល", dot: "bg-rose-400", badge: "bg-rose-50 dark:bg-rose-500/10 text-rose-700 dark:text-rose-400" },
 };
 
 const allStatuses: RentalStatus[] = ["Active", "Reserved", "Completed", "Maintenance"];
@@ -149,7 +149,7 @@ const RentalList: React.FC<RentalListProps> = ({
                                 onClick={() => { setStatusFilter(s); setCurrentPage(1); }}
                                 className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${isActive
                                     ? "bg-indigo-600 text-white shadow-sm"
-                                    : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
+                                    : "bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700"
                                     }`}
                             >
                                 {s === "All"
@@ -161,7 +161,7 @@ const RentalList: React.FC<RentalListProps> = ({
                 </div>
 
                 {/* Items Per Page */}
-                <div className="flex items-center gap-2 text-xs font-medium text-slate-500">
+                <div className="flex items-center gap-2 text-xs font-medium text-slate-500 dark:text-slate-400">
                     <span>{lang === "en" ? "Show:" : "បង្ហាញ:"}</span>
                     <CustomDropdown
                         options={itemsPerPageOptions.map(opt => ({ value: String(opt), label: String(opt) }))}
@@ -172,10 +172,10 @@ const RentalList: React.FC<RentalListProps> = ({
                 </div>
             </div>
 
-            <div className="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden w-full">
+            <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden w-full">
                 <div className="overflow-x-auto w-full">
                     <table className="w-full text-sm text-left border-collapse">
-                        <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-medium">
+                        <thead className="bg-slate-50 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 font-medium">
                             <tr>
                                 <th className="px-6 py-3 font-medium text-[13px]">#</th>
                                 <th className="px-6 py-3 font-medium text-[13px]">{t.client}</th>
@@ -187,13 +187,13 @@ const RentalList: React.FC<RentalListProps> = ({
                                 <th className="px-6 py-3 font-medium text-[13px]">{t.actions}</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-100">
+                        <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50">
                             {currentRentals.length === 0 ? (
                                 <tr>
                                     <td colSpan={8}>
-                                        <div className="flex flex-col items-center justify-center py-20 text-slate-500 gap-3">
-                                            <div className="w-12 h-12 rounded bg-slate-50 flex items-center justify-center">
-                                                <FaInbox className="text-xl text-slate-300" />
+                                        <div className="flex flex-col items-center justify-center py-20 text-slate-500 dark:text-slate-400 gap-3">
+                                            <div className="w-12 h-12 rounded bg-slate-50 dark:bg-slate-800/50 flex items-center justify-center">
+                                                <FaInbox className="text-xl text-slate-300 dark:text-slate-600" />
                                             </div>
                                             <p className="text-sm font-medium">{t.noRentals}</p>
                                         </div>
@@ -207,10 +207,10 @@ const RentalList: React.FC<RentalListProps> = ({
                                 return (
                                     <tr
                                         key={rental.id}
-                                        className={`group transition-colors hover:bg-slate-50 ${isEditing ? "bg-slate-50/70" : ""}`}
+                                        className={`group transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50 ${isEditing ? "bg-slate-50/70 dark:bg-slate-800/30" : ""}`}
                                     >
                                         {/* ID */}
-                                        <td className="px-6 py-4 text-slate-500 tabular-nums whitespace-nowrap">
+                                        <td className="px-6 py-4 text-slate-500 dark:text-slate-400 tabular-nums whitespace-nowrap">
                                             {String(idx + 1 + (currentPage - 1) * itemsPerPage).padStart(2, "0")}
                                         </td>
 
@@ -221,26 +221,26 @@ const RentalList: React.FC<RentalListProps> = ({
                                                     type="text"
                                                     value={editForm.ClientName || ""}
                                                     onChange={(e) => updateEditForm("ClientName", e.target.value)}
-                                                    className="border border-slate-300 rounded-md px-2 py-1.5 w-full text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
+                                                    className="border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 rounded-md px-2 py-1.5 w-full text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:focus:ring-indigo-400"
                                                 />
                                             ) : (
                                                 <div className="flex items-center gap-3">
-                                                    <div className="w-8 h-8 rounded bg-slate-100 text-slate-600 flex items-center justify-center flex-shrink-0 text-xs font-medium">
+                                                    <div className="w-8 h-8 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center flex-shrink-0 text-xs font-medium">
                                                         {initials}
                                                     </div>
-                                                    <span className="font-medium text-slate-900">{rental.ClientName || "N/A"}</span>
+                                                    <span className="font-medium text-slate-900 dark:text-slate-50">{rental.ClientName || "N/A"}</span>
                                                 </div>
                                             )}
                                         </td>
 
                                         {/* Room */}
-                                        <td className="px-6 py-4 whitespace-nowrap text-slate-600">
+                                        <td className="px-6 py-4 whitespace-nowrap text-slate-600 dark:text-slate-300">
                                             {isEditing ? (
                                                 <input
                                                     type="text"
                                                     value={editForm.roomNumber || ""}
                                                     onChange={(e) => updateEditForm("roomNumber", e.target.value)}
-                                                    className="border border-slate-300 rounded-md px-2 py-1.5 w-full text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
+                                                    className="border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 rounded-md px-2 py-1.5 w-full text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:focus:ring-indigo-400"
                                                 />
                                             ) : (
                                                 rental.roomNumber || "N/A"
@@ -267,13 +267,13 @@ const RentalList: React.FC<RentalListProps> = ({
                                         </td>
 
                                         {/* Rent Amount */}
-                                        <td className="px-6 py-4 whitespace-nowrap font-medium text-slate-900">
+                                        <td className="px-6 py-4 whitespace-nowrap font-medium text-slate-900 dark:text-slate-50">
                                             {isEditing ? (
                                                 <input
                                                     type="number"
                                                     value={editForm.rentAmount || 0}
                                                     onChange={(e) => updateEditForm("rentAmount", parseFloat(e.target.value) || 0)}
-                                                    className="border border-slate-300 rounded-md px-2 py-1.5 w-24 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
+                                                    className="border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 rounded-md px-2 py-1.5 w-24 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:focus:ring-indigo-400"
                                                     min="0" step="0.01"
                                                 />
                                             ) : (
@@ -282,14 +282,14 @@ const RentalList: React.FC<RentalListProps> = ({
                                         </td>
 
                                         {/* Start Date */}
-                                        <td className="px-6 py-4 whitespace-nowrap text-slate-600">
+                                        <td className="px-6 py-4 whitespace-nowrap text-slate-600 dark:text-slate-300">
                                             {isEditing ? (
                                                 <button
                                                     type="button"
-                                                    className="flex items-center gap-2 border border-slate-300 rounded-md bg-white px-2 py-1.5 text-sm w-full hover:bg-slate-50"
+                                                    className="flex items-center gap-2 border border-slate-300 dark:border-slate-700 rounded-md bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 px-2 py-1.5 text-sm w-full hover:bg-slate-50 dark:hover:bg-slate-800"
                                                     onClick={() => handleDateEdit("startDate")}
                                                 >
-                                                    <FaCalendarAlt className="text-slate-400 text-xs" />
+                                                    <FaCalendarAlt className="text-slate-400 dark:text-slate-500 text-xs" />
                                                     <span>{formatKhmerDate(editForm.startDate as string, lang) || "—"}</span>
                                                 </button>
                                             ) : (
@@ -298,14 +298,14 @@ const RentalList: React.FC<RentalListProps> = ({
                                         </td>
 
                                         {/* End Date */}
-                                        <td className="px-6 py-4 whitespace-nowrap text-slate-600">
+                                        <td className="px-6 py-4 whitespace-nowrap text-slate-600 dark:text-slate-300">
                                             {isEditing ? (
                                                 <button
                                                     type="button"
-                                                    className="flex items-center gap-2 border border-slate-300 rounded-md bg-white px-2 py-1.5 text-sm w-full hover:bg-slate-50"
+                                                    className="flex items-center gap-2 border border-slate-300 dark:border-slate-700 rounded-md bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 px-2 py-1.5 text-sm w-full hover:bg-slate-50 dark:hover:bg-slate-800"
                                                     onClick={() => handleDateEdit("endDate")}
                                                 >
-                                                    <FaCalendarAlt className="text-slate-400 text-xs" />
+                                                    <FaCalendarAlt className="text-slate-400 dark:text-slate-500 text-xs" />
                                                     <span>{formatKhmerDate(editForm.endDate as string, lang) || "—"}</span>
                                                 </button>
                                             ) : (
@@ -327,7 +327,7 @@ const RentalList: React.FC<RentalListProps> = ({
                                                         </button>
                                                         <button
                                                             onClick={handleCancelEdit}
-                                                            className="p-1.5 bg-slate-200 text-slate-700 rounded hover:bg-slate-300 transition-colors"
+                                                            className="p-1.5 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors"
                                                             title={lang === "en" ? "Cancel" : "បោះបង់"}
                                                         >
                                                             <FaTimes size={14} />
@@ -337,21 +337,21 @@ const RentalList: React.FC<RentalListProps> = ({
                                                     <>
                                                         <button
                                                             onClick={() => handleViewDetails(rental)}
-                                                            className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-slate-100 rounded transition-colors"
+                                                            className="p-1.5 text-slate-400 dark:text-slate-500 hover:text-indigo-500 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded transition-colors"
                                                             title={lang === "en" ? "View" : "មើល"}
                                                         >
                                                             <FaEye size={14} />
                                                         </button>
                                                         <button
                                                             onClick={() => handleEditStart(rental)}
-                                                            className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-slate-100 rounded transition-colors"
+                                                            className="p-1.5 text-slate-400 dark:text-slate-500 hover:text-indigo-500 dark:hover:text-indigo-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded transition-colors"
                                                             title={lang === "en" ? "Edit" : "កែប្រែ"}
                                                         >
                                                             <FaEdit size={14} />
                                                         </button>
                                                         <button
                                                             onClick={() => handleDelete(rental.id)}
-                                                            className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-slate-100 rounded transition-colors"
+                                                            className="p-1.5 text-slate-400 dark:text-slate-500 hover:text-rose-500 dark:hover:text-rose-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded transition-colors"
                                                             title={lang === "en" ? "Delete" : "លុប"}
                                                         >
                                                             <FaTrash size={13} />
@@ -369,13 +369,13 @@ const RentalList: React.FC<RentalListProps> = ({
 
                 {/* Pagination */}
                 {totalPages > 1 && (
-                    <div className="flex items-center justify-between px-6 py-4 border-t border-slate-200 bg-slate-50">
+                    <div className="flex items-center justify-between px-6 py-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50">
                         <button
                             onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
                             disabled={currentPage === 1}
                             className={`flex items-center px-4 py-2 rounded border text-sm font-medium transition-colors ${currentPage === 1
-                                ? "border-slate-200 text-slate-300 cursor-not-allowed bg-white"
-                                : "border-slate-300 text-slate-700 hover:bg-slate-50 bg-white shadow-sm"
+                                ? "border-slate-200 dark:border-slate-700 text-slate-300 dark:text-slate-600 cursor-not-allowed bg-white dark:bg-slate-800"
+                                : "border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 bg-white dark:bg-slate-800 shadow-sm"
                                 }`}
                         >
                             {lang === 'en' ? 'Previous' : 'មុន'}
@@ -387,7 +387,7 @@ const RentalList: React.FC<RentalListProps> = ({
                                     onClick={() => setCurrentPage(page)}
                                     className={`w-8 h-8 rounded text-sm font-medium transition-colors ${page === currentPage
                                         ? "bg-indigo-600 text-white shadow-sm"
-                                        : "bg-transparent text-slate-600 hover:bg-slate-200"
+                                        : "bg-transparent text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800"
                                         }`}
                                 >
                                     {page}
@@ -398,8 +398,8 @@ const RentalList: React.FC<RentalListProps> = ({
                             onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
                             disabled={currentPage === totalPages}
                             className={`flex items-center px-4 py-2 rounded border text-sm font-medium transition-colors ${currentPage === totalPages
-                                ? "border-slate-200 text-slate-300 cursor-not-allowed bg-white"
-                                : "border-slate-300 text-slate-700 hover:bg-slate-50 bg-white shadow-sm"
+                                ? "border-slate-200 dark:border-slate-700 text-slate-300 dark:text-slate-600 cursor-not-allowed bg-white dark:bg-slate-800"
+                                : "border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 bg-white dark:bg-slate-800 shadow-sm"
                                 }`}
                         >
                             {lang === 'en' ? 'Next' : 'បន្ទាប់'}
