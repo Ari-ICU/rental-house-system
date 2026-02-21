@@ -101,13 +101,13 @@ const BillsPage: React.FC = () => {
                 {/* Summary Cards */}
                 {!isLoading && bills.length > 0 && (
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6 mt-2">
-                        <div className="bg-white p-5 rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+                        <div className="bg-white dark:bg-slate-900 p-5 rounded-lg border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
                             <div className="flex items-start justify-between mb-4">
                                 <div>
-                                    <h3 className="text-slate-500 text-sm font-medium">
+                                    <h3 className="text-slate-500 dark:text-slate-400 text-sm font-medium">
                                         {lang === 'km' ? 'វិក្កយបត្រសរុប' : 'Total Bills'}
                                     </h3>
-                                    <p className="text-2xl font-semibold text-slate-900 mt-1">{stats.total}</p>
+                                    <p className="text-2xl font-semibold text-slate-900 dark:text-white mt-1">{stats.total}</p>
                                 </div>
                                 <div className="p-2.5 bg-indigo-50 text-indigo-600 rounded-md">
                                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -117,13 +117,13 @@ const BillsPage: React.FC = () => {
                             </div>
                         </div>
 
-                        <div className="bg-white p-5 rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+                        <div className="bg-white dark:bg-slate-900 p-5 rounded-lg border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
                             <div className="flex items-start justify-between mb-4">
                                 <div>
-                                    <h3 className="text-slate-500 text-sm font-medium">
+                                    <h3 className="text-slate-500 dark:text-slate-400 text-sm font-medium">
                                         {lang === 'km' ? 'មិនទាន់បង់' : 'Unpaid Bills'}
                                     </h3>
-                                    <p className="text-2xl font-semibold text-slate-900 mt-1">{stats.unpaidCount}</p>
+                                    <p className="text-2xl font-semibold text-slate-900 dark:text-white mt-1">{stats.unpaidCount}</p>
                                 </div>
                                 <div className="p-2.5 bg-rose-50 text-rose-600 rounded-md">
                                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -133,13 +133,13 @@ const BillsPage: React.FC = () => {
                             </div>
                         </div>
 
-                        <div className="bg-white p-5 rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+                        <div className="bg-white dark:bg-slate-900 p-5 rounded-lg border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
                             <div className="flex items-start justify-between mb-4">
                                 <div>
-                                    <h3 className="text-slate-500 text-sm font-medium">
+                                    <h3 className="text-slate-500 dark:text-slate-400 text-sm font-medium">
                                         {lang === 'km' ? 'ចំណូលសរុប' : 'Total Revenue'}
                                     </h3>
-                                    <p className="text-2xl font-semibold text-slate-900 mt-1">${stats.totalRevenue.toLocaleString()}</p>
+                                    <p className="text-2xl font-semibold text-slate-900 dark:text-white mt-1">${stats.totalRevenue.toLocaleString()}</p>
                                 </div>
                                 <div className="p-2.5 bg-emerald-50 text-emerald-600 rounded-md">
                                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -156,20 +156,20 @@ const BillsPage: React.FC = () => {
                         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
                     </div>
                 ) : filteredBills.length > 0 ? (
-                    <div className="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden">
+                    <div className="bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
                         <BillsList bills={filteredBills} onRefresh={fetchBills} />
                     </div>
                 ) : (
-                    <div className="flex flex-col items-center justify-center py-24 px-6 bg-white rounded-lg border border-dashed border-slate-300 shadow-sm text-center">
-                        <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
-                            <svg className="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="flex flex-col items-center justify-center py-24 px-6 bg-white dark:bg-slate-900 rounded-lg border border-dashed border-slate-300 dark:border-slate-700 shadow-sm text-center">
+                        <div className="w-16 h-16 bg-slate-50 dark:bg-slate-800 rounded-full flex items-center justify-center mb-4">
+                            <svg className="w-8 h-8 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
                         </div>
-                        <h3 className="text-lg font-medium text-slate-900 mb-1">
+                        <h3 className="text-lg font-medium text-slate-900 dark:text-white mb-1">
                             {lang === "km" ? "មិនមានវិក្កយបត្រទេ" : "No Bills Found"}
                         </h3>
-                        <p className="text-sm text-slate-500 mb-6 max-w-sm">
+                        <p className="text-sm text-slate-500 dark:text-slate-400 mb-6 max-w-sm">
                             {lang === "km"
                                 ? "ចាប់ផ្តើមដោយការបង្កើតវិក្កយបត្រថ្មីសម្រាប់អតិថិជនរបស់អ្នក។"
                                 : "Start by creating a new bill for your customers to track their monthly payments."}

@@ -44,24 +44,24 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
     return (
         <div className={`relative ${className}`} ref={dropdownRef}>
             {label && (
-                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5 ml-1">
+                <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1.5 ml-1">
                     {label}
                 </label>
             )}
             <div
                 onClick={() => setIsOpen(!isOpen)}
                 className={`group w-full px-4 py-3 border rounded-xl flex justify-between items-center cursor-pointer transition-all duration-200 outline-none
-                    ${isOpen ? 'ring-2 ring-violet-500/20 border-violet-400 bg-white' : 'border-gray-200 bg-gray-50/50 hover:bg-white hover:border-gray-300'}
-                    ${selectedOption?.bg || ''} ${selectedOption?.color || 'text-gray-800'} ${selectedOption?.border || ''}`}
+                    ${isOpen ? 'ring-2 ring-violet-500/20 border-violet-400 bg-white dark:bg-slate-900' : 'border-gray-200 dark:border-slate-700 bg-gray-50/50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-900 hover:border-gray-300 dark:hover:border-slate-600'}
+                    ${selectedOption?.bg || ''} ${selectedOption?.color || 'text-gray-800 dark:text-gray-200'} ${selectedOption?.border || ''}`}
             >
                 <span className="text-sm font-black translate-no notranslate" translate="no">
                     {selectedOption ? selectedOption.label : placeholder}
                 </span>
-                <FaChevronDown className={`text-xs transition-transform duration-300 ${isOpen ? 'rotate-180 text-violet-500' : 'text-gray-400 group-hover:text-gray-600'}`} />
+                <FaChevronDown className={`text-xs transition-transform duration-300 ${isOpen ? 'rotate-180 text-violet-500' : 'text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300'}`} />
             </div>
 
             {isOpen && (
-                <div className="absolute z-50 w-full mt-2 bg-white border border-gray-100 rounded-xl shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                <div className="absolute z-50 w-full mt-2 bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-700 rounded-xl shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
                     <div className="max-h-60 overflow-y-auto p-1">
                         {options.map((opt) => (
                             <div
@@ -73,7 +73,7 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
                                 className={`px-4 py-2.5 rounded-lg cursor-pointer flex items-center justify-between text-sm transition-colors mb-0.5
                                     ${value === opt.value
                                         ? 'bg-violet-600 text-white font-semibold'
-                                        : 'text-gray-700 hover:bg-violet-50'}`}
+                                        : 'text-gray-700 dark:text-gray-300 hover:bg-violet-50 dark:hover:bg-slate-800'}`}
                             >
                                 <span>{opt.label}</span>
                                 {value === opt.value && <FaCheck className="text-[10px]" />}

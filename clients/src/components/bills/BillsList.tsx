@@ -125,14 +125,14 @@ const BillsList: React.FC<BillsListProps> = ({
         <div className="flex flex-col w-full">
             {/* Filters */}
             <div className="flex flex-col sm:flex-row justify-between items-end gap-4 px-6 pt-5 pb-3">
-                <div className="text-sm text-slate-500 font-medium pb-2">
+                <div className="text-sm text-slate-500 dark:text-slate-400 font-medium pb-2">
                     {lang === 'en'
                         ? `Showing ${currentBills.length} of ${filteredBills.length} records`
                         : `បង្ហាញ ${currentBills.length} ក្នុងចំណោម ${filteredBills.length} កំណត់ត្រា`}
                 </div>
                 <div className="flex flex-wrap gap-4">
                     <div className="flex flex-col gap-1.5">
-                        <label className="text-xs font-medium text-slate-500">
+                        <label className="text-xs font-medium text-slate-500 dark:text-slate-400">
                             {lang === "en" ? "Status" : "ស្ថានភាព"}
                         </label>
                         <CustomDropdown
@@ -149,7 +149,7 @@ const BillsList: React.FC<BillsListProps> = ({
                         />
                     </div>
                     <div className="flex flex-col gap-1.5">
-                        <label className="text-xs font-medium text-slate-500">
+                        <label className="text-xs font-medium text-slate-500 dark:text-slate-400">
                             {lang === "en" ? "Rows per page" : "ចំនួនក្នុងមួយទំព័រ"}
                         </label>
                         <CustomDropdown
@@ -171,7 +171,7 @@ const BillsList: React.FC<BillsListProps> = ({
             {/* Table */}
             <div className="relative overflow-x-auto w-full">
                 <table className="w-full text-sm text-left border-collapse">
-                    <thead className="bg-slate-50 border-y border-slate-200 text-slate-500 font-medium">
+                    <thead className="bg-slate-50 dark:bg-slate-900 border-y border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 font-medium">
                         <tr>
                             {[
                                 lang === "en" ? "ID" : "ល.រ",
@@ -192,10 +192,10 @@ const BillsList: React.FC<BillsListProps> = ({
                             ))}
                         </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-100">
+                    <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                         {currentBills.length === 0 ? (
                             <tr>
-                                <td colSpan={8} className="text-center py-20 text-slate-500 bg-slate-50/50">
+                                <td colSpan={8} className="text-center py-20 text-slate-500 dark:text-slate-400 bg-slate-50/50 dark:bg-slate-900/50">
                                     {lang === "en" ? "No matches found." : "រកមិនឃើញលទ្ធផលដែលត្រូវគ្នា។"}
                                 </td>
                             </tr>
@@ -206,30 +206,30 @@ const BillsList: React.FC<BillsListProps> = ({
                                 return (
                                     <tr
                                         key={bill.id}
-                                        className="hover:bg-slate-50 transition-colors group"
+                                        className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group"
                                     >
-                                        <td className="px-6 py-4 whitespace-nowrap text-slate-500 tabular-nums">
+                                        <td className="px-6 py-4 whitespace-nowrap text-slate-500 dark:text-slate-400 tabular-nums">
                                             #{bill.id}
                                         </td>
                                         {/* Client & Room */}
                                         <td className="px-6 py-4">
                                             <div className="flex flex-col">
-                                                <span className="font-medium text-slate-900 leading-tight">
+                                                <span className="font-medium text-slate-900 dark:text-white leading-tight">
                                                     {bill.rental?.ClientName || 'N/A'}
                                                 </span>
-                                                <span className="text-xs text-slate-500 mt-1">
+                                                <span className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                                                     Room: {bill.rental?.roomNumber || 'N/A'}
                                                 </span>
                                             </div>
                                         </td>
 
                                         {/* Month */}
-                                        <td className="px-6 py-4 whitespace-nowrap text-slate-600">
+                                        <td className="px-6 py-4 whitespace-nowrap text-slate-600 dark:text-slate-300">
                                             {formatKhmerDate(bill.month, lang)}
                                         </td>
 
                                         {/* Room Price */}
-                                        <td className="px-6 py-4 whitespace-nowrap font-medium text-slate-700">
+                                        <td className="px-6 py-4 whitespace-nowrap font-medium text-slate-700 dark:text-slate-300">
                                             ${(bill.rentAmount ?? bill.rental?.rentAmount ?? 0).toFixed(2)}
                                         </td>
 
@@ -239,7 +239,7 @@ const BillsList: React.FC<BillsListProps> = ({
                                                 <span className={`inline-flex px-2 py-0.5 rounded text-[11px] font-medium leading-tight ${statusColors[bill.electricityStatus] || "bg-slate-100 text-slate-700"}`}>
                                                     {lang === "en" ? bill.electricityStatus : bill.electricityStatus === "Paid" ? "បានបង់" : "មិនបង់"}
                                                 </span>
-                                                <span className="text-xs text-slate-500">
+                                                <span className="text-xs text-slate-500 dark:text-slate-400">
                                                     ${bill.electricityAmount?.toFixed(2) || '0.00'}
                                                 </span>
                                             </div>
@@ -251,14 +251,14 @@ const BillsList: React.FC<BillsListProps> = ({
                                                 <span className={`inline-flex px-2 py-0.5 rounded text-[11px] font-medium leading-tight ${statusColors[bill.waterStatus] || "bg-slate-100 text-slate-700"}`}>
                                                     {lang === "en" ? bill.waterStatus : bill.waterStatus === "Paid" ? "បានបង់" : "មិនបង់"}
                                                 </span>
-                                                <span className="text-xs text-slate-500">
+                                                <span className="text-xs text-slate-500 dark:text-slate-400">
                                                     ${bill.waterAmount?.toFixed(2) || '0.00'}
                                                 </span>
                                             </div>
                                         </td>
 
                                         {/* Total Due */}
-                                        <td className="px-6 py-4 whitespace-nowrap font-semibold text-slate-900">
+                                        <td className="px-6 py-4 whitespace-nowrap font-semibold text-slate-900 dark:text-white">
                                             ${totalAmount.toFixed(2)}
                                         </td>
 
@@ -306,13 +306,13 @@ const BillsList: React.FC<BillsListProps> = ({
 
             {/* Pagination */}
             {totalPages > 1 && (
-                <div className="flex items-center justify-between px-6 py-4 border-t border-slate-200 bg-slate-50">
+                <div className="flex items-center justify-between px-6 py-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900">
                     <button
                         onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
                         disabled={currentPage === 1}
                         className={`flex items-center px-4 py-2 rounded border text-sm font-medium transition-colors ${currentPage === 1
-                            ? "border-slate-200 text-slate-300 cursor-not-allowed bg-white"
-                            : "border-slate-300 text-slate-700 hover:bg-slate-50 bg-white shadow-sm"
+                            ? "border-slate-200 dark:border-slate-700 text-slate-300 dark:text-slate-600 cursor-not-allowed bg-white dark:bg-slate-800"
+                            : "border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 bg-white dark:bg-slate-900 shadow-sm"
                             }`}
                     >
                         {lang === 'en' ? 'Previous' : 'មុន'}
@@ -325,7 +325,7 @@ const BillsList: React.FC<BillsListProps> = ({
                                 onClick={() => setCurrentPage(page)}
                                 className={`w-8 h-8 rounded text-sm font-medium transition-colors ${currentPage === page
                                     ? "bg-indigo-600 text-white shadow-sm"
-                                    : "bg-transparent text-slate-600 hover:bg-slate-200"
+                                    : "bg-transparent text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700"
                                     }`}
                             >
                                 {page}
@@ -337,8 +337,8 @@ const BillsList: React.FC<BillsListProps> = ({
                         onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
                         disabled={currentPage === totalPages}
                         className={`flex items-center px-4 py-2 rounded border text-sm font-medium transition-colors ${currentPage === totalPages
-                            ? "border-slate-200 text-slate-300 cursor-not-allowed bg-white"
-                            : "border-slate-300 text-slate-700 hover:bg-slate-50 bg-white shadow-sm"
+                            ? "border-slate-200 dark:border-slate-700 text-slate-300 dark:text-slate-600 cursor-not-allowed bg-white dark:bg-slate-800"
+                            : "border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 bg-white dark:bg-slate-900 shadow-sm"
                             }`}
                     >
                         {lang === 'en' ? 'Next' : 'បន្ទាប់'}
