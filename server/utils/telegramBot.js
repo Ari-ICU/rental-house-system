@@ -61,6 +61,28 @@ const initializeBot = async () => {
     }
 };
 
+const sendMessage = async (message, chatId = null) => {
+    try {
+        const settings = await SystemSetting.getSettings();
+        const token = settings.telegramBotToken;
+        const targetChatId = chatId || settings.telegramChatId;
+
+        if (!token || !targetChatId) {
+            logger.warn('Telegram token or target chat ID not set. Cannot send message.');
+            return false;
+        }
+
+        const tempBot = new TelegramBot(token, { polling: false });
+        await tempBot.sendMessage(targetChatId, message, { parse_mode: 'Markdown' });
+        return true;
+    } catch (error) {
+        logger.error('Failed to send Telegram message:', error.message);
+        return false;
+    }
+}
+
 module.exports = {
     initializeBot,
+    sendMessage,
 };
+

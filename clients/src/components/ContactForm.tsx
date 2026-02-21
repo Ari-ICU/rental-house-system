@@ -29,22 +29,40 @@ const ContactForm = () => {
         e.preventDefault();
         setSending(true);
 
-        // Simulate API call
-        await new Promise((resolve) => setTimeout(resolve, 1500));
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api"}/support`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(formData),
+            });
 
-        toast.success(
-            isKhmer
-                ? "សាររបស់អ្នកត្រូវបានបញ្ជូនដោយជោគជ័យ! យើងនឹងទាក់ទងមកវិញឆាប់ៗនេះ។"
-                : "Your message has been sent successfully! We'll get back to you soon."
-        );
+            if (res.ok) {
+                toast.success(
+                    isKhmer
+                        ? "សាររបស់អ្នកត្រូវបានបញ្ជូនដោយជោគជ័យ! យើងនឹងទាក់ទងមកវិញឆាប់ៗនេះ។"
+                        : "Your message has been sent successfully! We'll get back to you soon."
+                );
 
-        setFormData({
-            name: "",
-            email: "",
-            subject: "General Inquiry",
-            message: "",
-        });
-        setSending(false);
+                setFormData({
+                    name: "",
+                    email: "",
+                    subject: "General Inquiry",
+                    message: "",
+                });
+            } else {
+                throw new Error("Failed to send message");
+            }
+        } catch (error) {
+            toast.error(
+                isKhmer
+                    ? "បរាជ័យក្នុងការផ្ញើសារ។ សូមព្យាយាមម្តងទៀតនៅពេលក្រោយ។"
+                    : "Failed to send message. Please try again later."
+            );
+        } finally {
+            setSending(false);
+        }
     };
 
     return (
