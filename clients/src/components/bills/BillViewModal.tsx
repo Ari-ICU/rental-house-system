@@ -39,7 +39,7 @@ export default function BillViewModal({ bill, onClose, exchangeRate = 4100 }: Bi
 
     return (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-md flex items-center justify-center z-50 p-4 transition-all animate-in fade-in duration-300">
-            <div className="bg-white rounded-[32px] sm:rounded-[40px] shadow-2xl w-full max-w-lg max-h-[90vh] flex flex-col overflow-hidden relative animate-in zoom-in-95 duration-300">
+            <div className="bg-white dark:bg-slate-900 rounded-[32px] sm:rounded-[40px] shadow-2xl w-full max-w-lg max-h-[90vh] flex flex-col overflow-hidden relative animate-in zoom-in-95 duration-300">
                 {paymentMode ? (
                     <PaymentView
                         billId={bill.id}
@@ -77,33 +77,33 @@ export default function BillViewModal({ bill, onClose, exchangeRate = 4100 }: Bi
                         {/* Details Section */}
                         <div className="p-6 sm:p-10 space-y-6 sm:space-y-8 overflow-y-auto">
                             {/* Primary Info Area */}
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 bg-gray-50/50 p-4 sm:p-6 rounded-3xl border border-gray-100 mb-2">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 bg-gray-50/50 dark:bg-slate-800/50 p-4 sm:p-6 rounded-3xl border border-gray-100 dark:border-slate-700 mb-2">
                                 <div className="space-y-1">
                                     <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{lang === 'en' ? 'Client' : 'អតិថិជន'}</p>
                                     <div className="flex items-center gap-2">
                                         <FaUser className="text-violet-500 text-xs" />
-                                        <p className="text-sm font-bold text-gray-800 truncate">{bill.rental?.ClientName || "N/A"}</p>
+                                        <p className="text-sm font-bold text-gray-800 dark:text-gray-200 truncate">{bill.rental?.ClientName || "N/A"}</p>
                                     </div>
                                 </div>
                                 <div className="space-y-1">
                                     <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{lang === 'en' ? 'Room' : 'លេខបន្ទប់'}</p>
                                     <div className="flex items-center gap-2">
                                         <FaHome className="text-violet-500 text-xs" />
-                                        <p className="text-sm font-bold text-gray-800">{lang === 'en' ? 'Room' : 'បន្ទប់'} {bill.rental?.roomNumber || "N/A"}</p>
+                                        <p className="text-sm font-bold text-gray-800 dark:text-gray-200">{lang === 'en' ? 'Room' : 'បន្ទប់'} {bill.rental?.roomNumber || "N/A"}</p>
                                     </div>
                                 </div>
-                                <div className="col-span-1 sm:col-span-2 pt-2 border-t border-gray-100 mt-2">
+                                <div className="col-span-1 sm:col-span-2 pt-2 border-t border-gray-100 dark:border-slate-700 mt-2">
                                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
                                         <div className="space-y-1">
                                             <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{lang === 'en' ? 'Billing Period' : 'រយៈពេលវិក្កយបត្រ'}</p>
                                             <div className="flex items-center gap-2">
                                                 <FaCalendarAlt className="text-violet-500 text-xs" />
-                                                <p className="text-sm font-bold text-gray-700">{formatKhmerDate(bill.month, lang)}</p>
+                                                <p className="text-sm font-bold text-gray-700 dark:text-gray-300">{formatKhmerDate(bill.month, lang)}</p>
                                             </div>
                                         </div>
                                         <div className="text-left sm:text-right">
                                             <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{lang === 'en' ? 'ID' : 'លេខសម្គាល់'}</p>
-                                            <p className="text-xs font-mono font-bold text-gray-500">#{bill.id.toString().padStart(6, '0')}</p>
+                                            <p className="text-xs font-mono font-bold text-gray-500 dark:text-gray-400">#{bill.id.toString().padStart(6, '0')}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -116,9 +116,9 @@ export default function BillViewModal({ bill, onClose, exchangeRate = 4100 }: Bi
                                         <div className="p-3 bg-indigo-50 rounded-2xl text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-all">
                                             <FaHome size={16} />
                                         </div>
-                                        <span className="text-gray-500 text-sm font-bold">{lang === 'en' ? 'Base Rent' : 'ថ្លៃបន្ទប់សរុប'}</span>
+                                        <span className="text-gray-500 dark:text-gray-400 text-sm font-bold">{lang === 'en' ? 'Base Rent' : 'ថ្លៃបន្ទប់សរុប'}</span>
                                     </div>
-                                    <span className="text-gray-800 font-black">${activeRentAmount.toLocaleString() || '0.00'}</span>
+                                    <span className="text-gray-800 dark:text-gray-200 font-black">${activeRentAmount.toLocaleString() || '0.00'}</span>
                                 </div>
 
                                 <div className="flex items-center justify-between group">
@@ -128,7 +128,7 @@ export default function BillViewModal({ bill, onClose, exchangeRate = 4100 }: Bi
                                             <span className={`absolute -top-1 -right-1 w-3 h-3 rounded-full border-2 border-white ${bill.electricityStatus === 'Paid' ? 'bg-emerald-500' : 'bg-rose-500'}`}></span>
                                         </div>
                                         <div className="flex flex-col">
-                                            <span className="text-gray-500 text-sm font-bold">{lang === 'en' ? 'Electricity' : 'ថ្លៃអគ្គិសនី'}</span>
+                                            <span className="text-gray-500 dark:text-gray-400 text-sm font-bold">{lang === 'en' ? 'Electricity' : 'ថ្លៃអគ្គិសនី'}</span>
                                             <span className={`text-[9px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded-full border w-fit mt-1 ${statusColors[bill.electricityStatus]}`}>
                                                 {translateStatus(bill.electricityStatus)}
                                             </span>
@@ -139,7 +139,7 @@ export default function BillViewModal({ bill, onClose, exchangeRate = 4100 }: Bi
                                             )}
                                         </div>
                                     </div>
-                                    <span className="text-gray-800 font-black">${bill.electricityAmount?.toLocaleString() || '0.00'}</span>
+                                    <span className="text-gray-800 dark:text-gray-200 font-black">${bill.electricityAmount?.toLocaleString() || '0.00'}</span>
                                 </div>
 
                                 <div className="flex items-center justify-between group">
@@ -149,7 +149,7 @@ export default function BillViewModal({ bill, onClose, exchangeRate = 4100 }: Bi
                                             <span className={`absolute -top-1 -right-1 w-3 h-3 rounded-full border-2 border-white ${bill.waterStatus === 'Paid' ? 'bg-emerald-500' : 'bg-rose-500'}`}></span>
                                         </div>
                                         <div className="flex flex-col">
-                                            <span className="text-gray-500 text-sm font-bold">{lang === 'en' ? 'Water Service' : 'ថ្លៃទឹកស្អាត'}</span>
+                                            <span className="text-gray-500 dark:text-gray-400 text-sm font-bold">{lang === 'en' ? 'Water Service' : 'ថ្លៃទឹកស្អាត'}</span>
                                             <span className={`text-[9px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded-full border w-fit mt-1 ${statusColors[bill.waterStatus]}`}>
                                                 {translateStatus(bill.waterStatus)}
                                             </span>
@@ -160,26 +160,26 @@ export default function BillViewModal({ bill, onClose, exchangeRate = 4100 }: Bi
                                             )}
                                         </div>
                                     </div>
-                                    <span className="text-gray-800 font-black">${bill.waterAmount?.toLocaleString() || '0.00'}</span>
+                                    <span className="text-gray-800 dark:text-gray-200 font-black">${bill.waterAmount?.toLocaleString() || '0.00'}</span>
                                 </div>
                             </div>
 
                             {/* Total Summary */}
-                            <div className="pt-6 sm:pt-8 border-t border-dashed border-gray-200">
+                            <div className="pt-6 sm:pt-8 border-t border-dashed border-gray-200 dark:border-slate-700">
                                 <div className="space-y-4">
                                     <div className="flex flex-col sm:flex-row items-center sm:justify-between px-2 gap-4 sm:gap-0 text-center sm:text-left">
                                         <div>
                                             <h4 className="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em]">{lang === 'en' ? 'Grand Total Due' : 'ទឹកប្រាក់សរុប'}</h4>
                                             <p className="text-gray-400 text-[10px] mt-1 italic opacity-60">* {lang === 'en' ? 'Taxes may not be included' : 'មិនគិតបញ្ចូលពន្ធ'}</p>
                                         </div>
-                                        <div className="flex items-center gap-2 text-3xl font-black text-gray-900">
+                                        <div className="flex items-center gap-2 text-3xl font-black text-gray-900 dark:text-white">
                                             <span className="text-violet-600 text-xl font-bold italic">$</span>
                                             <span>{totalAmount.toLocaleString()}</span>
                                         </div>
                                     </div>
 
                                     {/* KHR Total Calculation */}
-                                    <div className="bg-emerald-50 rounded-2xl p-4 flex items-center justify-between border border-emerald-100/50">
+                                    <div className="bg-emerald-50 dark:bg-emerald-900/10 rounded-2xl p-4 flex items-center justify-between border border-emerald-100/50 dark:border-emerald-900/30">
                                         <div className="flex items-center gap-3">
                                             <div className="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-600">
                                                 <span className="font-bold text-lg">៛</span>
@@ -208,7 +208,7 @@ export default function BillViewModal({ bill, onClose, exchangeRate = 4100 }: Bi
                                 )}
                                 <button
                                     onClick={onClose}
-                                    className={`${isFullyPaid ? 'w-full' : 'w-auto'} bg-gray-50 hover:bg-gray-100 text-gray-600 py-4 px-6 rounded-2xl font-bold text-sm transition-all active:scale-95 whitespace-nowrap`}
+                                    className={`${isFullyPaid ? 'w-full' : 'w-auto'} bg-gray-50 dark:bg-slate-800 hover:bg-gray-100 dark:hover:bg-slate-700 text-gray-600 dark:text-gray-300 py-4 px-6 rounded-2xl font-bold text-sm transition-all active:scale-95 whitespace-nowrap`}
                                 >
                                     {lang === "en" ? "Dismiss" : "បិទថាស"}
                                 </button>

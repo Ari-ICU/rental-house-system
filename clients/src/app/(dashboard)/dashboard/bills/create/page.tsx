@@ -32,13 +32,13 @@ const CreateBillPage: React.FC = () => {
             <div className="max-w-6xl mx-auto">
                 {isLoading ? (
                     <div className="flex justify-center items-center py-20">
-                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-violet-600"></div>
+                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-violet-600 dark:border-violet-400"></div>
                     </div>
                 ) : rentals.length > 0 ? (
                     <BillForm rentals={rentals} />
                 ) : (
-                    <div className="text-center py-20 bg-white rounded-2xl border border-gray-100 shadow-sm">
-                        <p className="text-gray-500">
+                    <div className="text-center py-20 bg-white dark:bg-slate-900 rounded-2xl border border-gray-100 dark:border-slate-800 shadow-sm">
+                        <p className="text-gray-500 dark:text-gray-400">
                             {lang === 'km' ? 'មិនមានទិន្នន័យការជួលទេ' : 'No rental data found'}
                         </p>
                     </div>

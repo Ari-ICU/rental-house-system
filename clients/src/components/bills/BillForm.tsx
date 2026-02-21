@@ -210,7 +210,7 @@ const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
                 <button
                     type="button"
                     onClick={() => router.back()}
-                    className="flex items-center gap-2 text-gray-500 hover:text-violet-600 font-bold text-sm bg-white px-5 py-2.5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all active:scale-95"
+                    className="flex items-center gap-2 text-gray-500 dark:text-slate-400 hover:text-violet-600 dark:hover:text-violet-400 font-bold text-sm bg-white dark:bg-slate-900 px-5 py-2.5 rounded-2xl border border-gray-100 dark:border-slate-800 shadow-sm hover:shadow-md transition-all active:scale-95"
                 >
                     <FaArrowLeft className="text-xs" /> {lang === 'km' ? 'ត្រឡប់ក្រោយ' : 'Back'}
                 </button>
@@ -218,7 +218,7 @@ const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
 
             <form
                 onSubmit={handleSubmit}
-                className="bg-white rounded-[40px] shadow-2xl shadow-violet-100/50 border border-violet-50 overflow-hidden animate-in fade-in slide-in-from-bottom-6 duration-700"
+                className="bg-white dark:bg-slate-900 rounded-[40px] shadow-2xl shadow-violet-100/50 dark:shadow-none border border-violet-50 dark:border-slate-800 overflow-hidden animate-in fade-in slide-in-from-bottom-6 duration-700"
             >
                 {/* Form Hero Section */}
                 <div className="bg-gradient-to-r from-violet-600 to-indigo-600 p-10 text-white relative overflow-hidden">
@@ -242,7 +242,7 @@ const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
                     <div>
                         <div className="flex items-center gap-3 mb-6">
                             <div className="w-1.5 h-6 bg-violet-500 rounded-full"></div>
-                            <h3 className="text-lg font-bold text-gray-800 tracking-tight">
+                            <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100 tracking-tight">
                                 {lang === 'km' ? 'ព័ត៌មានអតិថិជន និងពេលវេលា' : 'Client & Timeline'}
                             </h3>
                         </div>
@@ -254,17 +254,16 @@ const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
                                     {lang === 'km' ? 'ជ្រើសរើសការជួល *' : 'Select Rental *'}
                                 </label>
                                 <div
-                                    onClick={() => setIsOpen(!isOpen)}
-                                    className={`relative w-full px-5 py-4 bg-gray-50/50 border rounded-3xl cursor-pointer flex justify-between items-center transition-all ${isOpen ? 'border-violet-300 ring-4 ring-violet-50 bg-white' : 'border-gray-100 hover:border-violet-200'}`}
+                                    className={`relative w-full px-5 py-4 border rounded-3xl cursor-pointer flex justify-between items-center transition-all ${isOpen ? 'border-violet-300 ring-4 ring-violet-50 dark:ring-violet-900/30 bg-white dark:bg-slate-800' : 'bg-gray-50/50 dark:bg-slate-800/50 border-gray-100 dark:border-slate-700 hover:border-violet-200 dark:hover:border-slate-600'}`}
                                 >
                                     <div className="flex items-center gap-4 overflow-hidden">
-                                        <div className={`w-10 h-10 rounded-2xl flex items-center justify-center flex-shrink-0 transition-colors ${formData.rental?.id ? 'bg-violet-100 text-violet-600' : 'bg-gray-100 text-gray-400'}`}>
+                                        <div className={`w-10 h-10 rounded-2xl flex items-center justify-center flex-shrink-0 transition-colors ${formData.rental?.id ? 'bg-violet-100 dark:bg-violet-900/50 text-violet-600 dark:text-violet-400' : 'bg-gray-100 dark:bg-slate-700 text-gray-400 dark:text-gray-500'}`}>
                                             <FaUser />
                                         </div>
                                         <div className="flex flex-col truncate">
                                             {formData.rental?.id ? (
                                                 <>
-                                                    <span className="text-sm font-bold text-gray-800">
+                                                    <span className="text-sm font-bold text-gray-800 dark:text-gray-200">
                                                         {formData.rental.ClientName}
                                                     </span>
                                                     <span className="text-[11px] text-violet-500 font-bold uppercase">
@@ -282,8 +281,8 @@ const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
                                 </div>
 
                                 {isOpen && (
-                                    <div className="absolute z-50 w-full mt-3 bg-white border border-gray-100 rounded-[30px] shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-                                        <div className="p-4 bg-gray-50/50">
+                                    <div className="absolute z-50 w-full mt-3 bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-700 rounded-[30px] shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                                        <div className="p-4 bg-gray-50/50 dark:bg-slate-800/50">
                                             <div className="relative group">
                                                 <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 text-sm group-focus-within:text-violet-500 transition-colors" />
                                                 <input
@@ -292,7 +291,7 @@ const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
                                                     value={rentalSearch}
                                                     onChange={(e) => setRentalSearch(e.target.value)}
                                                     onClick={(e) => e.stopPropagation()}
-                                                    className="w-full pl-11 pr-4 py-3 text-sm bg-white border border-gray-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-violet-50 focus:border-violet-200 transition-all font-medium"
+                                                    className="w-full pl-11 pr-4 py-3 text-sm bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-2xl focus:outline-none focus:ring-4 focus:ring-violet-50 dark:focus:ring-violet-900/20 focus:border-violet-200 dark:focus:border-violet-700 transition-all font-medium dark:text-gray-200"
                                                     autoFocus
                                                 />
                                             </div>
@@ -331,7 +330,7 @@ const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
                                                             setIsOpen(false);
                                                             setRentalSearch('');
                                                         }}
-                                                        className={`px-4 py-3.5 rounded-2xl cursor-pointer flex items-center justify-between transition-all mb-1 ${formData.rental?.id === r.id ? 'bg-violet-600 text-white' : 'hover:bg-violet-50 text-gray-700'}`}
+                                                        className={`px-4 py-3.5 rounded-2xl cursor-pointer flex items-center justify-between transition-all mb-1 ${formData.rental?.id === r.id ? 'bg-violet-600 text-white' : 'hover:bg-violet-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-300'}`}
                                                     >
                                                         <div className="flex flex-col">
                                                             <span className="text-sm font-bold tracking-tight">
@@ -358,10 +357,10 @@ const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
                                 <button
                                     type="button"
                                     onClick={() => setShowMonthPopup(true)}
-                                    className="w-full h-[62px] px-5 bg-gray-50/50 border border-gray-100 rounded-3xl flex justify-between items-center hover:border-violet-200 hover:bg-white transition-all text-sm font-bold text-gray-700 group"
+                                    className="w-full h-[62px] px-5 bg-gray-50/50 dark:bg-slate-800/50 border border-gray-100 dark:border-slate-700 rounded-3xl flex justify-between items-center hover:border-violet-200 dark:hover:border-slate-600 hover:bg-white dark:hover:bg-slate-800 transition-all text-sm font-bold text-gray-700 dark:text-gray-300 group"
                                 >
                                     <div className="flex items-center gap-4">
-                                        <div className="w-10 h-10 rounded-2xl bg-gray-100 text-gray-400 group-hover:bg-violet-100 group-hover:text-violet-600 flex items-center justify-center transition-colors">
+                                        <div className="w-10 h-10 rounded-2xl bg-gray-100 dark:bg-slate-700 text-gray-400 dark:text-gray-500 group-hover:bg-violet-100 dark:group-hover:bg-violet-900/50 group-hover:text-violet-600 dark:group-hover:text-violet-400 flex items-center justify-center transition-colors">
                                             <FaCalendarAlt />
                                         </div>
                                         <span>
@@ -378,7 +377,7 @@ const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
                     <div>
                         <div className="flex items-center gap-3 mb-6 pt-4">
                             <div className="w-1.5 h-6 bg-emerald-500 rounded-full"></div>
-                            <h3 className="text-lg font-bold text-gray-800 tracking-tight">
+                            <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100 tracking-tight">
                                 {lang === 'km' ? 'ការប្រើប្រាស់ និងការចំណាយ' : 'Usage & Charges'}
                             </h3>
                         </div>
@@ -386,7 +385,7 @@ const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-2">
                             {/* Room Rent Column */}
                             <div className="space-y-6">
-                                <div className="p-6 bg-amber-50/30 rounded-[32px] border border-amber-100/50 space-y-6 h-full">
+                                <div className="p-6 bg-amber-50/30 dark:bg-amber-900/10 rounded-[32px] border border-amber-100/50 dark:border-amber-900/30 space-y-6 h-full">
                                     <div className="flex items-center gap-3">
                                         <div className="p-2 bg-amber-100 rounded-xl text-amber-600">
                                             <FaHome size={14} />
@@ -402,7 +401,7 @@ const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
                                             name="rentAmount"
                                             value={formData.rentAmount !== undefined && formData.rentAmount !== null ? formData.rentAmount : ''}
                                             onChange={handleChange}
-                                            className="w-full pl-12 pr-4 py-4 bg-white border border-gray-100 rounded-2xl text-lg font-black text-gray-800 focus:outline-none focus:ring-4 focus:ring-amber-50 focus:border-amber-200 transition-all placeholder:text-gray-300"
+                                            className="w-full pl-12 pr-4 py-4 bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-700 rounded-2xl text-lg font-black text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-4 focus:ring-amber-50 dark:focus:ring-amber-900/20 focus:border-amber-200 dark:focus:border-amber-700 transition-all placeholder:text-gray-300 dark:placeholder:text-gray-600"
                                             placeholder="0.00"
                                             step="any"
                                         />
@@ -417,7 +416,7 @@ const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
 
                             {/* Electricity Column */}
                             <div className="space-y-6">
-                                <div className="p-6 bg-violet-50/30 rounded-[32px] border border-violet-100/50 space-y-6">
+                                <div className="p-6 bg-violet-50/30 dark:bg-violet-900/10 rounded-[32px] border border-violet-100/50 dark:border-violet-900/30 space-y-6">
                                     <div className="flex items-center gap-3">
                                         <div className="p-2 bg-violet-100 rounded-xl text-violet-600">
                                             <FaBolt size={14} />
@@ -438,7 +437,7 @@ const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
                                                 name="prevElectricityReading"
                                                 value={formData.prevElectricityReading}
                                                 onChange={handleChange}
-                                                className="w-full px-3 py-2 bg-white border border-gray-100 rounded-xl text-sm font-bold text-gray-700 transition-all focus:border-violet-200"
+                                                className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-700 rounded-xl text-sm font-bold text-gray-700 dark:text-gray-300 transition-all focus:border-violet-200 dark:focus:border-violet-700"
                                                 placeholder="0"
                                             />
                                         </div>
@@ -451,7 +450,7 @@ const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
                                                 name="currElectricityReading"
                                                 value={formData.currElectricityReading}
                                                 onChange={handleChange}
-                                                className="w-full px-3 py-2 bg-white border border-gray-100 rounded-xl text-sm font-bold text-gray-700 transition-all focus:border-violet-200"
+                                                className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-700 rounded-xl text-sm font-bold text-gray-700 dark:text-gray-300 transition-all focus:border-violet-200 dark:focus:border-violet-700"
                                                 placeholder="0"
                                             />
                                         </div>
@@ -463,9 +462,8 @@ const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
                                             name="electricityAmount"
                                             value={formData.electricityAmount !== undefined && formData.electricityAmount !== null ? formData.electricityAmount : ''}
                                             onChange={handleChange}
-                                            className="w-full pl-12 pr-4 py-4 bg-white border border-gray-100 rounded-2xl text-lg font-black text-gray-800 focus:outline-none focus:ring-4 focus:ring-violet-50 focus:border-violet-200 transition-all placeholder:text-gray-300"
+                                            className="w-full pl-12 pr-4 py-4 bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-700 rounded-2xl text-lg font-black text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-4 focus:ring-violet-50 dark:focus:ring-violet-900/20 focus:border-violet-200 dark:focus:border-violet-700 transition-all placeholder:text-gray-300 dark:placeholder:text-gray-600"
                                             placeholder="0.00"
-                                            step="any"
                                             required
                                         />
                                         <FaMoneyBillWave className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 text-xl" />
@@ -491,7 +489,7 @@ const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
 
                             {/* Water Column */}
                             <div className="space-y-6">
-                                <div className="p-6 bg-blue-50/30 rounded-[32px] border border-blue-100/50 space-y-6">
+                                <div className="p-6 bg-blue-50/30 dark:bg-blue-900/10 rounded-[32px] border border-blue-100/50 dark:border-blue-900/30 space-y-6">
                                     <div className="flex items-center gap-3">
                                         <div className="p-2 bg-blue-100 rounded-xl text-blue-600">
                                             <FaTint size={14} />
@@ -512,7 +510,7 @@ const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
                                                 name="prevWaterReading"
                                                 value={formData.prevWaterReading}
                                                 onChange={handleChange}
-                                                className="w-full px-3 py-2 bg-white border border-gray-100 rounded-xl text-sm font-bold text-gray-700 transition-all focus:border-blue-200"
+                                                className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-700 rounded-xl text-sm font-bold text-gray-700 dark:text-gray-300 transition-all focus:border-blue-200 dark:focus:border-blue-700"
                                                 placeholder="0"
                                             />
                                         </div>
@@ -525,7 +523,7 @@ const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
                                                 name="currWaterReading"
                                                 value={formData.currWaterReading}
                                                 onChange={handleChange}
-                                                className="w-full px-3 py-2 bg-white border border-gray-100 rounded-xl text-sm font-bold text-gray-700 transition-all focus:border-blue-200"
+                                                className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-700 rounded-xl text-sm font-bold text-gray-700 dark:text-gray-300 transition-all focus:border-blue-200 dark:focus:border-blue-700"
                                                 placeholder="0"
                                             />
                                         </div>
@@ -537,7 +535,7 @@ const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
                                             name="waterAmount"
                                             value={formData.waterAmount !== undefined && formData.waterAmount !== null ? formData.waterAmount : ''}
                                             onChange={handleChange}
-                                            className="w-full pl-12 pr-4 py-4 bg-white border border-gray-100 rounded-2xl text-lg font-black text-gray-800 focus:outline-none focus:ring-4 focus:ring-blue-50 focus:border-blue-200 transition-all placeholder:text-gray-300"
+                                            className="w-full pl-12 pr-4 py-4 bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-700 rounded-2xl text-lg font-black text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-4 focus:ring-blue-50 dark:focus:ring-blue-900/20 focus:border-blue-200 dark:focus:border-blue-700 transition-all placeholder:text-gray-300 dark:placeholder:text-gray-600"
                                             placeholder="0.00"
                                             step="any"
                                             required
@@ -568,7 +566,7 @@ const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
                     <div className="pt-4">
                         <div className="flex items-center gap-3 mb-6">
                             <div className="w-1.5 h-6 bg-amber-400 rounded-full"></div>
-                            <h3 className="text-lg font-bold text-gray-800 tracking-tight">
+                            <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100 tracking-tight">
                                 {lang === 'km' ? 'សម្គាល់បន្ថែម' : 'Additional Notes'}
                             </h3>
                         </div>
@@ -578,7 +576,7 @@ const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
                                 value={formData.notes || ''}
                                 onChange={handleChange}
                                 rows={4}
-                                className="w-full px-6 py-5 bg-gray-50/50 border border-gray-100 rounded-[32px] text-sm font-medium text-gray-700 focus:outline-none focus:ring-4 focus:ring-violet-50 focus:border-violet-200 transition-all resize-none placeholder:text-gray-300"
+                                className="w-full px-6 py-5 bg-gray-50/50 dark:bg-slate-800/50 border border-gray-100 dark:border-slate-700 rounded-[32px] text-sm font-medium text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-4 focus:ring-violet-50 dark:focus:ring-violet-900/20 focus:border-violet-200 dark:focus:border-violet-700 transition-all resize-none placeholder:text-gray-300 dark:placeholder:text-gray-600"
                                 placeholder={lang === 'km' ? 'សរសេរសម្គាល់នៅទីនេះ...' : 'Enter any special instructions or remarks...'}
                             />
                             <FaRegStickyNote className="absolute right-6 top-6 text-gray-200 text-xl" />

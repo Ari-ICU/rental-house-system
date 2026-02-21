@@ -44,7 +44,7 @@ const EditBillPage: React.FC = () => {
     if (isLoading) {
         return (
             <div className="min-h-screen flex justify-center items-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-violet-600"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-violet-600 dark:border-violet-400"></div>
             </div>
         );
     }
@@ -52,8 +52,8 @@ const EditBillPage: React.FC = () => {
     if (!bill) {
         return (
             <div className="min-h-screen flex justify-center items-center py-20">
-                <div className="text-center p-8 bg-white rounded-2xl border border-gray-100 shadow-sm max-w-sm">
-                    <p className="text-gray-500 font-medium">
+                <div className="text-center p-8 bg-white dark:bg-slate-900 rounded-2xl border border-gray-100 dark:border-slate-800 shadow-sm max-w-sm">
+                    <p className="text-gray-500 dark:text-gray-400 font-medium">
                         {lang === 'km' ? 'រកមិនឃើញវិក្កយបត្រទេ' : 'Bill not found'}
                     </p>
                 </div>
