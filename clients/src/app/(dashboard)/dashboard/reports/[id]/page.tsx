@@ -189,7 +189,7 @@ const ReportViewPage: React.FC = () => {
                                 </h4>
                                 <p className="text-blue-800/70 dark:text-blue-400/80 font-medium leading-normal">
                                     {lang === 'km'
-                                        ? `ផ្អែកលើស្ថានភាព ${report.status === 'Completed' ? 'បានបញ្ចប់' : 'កំពុងពិនិត្យ'} บច្ចុប្បន្ន យើងសូមណែនាំឱ្យបន្តការត្រួតពិនិត្យប្រចាំត្រីមាស។ គ្មានភាពមិនប្រក្រតីសំខាន់ៗត្រូវបានរកឃើញនៅក្នុងចរន្ត ${report.type} សម្រាប់រយៈពេលរាយការណ៍នេះទេ។`
+                                        ? `ផ្អែកលើស្ថានភាព ${report.status === 'Completed' ? 'បានបញ្ចប់' : 'កំពុងពិនិត្យ'} បច្ចុប្បន្ន យើងសូមណែនាំឱ្យបន្តការត្រួតពិនិត្យប្រចាំត្រីមាស។ គ្មានភាពមិនប្រក្រតីសំខាន់ៗត្រូវបានរកឃើញនៅក្នុងចរន្ត ${report.type} សម្រាប់រយៈពេលរាយការណ៍នេះទេ។`
                                         : `Based on the current ${report.status} state, we recommend proceeding with the quarterly review. No significant anomalies were detected in the ${report.type} stream for this reporting period.`}
                                 </p>
                             </div>
