@@ -51,6 +51,24 @@ const BillsList: React.FC<BillsListProps> = ({
     // Modal state
     const [viewModalOpen, setViewModalOpen] = useState(false);
     const [selectedBill, setSelectedBill] = useState<Bill | null>(null);
+    const [exchangeRate, setExchangeRate] = useState(4100);
+
+    useEffect(() => {
+        const fetchSettings = async () => {
+            try {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api'}/settings`);
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.data?.exchangeRate) {
+                        setExchangeRate(Number(data.data.exchangeRate));
+                    }
+                }
+            } catch (error) {
+                console.error('Failed to fetch settings:', error);
+            }
+        };
+        fetchSettings();
+    }, []);
 
     useEffect(() => {
         setLocalBills(bills || []);
@@ -102,7 +120,7 @@ const BillsList: React.FC<BillsListProps> = ({
     };
 
     const handlePrint = (bill: Bill) => {
-        printBill(bill, lang, '/signature.png');
+        printBill(bill, lang, exchangeRate, '/signature.png');
     };
 
     return (
@@ -339,7 +357,7 @@ const BillsList: React.FC<BillsListProps> = ({
 
             {/* View Modal */}
             {viewModalOpen && selectedBill && (
-                <BillViewModal bill={selectedBill} onClose={closeViewModal} />
+                <BillViewModal bill={selectedBill} onClose={closeViewModal} exchangeRate={exchangeRate} />
             )}
         </div>
     );

@@ -22,8 +22,6 @@ const statusColors: Record<Report["status"], string> = {
     "In-Review": "bg-amber-50 text-amber-700 border-amber-100"
 };
 
-const allStatuses: Report["status"][] = ["Completed", "In-Review"];
-
 const ReportsTable: React.FC<ReportsTableProps> = ({
     reports = [],
     itemsPerPageOptions = [5, 10, 20],

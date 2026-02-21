@@ -6,6 +6,10 @@ export interface Bill {
     rental: Rental;
     month: string;
     rentAmount?: number;
+    prevElectricityReading?: number;
+    currElectricityReading?: number;
+    prevWaterReading?: number;
+    currWaterReading?: number;
     electricityAmount: number;
     waterAmount: number;
     electricityStatus: 'Paid' | 'Unpaid';

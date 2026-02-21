@@ -7,7 +7,7 @@ import { Rental, RentalStatus } from '@/types/rents';
 import { useLang } from '@/context/LangContext';
 import KhmerCalendar from '@/utils/KhmerCalendar';
 import FileUploader from '@/common/FileUploader';
-import { createRental } from '@/services/rentalService';
+import { createRental, RentalPayload } from '@/services/rentalService';
 import { ApiError } from '@/lib/api';
 import CustomDropdown from '@/common/CustomDropdown';
 
@@ -116,8 +116,9 @@ const RentalForm: React.FC = () => {
                 clientImageCardFront: formData.clientImageCard?.front ?? '',
                 clientImageCardBack: formData.clientImageCard?.back ?? '',
             };
-            const { clientImageCard: _, ...rest } = payload;
-            await createRental(rest);
+            const { clientImageCard, ...rest } = payload;
+            void clientImageCard;
+            await createRental(rest as RentalPayload);
             setToast({
                 type: 'success',
                 message: lang === 'km' ? 'ការជួលត្រូវបានបន្ថែម!' : 'Rental created successfully!',

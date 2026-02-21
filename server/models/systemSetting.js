@@ -12,6 +12,9 @@ const SystemSetting = {
                     paymentBakongAccountId: '',
                     paywayMerchantId: '',
                     paywayApiKey: '',
+                    electricityRate: 0,
+                    waterRate: 0,
+                    exchangeRate: 4100,
                 },
             });
         }
@@ -29,6 +32,9 @@ const SystemSetting = {
                 paymentBakongAccountId: data.paymentBakongAccountId !== undefined ? data.paymentBakongAccountId : settings.paymentBakongAccountId,
                 paywayMerchantId: data.paywayMerchantId !== undefined ? data.paywayMerchantId : settings.paywayMerchantId,
                 paywayApiKey: data.paywayApiKey !== undefined ? data.paywayApiKey : settings.paywayApiKey,
+                electricityRate: data.electricityRate !== undefined ? data.electricityRate : settings.electricityRate,
+                waterRate: data.waterRate !== undefined ? data.waterRate : settings.waterRate,
+                exchangeRate: data.exchangeRate !== undefined ? data.exchangeRate : settings.exchangeRate,
             },
         });
         return updated;

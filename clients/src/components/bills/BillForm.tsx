@@ -39,19 +39,73 @@ const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
 
     const activeRentals = rentals.filter(r => r.status === 'Active' || r.status === 'Reserved');
 
-    const [formData, setFormData] = useState<Omit<Bill, 'id' | 'rentAmount' | 'electricityAmount' | 'waterAmount'> & { rentAmount?: number | string; electricityAmount: number | string; waterAmount: number | string }>({
+    const [formData, setFormData] = useState<Omit<Bill, 'id' | 'rentAmount' | 'electricityAmount' | 'waterAmount'> & {
+        rentAmount?: number | string;
+        electricityAmount: number | string;
+        waterAmount: number | string;
+        prevElectricityReading: number | string;
+        currElectricityReading: number | string;
+        prevWaterReading: number | string;
+        currWaterReading: number | string;
+    }>({
         rental: bill?.rental || (activeRentals.length > 0 ? activeRentals[0] : {} as Rental),
         month: bill?.month || '',
         rentAmount: bill?.rentAmount ?? bill?.rental?.rentAmount ?? '',
+        prevElectricityReading: bill?.prevElectricityReading ?? 0,
+        currElectricityReading: bill?.currElectricityReading ?? 0,
         electricityAmount: bill?.electricityAmount ?? '',
+        prevWaterReading: bill?.prevWaterReading ?? 0,
+        currWaterReading: bill?.currWaterReading ?? 0,
         waterAmount: bill?.waterAmount ?? '',
         electricityStatus: bill?.electricityStatus || 'Unpaid',
         waterStatus: bill?.waterStatus || 'Unpaid',
         notes: bill?.notes || '',
     });
 
+    const [rates, setRates] = useState({ electricity: 0, water: 0, exchangeRate: 4100 });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [showMonthPopup, setShowMonthPopup] = useState(false);
+
+    useEffect(() => {
+        const fetchRates = async () => {
+            try {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api'}/settings`);
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.data) {
+                        setRates({
+                            electricity: Number(data.data.electricityRate || 0),
+                            water: Number(data.data.waterRate || 0),
+                            exchangeRate: Number(data.data.exchangeRate || 4100)
+                        });
+                    }
+                }
+            } catch (error) {
+                console.error('Failed to fetch rates:', error);
+            }
+        };
+        fetchRates();
+    }, []);
+
+    // Auto-calculate electricity
+    useEffect(() => {
+        const prev = Number(formData.prevElectricityReading);
+        const curr = Number(formData.currElectricityReading);
+        if (curr >= prev && rates.electricity > 0) {
+            const amount = (curr - prev) * rates.electricity;
+            setFormData(p => ({ ...p, electricityAmount: amount.toFixed(2) }));
+        }
+    }, [formData.prevElectricityReading, formData.currElectricityReading, rates.electricity]);
+
+    // Auto-calculate water
+    useEffect(() => {
+        const prev = Number(formData.prevWaterReading);
+        const curr = Number(formData.currWaterReading);
+        if (curr >= prev && rates.water > 0) {
+            const amount = (curr - prev) * rates.water;
+            setFormData(p => ({ ...p, waterAmount: amount.toFixed(2) }));
+        }
+    }, [formData.prevWaterReading, formData.currWaterReading, rates.water]);
 
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
@@ -70,7 +124,11 @@ const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
                 rental: bill.rental,
                 month: bill.month,
                 rentAmount: bill.rentAmount ?? bill.rental?.rentAmount ?? '',
+                prevElectricityReading: bill.prevElectricityReading ?? 0,
+                currElectricityReading: bill.currElectricityReading ?? 0,
                 electricityAmount: bill.electricityAmount ?? '',
+                prevWaterReading: bill.prevWaterReading ?? 0,
+                currWaterReading: bill.currWaterReading ?? 0,
                 waterAmount: bill.waterAmount ?? '',
                 electricityStatus: bill.electricityStatus,
                 waterStatus: bill.waterStatus,
@@ -118,6 +176,10 @@ const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
                 rentalId: formData.rental.id,
                 month: formData.month,
                 rentAmount: (formData.rentAmount !== '' && formData.rentAmount !== undefined) ? Number(formData.rentAmount) : undefined,
+                prevElectricityReading: Number(formData.prevElectricityReading),
+                currElectricityReading: Number(formData.currElectricityReading),
+                prevWaterReading: Number(formData.prevWaterReading),
+                currWaterReading: Number(formData.currWaterReading),
                 electricityAmount: formData.electricityAmount !== '' ? Number(formData.electricityAmount) : 0,
                 waterAmount: formData.waterAmount !== '' ? Number(formData.waterAmount) : 0,
                 electricityStatus: formData.electricityStatus,
@@ -365,6 +427,36 @@ const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
                                         </span>
                                     </div>
 
+                                    {/* Readings */}
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <div className="space-y-1">
+                                            <label className="text-[10px] font-bold text-gray-400 uppercase ml-1">
+                                                {lang === 'km' ? 'លេខអំណានចាស់' : 'Prev Read'}
+                                            </label>
+                                            <input
+                                                type="number"
+                                                name="prevElectricityReading"
+                                                value={formData.prevElectricityReading}
+                                                onChange={handleChange}
+                                                className="w-full px-3 py-2 bg-white border border-gray-100 rounded-xl text-sm font-bold text-gray-700 transition-all focus:border-violet-200"
+                                                placeholder="0"
+                                            />
+                                        </div>
+                                        <div className="space-y-1">
+                                            <label className="text-[10px] font-bold text-gray-400 uppercase ml-1">
+                                                {lang === 'km' ? 'លេខអំណានថ្មី' : 'Curr Read'}
+                                            </label>
+                                            <input
+                                                type="number"
+                                                name="currElectricityReading"
+                                                value={formData.currElectricityReading}
+                                                onChange={handleChange}
+                                                className="w-full px-3 py-2 bg-white border border-gray-100 rounded-xl text-sm font-bold text-gray-700 transition-all focus:border-violet-200"
+                                                placeholder="0"
+                                            />
+                                        </div>
+                                    </div>
+
                                     <div className="relative">
                                         <input
                                             type="number"
@@ -378,6 +470,12 @@ const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
                                         />
                                         <FaMoneyBillWave className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 text-xl" />
                                         <div className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-gray-400">$</div>
+                                    </div>
+
+                                    <div className="flex items-center justify-between px-1">
+                                        <span className="text-[10px] font-bold text-gray-400 italic">
+                                            Rate: ${rates.electricity}/kWh
+                                        </span>
                                     </div>
 
                                     <CustomDropdown
@@ -403,6 +501,36 @@ const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
                                         </span>
                                     </div>
 
+                                    {/* Readings */}
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <div className="space-y-1">
+                                            <label className="text-[10px] font-bold text-gray-400 uppercase ml-1">
+                                                {lang === 'km' ? 'លេខអំណានចាស់' : 'Prev Read'}
+                                            </label>
+                                            <input
+                                                type="number"
+                                                name="prevWaterReading"
+                                                value={formData.prevWaterReading}
+                                                onChange={handleChange}
+                                                className="w-full px-3 py-2 bg-white border border-gray-100 rounded-xl text-sm font-bold text-gray-700 transition-all focus:border-blue-200"
+                                                placeholder="0"
+                                            />
+                                        </div>
+                                        <div className="space-y-1">
+                                            <label className="text-[10px] font-bold text-gray-400 uppercase ml-1">
+                                                {lang === 'km' ? 'លេខអំណានថ្មី' : 'Curr Read'}
+                                            </label>
+                                            <input
+                                                type="number"
+                                                name="currWaterReading"
+                                                value={formData.currWaterReading}
+                                                onChange={handleChange}
+                                                className="w-full px-3 py-2 bg-white border border-gray-100 rounded-xl text-sm font-bold text-gray-700 transition-all focus:border-blue-200"
+                                                placeholder="0"
+                                            />
+                                        </div>
+                                    </div>
+
                                     <div className="relative">
                                         <input
                                             type="number"
@@ -418,6 +546,12 @@ const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
                                         <div className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-gray-400">$</div>
                                     </div>
 
+                                    <div className="flex items-center justify-between px-1">
+                                        <span className="text-[10px] font-bold text-gray-400 italic">
+                                            Rate: ${rates.water}/m³
+                                        </span>
+                                    </div>
+
                                     <CustomDropdown
                                         options={[
                                             { value: 'Paid', label: lang === 'km' ? 'បានបង់ (Paid)' : 'Paid' },
@@ -431,7 +565,6 @@ const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
                         </div>
                     </div>
 
-                    {/* Section 3: Notes */}
                     <div className="pt-4">
                         <div className="flex items-center gap-3 mb-6">
                             <div className="w-1.5 h-6 bg-amber-400 rounded-full"></div>
@@ -449,6 +582,39 @@ const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
                                 placeholder={lang === 'km' ? 'សរសេរសម្គាល់នៅទីនេះ...' : 'Enter any special instructions or remarks...'}
                             />
                             <FaRegStickyNote className="absolute right-6 top-6 text-gray-200 text-xl" />
+                        </div>
+
+                        {/* Total Summary with KHR */}
+                        <div className="mt-10 p-8 bg-slate-900 rounded-[40px] text-white shadow-2xl relative overflow-hidden group">
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-violet-500/10 rounded-full -mr-32 -mt-32 blur-3xl group-hover:bg-violet-500/20 transition-all duration-700"></div>
+                            <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-500/10 rounded-full -ml-32 -mb-32 blur-3xl group-hover:bg-blue-500/20 transition-all duration-700"></div>
+
+                            <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-8">
+                                <div className="space-y-1 text-center md:text-left">
+                                    <h4 className="text-slate-400 text-[10px] font-black uppercase tracking-[0.2em]">{lang === 'en' ? 'Grand Total' : 'ទឹកប្រាក់សរុប'}</h4>
+                                    <div className="flex items-baseline gap-2 justify-center md:justify-start">
+                                        <span className="text-violet-400 text-xl font-black italic">$</span>
+                                        <span className="text-4xl font-black tracking-tighter">
+                                            {(Number(formData.rentAmount || 0) + Number(formData.electricityAmount || 0) + Number(formData.waterAmount || 0)).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div className="h-px w-full md:h-12 md:w-px bg-slate-800"></div>
+
+                                <div className="space-y-1 text-center md:text-right">
+                                    <h4 className="text-slate-400 text-[10px] font-black uppercase tracking-[0.2em]">{lang === 'en' ? 'Total in Riel (KHR)' : 'សរុបជាប្រាក់រៀល'}</h4>
+                                    <div className="flex items-baseline gap-2 justify-center md:justify-end">
+                                        <span className="text-3xl font-black tracking-tighter text-emerald-400">
+                                            {Math.round((Number(formData.rentAmount || 0) + Number(formData.electricityAmount || 0) + Number(formData.waterAmount || 0)) * rates.exchangeRate).toLocaleString()}
+                                        </span>
+                                        <span className="text-emerald-500 text-lg font-black">៛</span>
+                                    </div>
+                                    <p className="text-[9px] text-slate-500 font-bold italic opacity-60">
+                                        * {lang === 'en' ? `Rate: 1$ = ${rates.exchangeRate}៛` : `អត្រា៖ 1$ = ${rates.exchangeRate}៛`}
+                                    </p>
+                                </div>
+                            </div>
                         </div>
                     </div>
 

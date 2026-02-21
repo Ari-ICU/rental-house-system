@@ -2,7 +2,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { FaVideo, FaStop, FaExpand, FaCamera, FaBuilding, FaCircle, FaExclamationTriangle, FaCog } from 'react-icons/fa';
+import { FaVideo, FaStop, FaExpand, FaCamera, FaBuilding, FaExclamationTriangle, FaCog } from 'react-icons/fa';
 import Hls from 'hls.js';
 import CameraSettings from '@/components/setting/CameraSettings';
 import { Camera } from '@/types/camera';
@@ -199,7 +199,7 @@ const CameraController: React.FC<CameraControllerProps> = ({
             toast.dismiss();
             toast.error('No stream URL or device ID configured');
         }
-    }, [cameras, updateCameraState]);
+    }, [cameras, updateCameraState, lang]);
 
     const handleStop = (id: number) => {
         const video = videoRefs.current[id];

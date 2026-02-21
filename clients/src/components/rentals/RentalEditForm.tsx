@@ -11,7 +11,7 @@ import { Rental, RentalStatus } from '@/types/rents';
 import { useLang } from '@/context/LangContext';
 import KhmerCalendar from '@/utils/KhmerCalendar';
 import FileUploader from '@/common/FileUploader';
-import { updateRental } from '@/services/rentalService';
+import { updateRental, RentalPayload } from '@/services/rentalService';
 import { ApiError } from '@/lib/api';
 import CustomDropdown from '@/common/CustomDropdown';
 
@@ -115,8 +115,11 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
                 clientImageCardFront: formData.clientImageCard?.front ?? '',
                 clientImageCardBack: formData.clientImageCard?.back ?? '',
             };
-            const { clientImageCard: _, ...rest } = payload;
-            await updateRental(id, rest);
+            const { clientImageCard, ...rest } = payload;
+            void clientImageCard;
+            await updateRental(id, rest as RentalPayload);
+
+
             setToast({
                 type: 'success',
                 message: lang === 'km' ? 'ការជួលត្រូវបានធ្វើបច្ចុប្បន្នភាព!' : 'Rental updated successfully!',

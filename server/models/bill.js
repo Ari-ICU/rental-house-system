@@ -7,6 +7,10 @@ const convertDecimalToNumber = (bill) => {
         rentAmount: bill.rentAmount ? Number(bill.rentAmount) : null,
         electricityAmount: Number(bill.electricityAmount),
         waterAmount: Number(bill.waterAmount),
+        prevElectricityReading: Number(bill.prevElectricityReading || 0),
+        currElectricityReading: Number(bill.currElectricityReading || 0),
+        prevWaterReading: Number(bill.prevWaterReading || 0),
+        currWaterReading: Number(bill.currWaterReading || 0),
         rental: bill.rental ? {
             ...bill.rental,
             rentAmount: Number(bill.rental.rentAmount)
@@ -46,7 +50,8 @@ const Bill = {
     create: async (billData) => {
         const {
             rentalId, month, rentAmount, electricityAmount, waterAmount,
-            electricityStatus, waterStatus, notes
+            electricityStatus, waterStatus, notes,
+            prevElectricityReading, currElectricityReading, prevWaterReading, currWaterReading
         } = billData;
 
         let finalRentAmount = rentAmount;
@@ -68,6 +73,10 @@ const Bill = {
                 electricityStatus,
                 waterStatus,
                 notes,
+                prevElectricityReading: Number(prevElectricityReading || 0),
+                currElectricityReading: Number(currElectricityReading || 0),
+                prevWaterReading: Number(prevWaterReading || 0),
+                currWaterReading: Number(currWaterReading || 0),
             },
             include: {
                 rental: true,
@@ -84,7 +93,8 @@ const Bill = {
 
         const allowedFields = [
             'rentalId', 'month', 'rentAmount', 'electricityAmount', 'waterAmount',
-            'electricityStatus', 'waterStatus', 'notes'
+            'electricityStatus', 'waterStatus', 'notes',
+            'prevElectricityReading', 'currElectricityReading', 'prevWaterReading', 'currWaterReading'
         ];
 
         const dataToUpdate = {};

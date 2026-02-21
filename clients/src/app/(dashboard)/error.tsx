@@ -23,7 +23,7 @@ export default function Error({
             <div className="space-y-2">
                 <h2 className="text-2xl font-black text-slate-800 tracking-tight">Something went wrong</h2>
                 <p className="text-slate-500 font-medium max-w-md">
-                    The requested page encountered an unexpected error. Don't worry, your data is safe.
+                    The requested page encountered an unexpected error. Don&apos;t worry, your data is safe.
                 </p>
                 {error.digest && (
                     <code className="block mt-4 text-[10px] font-mono text-slate-400 bg-slate-50 p-2 rounded-lg">

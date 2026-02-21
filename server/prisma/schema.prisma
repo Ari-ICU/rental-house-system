@@ -44,6 +44,13 @@ model Bill {
   rental            Rental   @relation(fields: [rentalId], references: [id])
   month             String
   rentAmount        Decimal?
+  
+  // Meter Readings
+  prevElectricityReading Decimal @default(0)
+  currElectricityReading Decimal @default(0)
+  prevWaterReading       Decimal @default(0)
+  currWaterReading       Decimal @default(0)
+  
   electricityAmount Decimal
   waterAmount       Decimal
   electricityStatus String   // "Paid" | "Unpaid"
@@ -79,6 +86,12 @@ model SystemSetting {
   paymentBakongAccountId String?
   paywayMerchantId       String?
   paywayApiKey           String?
+  
+  // Utility Rates
+  electricityRate        Decimal  @default(0)
+  waterRate              Decimal  @default(0)
+  exchangeRate           Decimal  @default(4100)
+  
   createdAt              DateTime @default(now())
   updatedAt              DateTime @updatedAt
 

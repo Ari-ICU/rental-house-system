@@ -8,6 +8,7 @@ import PaymentView from "./PaymentView";
 interface BillViewModalProps {
     bill: Bill | null;
     onClose: () => void;
+    exchangeRate?: number;
 }
 
 const statusColors: Record<"Paid" | "Unpaid", string> = {
@@ -15,7 +16,7 @@ const statusColors: Record<"Paid" | "Unpaid", string> = {
     Unpaid: "bg-rose-50 text-rose-700 border border-rose-100",
 };
 
-export default function BillViewModal({ bill, onClose }: BillViewModalProps) {
+export default function BillViewModal({ bill, onClose, exchangeRate = 4100 }: BillViewModalProps) {
     const { lang } = useLang();
     const [paymentMode, setPaymentMode] = React.useState(false);
 
@@ -131,6 +132,11 @@ export default function BillViewModal({ bill, onClose }: BillViewModalProps) {
                                             <span className={`text-[9px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded-full border w-fit mt-1 ${statusColors[bill.electricityStatus]}`}>
                                                 {translateStatus(bill.electricityStatus)}
                                             </span>
+                                            {bill.prevElectricityReading !== undefined && bill.currElectricityReading !== undefined && (
+                                                <span className="text-[10px] text-gray-400 mt-1 font-medium">
+                                                    {bill.prevElectricityReading} → {bill.currElectricityReading} ({Number(bill.currElectricityReading) - Number(bill.prevElectricityReading)} kWh)
+                                                </span>
+                                            )}
                                         </div>
                                     </div>
                                     <span className="text-gray-800 font-black">${bill.electricityAmount?.toLocaleString() || '0.00'}</span>
@@ -147,6 +153,11 @@ export default function BillViewModal({ bill, onClose }: BillViewModalProps) {
                                             <span className={`text-[9px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded-full border w-fit mt-1 ${statusColors[bill.waterStatus]}`}>
                                                 {translateStatus(bill.waterStatus)}
                                             </span>
+                                            {bill.prevWaterReading !== undefined && bill.currWaterReading !== undefined && (
+                                                <span className="text-[10px] text-gray-400 mt-1 font-medium">
+                                                    {bill.prevWaterReading} → {bill.currWaterReading} ({Number(bill.currWaterReading) - Number(bill.prevWaterReading)} m³)
+                                                </span>
+                                            )}
                                         </div>
                                     </div>
                                     <span className="text-gray-800 font-black">${bill.waterAmount?.toLocaleString() || '0.00'}</span>
@@ -155,14 +166,32 @@ export default function BillViewModal({ bill, onClose }: BillViewModalProps) {
 
                             {/* Total Summary */}
                             <div className="pt-6 sm:pt-8 border-t border-dashed border-gray-200">
-                                <div className="flex flex-col sm:flex-row items-center sm:justify-between px-2 gap-4 sm:gap-0 text-center sm:text-left">
-                                    <div>
-                                        <h4 className="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em]">{lang === 'en' ? 'Grand Total Due' : 'ទឹកប្រាក់សរុប'}</h4>
-                                        <p className="text-gray-400 text-[10px] mt-1 italic opacity-60">* {lang === 'en' ? 'Taxes may not be included' : 'មិនគិតបញ្ចូលពន្ធ'}</p>
+                                <div className="space-y-4">
+                                    <div className="flex flex-col sm:flex-row items-center sm:justify-between px-2 gap-4 sm:gap-0 text-center sm:text-left">
+                                        <div>
+                                            <h4 className="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em]">{lang === 'en' ? 'Grand Total Due' : 'ទឹកប្រាក់សរុប'}</h4>
+                                            <p className="text-gray-400 text-[10px] mt-1 italic opacity-60">* {lang === 'en' ? 'Taxes may not be included' : 'មិនគិតបញ្ចូលពន្ធ'}</p>
+                                        </div>
+                                        <div className="flex items-center gap-2 text-3xl font-black text-gray-900">
+                                            <span className="text-violet-600 text-xl font-bold italic">$</span>
+                                            <span>{totalAmount.toLocaleString()}</span>
+                                        </div>
                                     </div>
-                                    <div className="flex items-center gap-2 text-3xl font-black text-gray-900">
-                                        <span className="text-violet-600 text-xl font-bold italic">$</span>
-                                        <span>{totalAmount.toLocaleString()}</span>
+
+                                    {/* KHR Total Calculation */}
+                                    <div className="bg-emerald-50 rounded-2xl p-4 flex items-center justify-between border border-emerald-100/50">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-600">
+                                                <span className="font-bold text-lg">៛</span>
+                                            </div>
+                                            <span className="text-xs font-bold text-emerald-800 uppercase tracking-wider">{lang === 'en' ? 'Total (KHR)' : 'សរុបជាប្រាក់រៀល'}</span>
+                                        </div>
+                                        <div className="text-right">
+                                            <p className="text-xl font-black text-emerald-700">
+                                                {(totalAmount * exchangeRate).toLocaleString()} <span className="text-sm font-bold">៛</span>
+                                            </p>
+                                            <p className="text-[9px] text-emerald-600/60 font-medium italic">* 1$ = {exchangeRate.toLocaleString()}៛</p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

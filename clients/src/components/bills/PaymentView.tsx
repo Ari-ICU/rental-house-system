@@ -17,6 +17,24 @@ export default function PaymentView({ billId, amount, onClose, onPaymentSuccess 
     const [loading, setLoading] = useState(true);
     const [simulating, setSimulating] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [exchangeRate, setExchangeRate] = useState(4100);
+
+    useEffect(() => {
+        const fetchSettings = async () => {
+            try {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api'}/settings`);
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.data?.exchangeRate) {
+                        setExchangeRate(Number(data.data.exchangeRate));
+                    }
+                }
+            } catch (error) {
+                console.error('Failed to fetch settings:', error);
+            }
+        };
+        fetchSettings();
+    }, []);
 
     useEffect(() => {
         const fetchPaymentIntent = async () => {
@@ -28,7 +46,7 @@ export default function PaymentView({ billId, amount, onClose, onPaymentSuccess 
                 } else if (!data.data.qrString) {
                     setError(lang === 'en' ? "Please configure Bakong KHQR Account ID in Settings." : "សូមកំណត់លេខគណនី Bakong KHQR នៅក្នុងការកំណត់។");
                 }
-            } catch (err) {
+            } catch {
                 setError(lang === 'en' ? "Failed to generate payment." : "បរាជ័យក្នុងការបង្កើតការបង់ប្រាក់។");
             } finally {
                 setLoading(false);
@@ -51,7 +69,7 @@ export default function PaymentView({ billId, amount, onClose, onPaymentSuccess 
             } else {
                 toast.error(lang === 'en' ? 'Gateway Simulation Error' : 'កំហុសច្រកបង់ប្រាក់');
             }
-        } catch (e) {
+        } catch {
             toast.error('Simulation Failed');
         } finally {
             setSimulating(false);
@@ -100,9 +118,14 @@ export default function PaymentView({ billId, amount, onClose, onPaymentSuccess 
                         <p className="text-[10px] uppercase font-black text-gray-400 tracking-widest">
                             {lang === 'en' ? 'Amount Due' : 'ទឹកប្រាក់ត្រូវបង់'}
                         </p>
-                        <p className="text-4xl font-black text-indigo-600 tracking-tighter">
-                            ${amount.toLocaleString()}
-                        </p>
+                        <div className="flex flex-col items-center">
+                            <p className="text-4xl font-black text-indigo-600 tracking-tighter">
+                                ${amount.toLocaleString()}
+                            </p>
+                            <p className="text-lg font-bold text-emerald-600 tabular-nums">
+                                {Math.round(amount * exchangeRate).toLocaleString()} ៛
+                            </p>
+                        </div>
                     </div>
 
                     {/* Developer Mock Checkout */}

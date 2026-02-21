@@ -14,7 +14,7 @@ const escapeHtml = (str: string): string => {
 };
 
 // Generate bill HTML content
-const generateBillHtml = (bill: Bill, lang: "en" | "km", signatureSrc?: string): string => {
+const generateBillHtml = (bill: Bill, lang: "en" | "km", exchangeRate: number = 4100, signatureSrc?: string): string => {
   const rentAmount = bill.rentAmount ?? bill.rental?.rentAmount ?? 0;
   const electricityAmount = bill.electricityAmount || 0;
   const waterAmount = bill.waterAmount || 0;
@@ -210,18 +210,26 @@ const generateBillHtml = (bill: Bill, lang: "en" | "km", signatureSrc?: string):
       <span class="amount">$${rentAmount.toFixed(2)}</span>
     </div>
     <div class="line">
-      <span class="label">${t.electricity}</span>
+      <span class="label">${t.electricity}
+        ${bill.prevElectricityReading !== undefined ? `<br/><small style="font-size:7pt; color:#666">${bill.prevElectricityReading} → ${bill.currElectricityReading}</small>` : ''}
+      </span>
       <span class="amount">${formatLineAmount(electricityAmount, bill.electricityStatus)}</span>
     </div>
     <div class="line">
-      <span class="label">${t.water}</span>
+      <span class="label">${t.water}
+        ${bill.prevWaterReading !== undefined ? `<br/><small style="font-size:7pt; color:#666">${bill.prevWaterReading} → ${bill.currWaterReading}</small>` : ''}
+      </span>
       <span class="amount">${formatLineAmount(waterAmount, bill.waterStatus)}</span>
     </div>
 
-    <div class="total-line center">
+    <div class="total-line centre">
       <div class="line">
-        <span class="total-label bold">${t.total}</span>
+        <span class="total-label bold">${t.total} (USD)</span>
         <span class="total-amount amount">$${totalAmount.toFixed(2)}</span>
+      </div>
+      <div class="line" style="margin-top: 2px;">
+        <span class="total-label bold">${isKhmer ? 'សរុបជាប្រាក់រៀល' : 'Total (KHR)'}</span>
+        <span class="total-amount amount">${Math.round(totalAmount * exchangeRate).toLocaleString()} ៛</span>
       </div>
     </div>
 
@@ -243,14 +251,14 @@ const generateBillHtml = (bill: Bill, lang: "en" | "km", signatureSrc?: string):
 };
 
 // Export main print function
-export const printBill = (bill: Bill, lang: "en" | "km" = "en", signatureSrc?: string) => {
+export const printBill = (bill: Bill, lang: "en" | "km" = "en", exchangeRate: number = 4100, signatureSrc?: string) => {
   const printWindow = window.open("", "_blank");
   if (!printWindow) {
     console.error("Failed to open print window. Popup may be blocked.");
     return;
   }
 
-  const html = generateBillHtml(bill, lang, signatureSrc);
+  const html = generateBillHtml(bill, lang, exchangeRate, signatureSrc);
   printWindow.document.write(html);
   printWindow.document.close();
   printWindow.addEventListener("load", () => {

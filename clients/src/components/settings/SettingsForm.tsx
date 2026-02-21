@@ -8,7 +8,7 @@ import CustomDropdown from '@/common/CustomDropdown';
 
 export default function SettingsForm() {
     const { lang } = useLang();
-    const label = (en: string, km: string) => (lang === 'km' ? km : en);
+    const label = React.useCallback((en: string, km: string) => (lang === 'km' ? km : en), [lang]);
 
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -19,6 +19,9 @@ export default function SettingsForm() {
         paymentBakongAccountId: '',
         paywayMerchantId: '',
         paywayApiKey: '',
+        electricityRate: 0,
+        waterRate: 0,
+        exchangeRate: 4100,
     });
 
     useEffect(() => {
@@ -35,10 +38,13 @@ export default function SettingsForm() {
                             paymentBakongAccountId: data.data.paymentBakongAccountId || '',
                             paywayMerchantId: data.data.paywayMerchantId || '',
                             paywayApiKey: data.data.paywayApiKey || '',
+                            electricityRate: data.data.electricityRate || 0,
+                            waterRate: data.data.waterRate || 0,
+                            exchangeRate: data.data.exchangeRate || 4100,
                         });
                     }
                 }
-            } catch (error) {
+            } catch {
                 toast.error(label('Failed to load settings', 'បរាជ័យក្នុងការទាញយកការកំណត់'));
             } finally {
                 setLoading(false);
@@ -46,7 +52,7 @@ export default function SettingsForm() {
         };
 
         fetchSettings();
-    }, [lang]);
+    }, [lang, label]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -65,7 +71,7 @@ export default function SettingsForm() {
             } else {
                 toast.error(label('Failed to save settings', 'បរាជ័យក្នុងការរក្សាទុកការកំណត់'));
             }
-        } catch (error) {
+        } catch {
             toast.error(label('Error saving settings', 'មានបញ្ហាក្នុងការរក្សាទុកការកំណត់'));
         } finally {
             setSaving(false);
@@ -250,6 +256,61 @@ export default function SettingsForm() {
                                 className="w-full bg-gray-50/50 border border-gray-200 text-gray-800 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none"
                                 placeholder="****************"
                             />
+                        </div>
+
+                        {/* Utility Rates Group */}
+                        <div className="md:col-span-2 pt-4">
+                            <div className="flex items-center gap-3 pb-4 border-b border-gray-100 mb-6">
+                                <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center">
+                                    <span className="text-xl">⚡</span>
+                                </div>
+                                <div>
+                                    <h2 className="text-lg font-bold text-gray-800">{label('Utility Rates', 'ថ្លៃសេវាប្រើប្រាស់')}</h2>
+                                    <p className="text-xs font-medium text-gray-500 mt-0.5">{label('Set your standard rates for electricity and water', 'កំណត់តម្លៃស្តង់ដារសម្រាប់អគ្គិសនី និងទឹក')}</p>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold text-gray-600 uppercase tracking-wider block">
+                                        {label('Electricity Rate ($/kWh)', 'ថ្លៃអគ្គិសនី ($/kWh)')}
+                                    </label>
+                                    <input
+                                        type="number"
+                                        step="any"
+                                        value={formData.electricityRate}
+                                        onChange={(e) => setFormData({ ...formData, electricityRate: parseFloat(e.target.value) || 0 })}
+                                        className="w-full bg-gray-50/50 border border-gray-200 text-gray-800 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none"
+                                        placeholder="0.25"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold text-gray-600 uppercase tracking-wider block">
+                                        {label('Water Rate ($/m³)', 'ថ្លៃទឹក ($/m³)')}
+                                    </label>
+                                    <input
+                                        type="number"
+                                        step="any"
+                                        value={formData.waterRate}
+                                        onChange={(e) => setFormData({ ...formData, waterRate: parseFloat(e.target.value) || 0 })}
+                                        className="w-full bg-gray-50/50 border border-gray-200 text-gray-800 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none"
+                                        placeholder="0.15"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold text-gray-600 uppercase tracking-wider block">
+                                        {label('Exchange Rate (1$ = ? KHR)', 'អត្រាប្តូរប្រាក់ (1$ = ? KHR)')}
+                                    </label>
+                                    <input
+                                        type="number"
+                                        step="any"
+                                        value={formData.exchangeRate}
+                                        onChange={(e) => setFormData({ ...formData, exchangeRate: parseFloat(e.target.value) || 0 })}
+                                        className="w-full bg-gray-50/50 border border-gray-200 text-gray-800 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none"
+                                        placeholder="4100"
+                                    />
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
