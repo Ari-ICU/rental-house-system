@@ -224,8 +224,7 @@ const Sidebar: React.FC<{ isMobileOpen: boolean; onClose: () => void }> = ({ isM
                         <div className="relative">
                             <div className="absolute -inset-1 bg-gradient-to-tr from-indigo-600 to-violet-500 rounded-2xl blur opacity-30 group-hover:opacity-60 transition duration-500" />
                             <div className="relative w-11 h-11 rounded-2xl bg-[#0d1117] border border-slate-700/50 flex items-center justify-center shadow-2xl group-hover:scale-105 transition-transform duration-500 overflow-hidden">
-                                <div className="absolute inset-0 bg-gradient-to-tr from-indigo-600 to-violet-500 opacity-90" />
-                                <FaHome className="text-white text-xl relative z-10 drop-shadow-md" />
+                                <img src="/logo.png" alt="RentFlow Logo" className="w-full h-full object-contain p-1.5" />
                             </div>
                         </div>
 

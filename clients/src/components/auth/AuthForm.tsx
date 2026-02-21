@@ -35,8 +35,8 @@ const AuthForm = ({ onSubmit }: AuthFormProps) => {
 
                 {/* Logo Section */}
                 <div className="flex flex-col items-center gap-4 mb-4">
-                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center shadow-lg shadow-indigo-200">
-                        <FaHome className="text-white text-3xl" />
+                    <div className="w-20 h-20 rounded-2xl bg-white flex items-center justify-center shadow-xl shadow-indigo-100/50 p-2 border border-slate-50">
+                        <img src="/logo.png" alt="RentFlow Logo" className="w-full h-full object-contain" />
                     </div>
                     <div className="text-center">
                         <h2 className="text-3xl font-black text-slate-900 tracking-tight">
