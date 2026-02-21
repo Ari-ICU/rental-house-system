@@ -7,8 +7,8 @@ import { Toaster } from 'react-hot-toast';
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'),
   title: {
-    template: "%s | Rental House Management System",
-    default: "Dashboard | Rental House Management System",
+    template: "%s | RentFlow",
+    default: "RentFlow | Professional Rental Management",
   },
   description: "Advanced rental management ecosystem for modern landlords. Streamline client onboarding, automated billing, and real-time security monitoring in one premium dashboard.",
   applicationName: "RentFlow Premium",
