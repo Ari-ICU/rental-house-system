@@ -83,7 +83,7 @@ const ReportsTable: React.FC<ReportsTableProps> = ({
             <div className="flex flex-wrap items-center justify-between gap-6 px-4">
                 <div className="flex items-center gap-4">
                     <div className="flex flex-col gap-1.5 min-w-[160px]">
-                        <label className="text-xs font-bold text-gray-500 uppercase tracking-wider px-1">
+                        <label className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider px-1">
                             {lang === 'km' ? 'ត្រងតាមស្ថានភាព' : 'Filter by Status'}
                         </label>
                         <CustomDropdown
@@ -104,7 +104,7 @@ const ReportsTable: React.FC<ReportsTableProps> = ({
 
                 <div className="flex items-center gap-4">
                     <div className="flex flex-col gap-1.5 min-w-[160px]">
-                        <label className="text-xs font-bold text-gray-500 uppercase tracking-wider px-1">
+                        <label className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider px-1">
                             {lang === 'km' ? 'ចំនួនក្នុងមួយទំព័រ' : 'Items per Page'}
                         </label>
                         <CustomDropdown
@@ -124,11 +124,11 @@ const ReportsTable: React.FC<ReportsTableProps> = ({
             </div>
 
             {/* Table Container */}
-            <div className="bg-white/70 backdrop-blur-xl rounded-3xl shadow-xl shadow-gray-200/50 border border-white overflow-hidden mx-4">
+            <div className="bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl rounded-3xl shadow-xl shadow-gray-200/50 dark:shadow-none border border-white dark:border-slate-800 overflow-hidden mx-4">
                 <div className="overflow-x-auto w-full min-h-[400px]">
                     <table className="min-w-[900px] w-full border-collapse">
                         <thead>
-                            <tr className="bg-gray-50/50 border-b border-gray-100">
+                            <tr className="bg-gray-50/50 dark:bg-slate-800/50 border-b border-gray-100 dark:border-slate-800">
                                 {[
                                     lang === 'km' ? "ឈ្មោះរបាយការណ៍" : "Report Name",
                                     lang === 'km' ? "ប្រភេទ" : "Category",
@@ -145,15 +145,15 @@ const ReportsTable: React.FC<ReportsTableProps> = ({
                                 ))}
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-50">
+                        <tbody className="divide-y divide-gray-50 dark:divide-slate-800/50">
                             {currentReports.length === 0 ? (
                                 <tr>
                                     <td colSpan={5} className="px-8 py-20 text-center">
                                         <div className="flex flex-col items-center gap-3">
-                                            <div className="bg-gray-100 p-4 rounded-full text-gray-400">
+                                            <div className="bg-gray-100 dark:bg-slate-800 p-4 rounded-full text-gray-400 dark:text-gray-600">
                                                 <FaChevronRight size={32} className="rotate-90 opacity-20" />
                                             </div>
-                                            <span className="text-gray-400 font-medium">
+                                            <span className="text-gray-400 dark:text-gray-500 font-medium">
                                                 {lang === 'km' ? 'មិនមានរបាយការណ៍ដែលអ្នកស្វែងរកទេ' : 'No reports matching your criteria'}
                                             </span>
                                         </div>
@@ -167,7 +167,7 @@ const ReportsTable: React.FC<ReportsTableProps> = ({
                                     return (
                                         <tr
                                             key={report.id}
-                                            className="group hover:bg-blue-50/30 transition-colors duration-200"
+                                            className="group hover:bg-blue-50/30 dark:hover:bg-slate-800/50 transition-colors duration-200"
                                         >
                                             <td className="px-8 py-6">
                                                 {isEditing ? (
@@ -184,8 +184,8 @@ const ReportsTable: React.FC<ReportsTableProps> = ({
                                                     />
                                                 ) : (
                                                     <div className="flex flex-col gap-0.5">
-                                                        <span className="text-[15px] font-bold text-gray-900 group-hover:text-blue-600 transition-colors">{report.name}</span>
-                                                        <span className="text-[11px] text-gray-400 font-medium font-mono uppercase tracking-tighter">ID: #{report.id.toString().padStart(4, '0')}</span>
+                                                        <span className="text-[15px] font-bold text-gray-900 dark:text-gray-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{report.name}</span>
+                                                        <span className="text-[11px] text-gray-400 dark:text-gray-500 font-medium font-mono uppercase tracking-tighter">ID: #{report.id.toString().padStart(4, '0')}</span>
                                                     </div>
                                                 )}
                                             </td>
@@ -202,16 +202,16 @@ const ReportsTable: React.FC<ReportsTableProps> = ({
                                                         className="w-full px-4 py-2.5 bg-white border border-blue-200 rounded-xl focus:ring-4 focus:ring-blue-100 outline-none transition-all shadow-sm"
                                                     />
                                                 ) : (
-                                                    <span className="text-sm font-semibold text-gray-600 bg-gray-100/50 px-3 py-1.5 rounded-lg border border-gray-100">
+                                                    <span className="text-sm font-semibold text-gray-600 dark:text-gray-400 bg-gray-100/50 dark:bg-slate-800 px-3 py-1.5 rounded-lg border border-gray-100 dark:border-slate-700">
                                                         {report.type}
                                                     </span>
                                                 )}
                                             </td>
                                             <td className="px-8 py-6">
                                                 <div className="flex flex-col gap-0.5">
-                                                    <span className="text-sm font-medium text-gray-800">{formatKhmerDate(report.generatedAt as unknown as string, lang)}</span>
+                                                    <span className="text-sm font-medium text-gray-800 dark:text-gray-300">{formatKhmerDate(report.generatedAt as unknown as string, lang)}</span>
                                                     <div className="flex flex-col">
-                                                        <span className="text-xs text-gray-400">{new Date(report.generatedAt).toLocaleTimeString()}</span>
+                                                        <span className="text-xs text-gray-400 dark:text-gray-500">{new Date(report.generatedAt).toLocaleTimeString()}</span>
                                                         {report.startDate && report.endDate && (
                                                             <span className="text-[10px] text-blue-500 font-bold mt-1">
                                                                 {lang === 'km' ? 'រយៈពេល: ' : 'Period: '}
@@ -313,7 +313,7 @@ const ReportsTable: React.FC<ReportsTableProps> = ({
             {/* Premium Pagination */}
             {totalPages > 1 && (
                 <div className="flex items-center justify-between gap-4 mt-2 px-8">
-                    <span className="text-xs font-bold text-gray-400 uppercase tracking-widest bg-gray-50 px-4 py-2 rounded-full border border-gray-100">
+                    <span className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest bg-gray-50 dark:bg-slate-800 px-4 py-2 rounded-full border border-gray-100 dark:border-slate-700">
                         Page {currentPage} of {totalPages}
                     </span>
                     <div className="flex items-center gap-2">
@@ -321,8 +321,8 @@ const ReportsTable: React.FC<ReportsTableProps> = ({
                             onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
                             disabled={currentPage === 1}
                             className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-200 border ${currentPage === 1
-                                ? "bg-gray-50 text-gray-300 border-gray-100 cursor-not-allowed"
-                                : "bg-white text-gray-700 hover:bg-gray-50 border-gray-200 shadow-sm active:scale-95"
+                                ? "bg-gray-50 dark:bg-slate-900 text-gray-300 dark:text-slate-600 border-gray-100 dark:border-slate-800 cursor-not-allowed"
+                                : "bg-white dark:bg-slate-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-700 border-gray-200 dark:border-slate-700 shadow-sm active:scale-95"
                                 }`}
                         >
                             <FaChevronLeft size={12} />
@@ -332,8 +332,8 @@ const ReportsTable: React.FC<ReportsTableProps> = ({
                             onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
                             disabled={currentPage === totalPages}
                             className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-200 border ${currentPage === totalPages
-                                ? "bg-gray-50 text-gray-300 border-gray-100 cursor-not-allowed"
-                                : "bg-white text-gray-700 hover:bg-gray-50 border-gray-200 shadow-sm active:scale-95"
+                                ? "bg-gray-50 dark:bg-slate-900 text-gray-300 dark:text-slate-600 border-gray-100 dark:border-slate-800 cursor-not-allowed"
+                                : "bg-white dark:bg-slate-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-700 border-gray-200 dark:border-slate-700 shadow-sm active:scale-95"
                                 }`}
                         >
                             {lang === 'km' ? 'បន្ទាប់' : 'Next'}

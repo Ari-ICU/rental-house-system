@@ -198,13 +198,13 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
             <form onSubmit={handleSubmit} className="space-y-6">
 
                 {/* Section: Client Photo */}
-                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                    <div className="px-6 py-4 border-b border-gray-50 bg-gradient-to-r from-gray-50 to-white">
+                <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800 overflow-hidden">
+                    <div className="px-6 py-4 border-b border-gray-50 dark:border-slate-800 bg-gradient-to-r from-gray-50 to-white dark:from-slate-800 dark:to-slate-900">
                         <div className="flex items-center gap-2.5">
                             <div className="w-8 h-8 rounded-lg bg-violet-100 flex items-center justify-center">
                                 <FaUser className="text-violet-600 text-xs" />
                             </div>
-                            <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                            <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wider">
                                 {lang === 'km' ? 'រូបភាពអតិថិជន' : 'Client Photo'}
                             </h2>
                         </div>
@@ -220,13 +220,13 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
                 </div>
 
                 {/* Section: Rental Details */}
-                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                    <div className="px-6 py-4 border-b border-gray-50 bg-gradient-to-r from-gray-50 to-white">
+                <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800 overflow-hidden">
+                    <div className="px-6 py-4 border-b border-gray-50 dark:border-slate-800 bg-gradient-to-r from-gray-50 to-white dark:from-slate-800 dark:to-slate-900">
                         <div className="flex items-center gap-2.5">
                             <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
                                 <FaDoorOpen className="text-blue-600 text-xs" />
                             </div>
-                            <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                            <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wider">
                                 {lang === 'km' ? 'ព័ត៌មានការជួល' : 'Rental Details'}
                             </h2>
                         </div>
@@ -235,7 +235,7 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
 
                         {/* Client Name */}
                         <div className="space-y-1.5">
-                            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                            <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                 {lang === 'km' ? 'ឈ្មោះអតិថិជន' : 'Client Name'} <span className="text-red-400">*</span>
                             </label>
                             <div className="relative">
@@ -246,14 +246,14 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
                                     type="text" name="ClientName" value={formData.ClientName}
                                     onChange={handleChange} required
                                     placeholder={lang === 'km' ? 'បញ្ចូលឈ្មោះ...' : 'Enter client name...'}
-                                    className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 outline-none transition-all text-sm text-gray-800 placeholder-gray-300 bg-gray-50/50 hover:bg-white hover:border-gray-300"
+                                    className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 outline-none transition-all text-sm text-gray-800 dark:text-gray-200 placeholder-gray-300 dark:placeholder-gray-600 bg-gray-50/50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 hover:border-gray-300 dark:hover:border-slate-600"
                                 />
                             </div>
                         </div>
 
                         {/* Room Number */}
                         <div className="space-y-1.5">
-                            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                            <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                 {lang === 'km' ? 'លេខបន្ទប់' : 'Room Number'} <span className="text-red-400">*</span>
                             </label>
                             <div className="relative">
@@ -264,7 +264,7 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
                                     type="text" name="roomNumber" value={formData.roomNumber}
                                     onChange={handleChange} required
                                     placeholder="e.g. A-101"
-                                    className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 outline-none transition-all text-sm text-gray-800 placeholder-gray-300 bg-gray-50/50 hover:bg-white hover:border-gray-300"
+                                    className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 outline-none transition-all text-sm text-gray-800 dark:text-gray-200 placeholder-gray-300 dark:placeholder-gray-600 bg-gray-50/50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 hover:border-gray-300 dark:hover:border-slate-600"
                                 />
                             </div>
                         </div>
@@ -279,7 +279,7 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
 
                         {/* Rent Amount */}
                         <div className="space-y-1.5">
-                            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                            <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                 {lang === 'km' ? 'តម្លៃជួល' : 'Rent Amount'} <span className="text-red-400">*</span>
                             </label>
                             <div className="relative">
@@ -289,21 +289,21 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
                                 <input
                                     type="number" name="rentAmount" value={formData.rentAmount || ''} min={0}
                                     onChange={handleChange} required placeholder="0.00"
-                                    className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 outline-none transition-all text-sm text-gray-800 placeholder-gray-300 bg-gray-50/50 hover:bg-white hover:border-gray-300"
+                                    className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 outline-none transition-all text-sm text-gray-800 dark:text-gray-200 placeholder-gray-300 dark:placeholder-gray-600 bg-gray-50/50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 hover:border-gray-300 dark:hover:border-slate-600"
                                 />
                             </div>
                         </div>
 
                         {/* Start Date */}
                         <div className="space-y-1.5">
-                            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                            <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                 {lang === 'km' ? 'ថ្ងៃចាប់ផ្តើម' : 'Start Date'} <span className="text-red-400">*</span>
                             </label>
                             <button
                                 type="button" onClick={() => handleDateFieldClick('startDate')}
-                                className="w-full text-left px-4 py-3 border border-gray-200 rounded-xl flex justify-between items-center focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 outline-none transition-all text-sm bg-gray-50/50 hover:bg-white hover:border-gray-300"
+                                className="w-full text-left px-4 py-3 border border-gray-200 dark:border-slate-700 rounded-xl flex justify-between items-center focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 outline-none transition-all text-sm bg-gray-50/50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 hover:border-gray-300 dark:hover:border-slate-600"
                             >
-                                <span className={formData.startDate ? 'text-gray-800 font-medium' : 'text-gray-300'}>
+                                <span className={formData.startDate ? 'text-gray-800 dark:text-gray-200 font-medium' : 'text-gray-400 dark:text-gray-500'}>
                                     {formData.startDate || (lang === 'km' ? 'ជ្រើសរើសថ្ងៃ' : 'Select date...')}
                                 </span>
                                 <FaCalendarAlt className="text-violet-400 text-sm" />
@@ -312,14 +312,14 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
 
                         {/* End Date */}
                         <div className="space-y-1.5">
-                            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                            <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                 {lang === 'km' ? 'ថ្ងៃបញ្ចប់' : 'End Date'} <span className="text-red-400">*</span>
                             </label>
                             <button
                                 type="button" onClick={() => handleDateFieldClick('endDate')}
-                                className="w-full text-left px-4 py-3 border border-gray-200 rounded-xl flex justify-between items-center focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 outline-none transition-all text-sm bg-gray-50/50 hover:bg-white hover:border-gray-300"
+                                className="w-full text-left px-4 py-3 border border-gray-200 dark:border-slate-700 rounded-xl flex justify-between items-center focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 outline-none transition-all text-sm bg-gray-50/50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 hover:border-gray-300 dark:hover:border-slate-600"
                             >
-                                <span className={formData.endDate ? 'text-gray-800 font-medium' : 'text-gray-300'}>
+                                <span className={formData.endDate ? 'text-gray-800 dark:text-gray-200 font-medium' : 'text-gray-400 dark:text-gray-500'}>
                                     {formData.endDate || (lang === 'km' ? 'ជ្រើសរើសថ្ងៃ' : 'Select date...')}
                                 </span>
                                 <FaCalendarAlt className="text-violet-400 text-sm" />
@@ -330,13 +330,13 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
                 </div>
 
                 {/* Section: Contact Information */}
-                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                    <div className="px-6 py-4 border-b border-gray-50 bg-gradient-to-r from-gray-50 to-white">
+                <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800 overflow-hidden">
+                    <div className="px-6 py-4 border-b border-gray-50 dark:border-slate-800 bg-gradient-to-r from-gray-50 to-white dark:from-slate-800 dark:to-slate-900">
                         <div className="flex items-center gap-2.5">
                             <div className="w-8 h-8 rounded-lg bg-sky-100 flex items-center justify-center">
                                 <FaPhone className="text-sky-600 text-xs" />
                             </div>
-                            <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                            <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wider">
                                 {lang === 'km' ? 'ព័ត៌មានទំនាក់ទំនង' : 'Contact Information'}
                             </h2>
                         </div>
@@ -344,7 +344,7 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
                     <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-5">
 
                         <div className="space-y-1.5">
-                            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                            <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                 {lang === 'km' ? 'លេខទូរស័ព្ទ' : 'Phone'}
                             </label>
                             <div className="relative">
@@ -354,13 +354,13 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
                                 <input
                                     type="tel" name="clientPhone" value={formData.clientPhone}
                                     onChange={handleChange} placeholder="+855 xx xxx xxx"
-                                    className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 outline-none transition-all text-sm text-gray-800 placeholder-gray-300 bg-gray-50/50 hover:bg-white hover:border-gray-300"
+                                    className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 outline-none transition-all text-sm text-gray-800 dark:text-gray-200 placeholder-gray-300 dark:placeholder-gray-600 bg-gray-50/50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 hover:border-gray-300 dark:hover:border-slate-600"
                                 />
                             </div>
                         </div>
 
                         <div className="space-y-1.5">
-                            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                            <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                 {lang === 'km' ? 'អ៊ីមែល' : 'Email'}
                             </label>
                             <div className="relative">
@@ -370,13 +370,13 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
                                 <input
                                     type="email" name="clientEmail" value={formData.clientEmail}
                                     onChange={handleChange} placeholder="example@email.com"
-                                    className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 outline-none transition-all text-sm text-gray-800 placeholder-gray-300 bg-gray-50/50 hover:bg-white hover:border-gray-300"
+                                    className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 outline-none transition-all text-sm text-gray-800 dark:text-gray-200 placeholder-gray-300 dark:placeholder-gray-600 bg-gray-50/50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 hover:border-gray-300 dark:hover:border-slate-600"
                                 />
                             </div>
                         </div>
 
                         <div className="space-y-1.5 md:col-span-2">
-                            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                            <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                 {lang === 'km' ? 'អាស័យដ្ឋាន' : 'Address'}
                             </label>
                             <div className="relative">
@@ -387,14 +387,14 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
                                     type="text" name="clientAddress" value={formData.clientAddress}
                                     onChange={handleChange}
                                     placeholder={lang === 'km' ? 'បញ្ចូលអាស័យដ្ឋាន...' : 'Enter full address...'}
-                                    className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 outline-none transition-all text-sm text-gray-800 placeholder-gray-300 bg-gray-50/50 hover:bg-white hover:border-gray-300"
+                                    className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 outline-none transition-all text-sm text-gray-800 dark:text-gray-200 placeholder-gray-300 dark:placeholder-gray-600 bg-gray-50/50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 hover:border-gray-300 dark:hover:border-slate-600"
                                 />
                             </div>
                         </div>
 
                         {/* Telegram Chat ID */}
                         <div className="space-y-1.5 md:col-span-2">
-                            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                            <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                 {lang === 'km' ? 'លេខសម្គាល់ Telegram' : 'Telegram Chat ID'}
                             </label>
                             <div className="relative">
@@ -407,7 +407,7 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
                                     value={formData.telegramChatId}
                                     onChange={handleChange}
                                     placeholder={lang === 'km' ? 'ឧទាហរណ៍ៈ 123456789' : 'e.g. 123456789'}
-                                    className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 outline-none transition-all text-sm text-gray-800 placeholder-gray-300 bg-gray-50/50 hover:bg-white hover:border-gray-300"
+                                    className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 outline-none transition-all text-sm text-gray-800 dark:text-gray-200 placeholder-gray-300 dark:placeholder-gray-600 bg-gray-50/50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 hover:border-gray-300 dark:hover:border-slate-600"
                                 />
                             </div>
                             <p className="text-[10px] text-gray-400 mt-1 italic leading-relaxed">
@@ -420,13 +420,13 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
                 </div>
 
                 {/* Section: ID Card */}
-                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                    <div className="px-6 py-4 border-b border-gray-50 bg-gradient-to-r from-gray-50 to-white">
+                <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800 overflow-hidden">
+                    <div className="px-6 py-4 border-b border-gray-50 dark:border-slate-800 bg-gradient-to-r from-gray-50 to-white dark:from-slate-800 dark:to-slate-900">
                         <div className="flex items-center gap-2.5">
                             <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center">
                                 <FaIdCard className="text-amber-600 text-xs" />
                             </div>
-                            <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                            <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wider">
                                 {lang === 'km' ? 'អត្តសញ្ញាណប័ណ្ណ' : 'ID Card Documents'}
                             </h2>
                         </div>
@@ -448,20 +448,20 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
                 </div>
 
                 {/* Section: Emergency Contact */}
-                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                    <div className="px-6 py-4 border-b border-gray-50 bg-gradient-to-r from-gray-50 to-white">
+                <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800 overflow-hidden">
+                    <div className="px-6 py-4 border-b border-gray-50 dark:border-slate-800 bg-gradient-to-r from-gray-50 to-white dark:from-slate-800 dark:to-slate-900">
                         <div className="flex items-center gap-2.5">
                             <div className="w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center">
                                 <FaExclamationTriangle className="text-red-500 text-xs" />
                             </div>
-                            <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                            <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wider">
                                 {lang === 'km' ? 'ទំនាក់ទំនងបន្ទាន់' : 'Emergency Contact'}
                             </h2>
                         </div>
                     </div>
                     <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div className="space-y-1.5">
-                            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                            <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                 {lang === 'km' ? 'ឈ្មោះ' : 'Contact Name'}
                             </label>
                             <div className="relative">
@@ -472,12 +472,12 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
                                     type="text" name="emergencyContactName" value={formData.emergencyContactName}
                                     onChange={handleChange}
                                     placeholder={lang === 'km' ? 'ឈ្មោះអ្នកទំនាក់ទំនងបន្ទាន់' : 'Full name...'}
-                                    className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 outline-none transition-all text-sm text-gray-800 placeholder-gray-300 bg-gray-50/50 hover:bg-white hover:border-gray-300"
+                                    className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 outline-none transition-all text-sm text-gray-800 dark:text-gray-200 placeholder-gray-300 dark:placeholder-gray-600 bg-gray-50/50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 hover:border-gray-300 dark:hover:border-slate-600"
                                 />
                             </div>
                         </div>
                         <div className="space-y-1.5">
-                            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                            <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                 {lang === 'km' ? 'លេខទូរស័ព្ទបន្ទាន់' : 'Emergency Phone'}
                             </label>
                             <div className="relative">
@@ -487,7 +487,7 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
                                 <input
                                     type="tel" name="emergencyContactPhone" value={formData.emergencyContactPhone}
                                     onChange={handleChange} placeholder="+855 xx xxx xxx"
-                                    className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 outline-none transition-all text-sm text-gray-800 placeholder-gray-300 bg-gray-50/50 hover:bg-white hover:border-gray-300"
+                                    className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 outline-none transition-all text-sm text-gray-800 dark:text-gray-200 placeholder-gray-300 dark:placeholder-gray-600 bg-gray-50/50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 hover:border-gray-300 dark:hover:border-slate-600"
                                 />
                             </div>
                         </div>
@@ -495,13 +495,13 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
                 </div >
 
                 {/* Section: Notes */}
-                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                    <div className="px-6 py-4 border-b border-gray-50 bg-gradient-to-r from-gray-50 to-white">
+                <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800 overflow-hidden">
+                    <div className="px-6 py-4 border-b border-gray-50 dark:border-slate-800 bg-gradient-to-r from-gray-50 to-white dark:from-slate-800 dark:to-slate-900">
                         <div className="flex items-center gap-2.5">
                             <div className="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center">
                                 <FaStickyNote className="text-green-600 text-xs" />
                             </div>
-                            <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                            <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wider">
                                 {lang === 'km' ? 'កំណត់សម្គាល់' : 'Notes'}
                             </h2>
                         </div>
@@ -510,7 +510,7 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
                         <textarea
                             name="notes" value={formData.notes} onChange={handleChange} rows={4}
                             placeholder={lang === 'km' ? 'បញ្ចូលកំណត់សម្គាល់...' : 'Add any additional notes or remarks...'}
-                            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 outline-none transition-all text-sm text-gray-800 placeholder-gray-300 bg-gray-50/50 hover:bg-white hover:border-gray-300 resize-none"
+                            className="w-full px-4 py-3 border border-gray-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 outline-none transition-all text-sm text-gray-800 dark:text-gray-200 placeholder-gray-300 dark:placeholder-gray-600 bg-gray-50/50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 hover:border-gray-300 dark:hover:border-slate-600 resize-none"
                         />
                     </div>
                 </div >
@@ -544,7 +544,7 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
             {
                 showDatePopup && editingDateField && (
                     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md">
+                        <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl dark:border dark:border-slate-800 w-full max-w-md">
                             <KhmerCalendar
                                 selectedDate={formData[editingDateField]}
                                 onChange={handleDateChange}

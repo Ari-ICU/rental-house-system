@@ -109,33 +109,33 @@ export default function SettingsForm() {
             </div>
 
             {/* Form */}
-            <form onSubmit={handleSubmit} className="bg-white rounded-3xl p-6 sm:p-10 shadow-xl shadow-gray-200/50 border border-gray-100 flex flex-col gap-8">
+            <form onSubmit={handleSubmit} className="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-10 shadow-xl shadow-gray-200/50 dark:shadow-none border border-gray-100 dark:border-slate-800 flex flex-col gap-8">
                 {/* Telegram Settings Group */}
                 <div className="space-y-6">
-                    <div className="flex items-center gap-3 pb-4 border-b border-gray-100">
-                        <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center">
+                    <div className="flex items-center gap-3 pb-4 border-b border-gray-100 dark:border-slate-800">
+                        <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center">
                             <FaTelegramPlane className="text-blue-500 text-xl" />
                         </div>
                         <div>
-                            <h2 className="text-lg font-bold text-gray-800">{label('Telegram Bot Integration', 'ការរួមបញ្ចូល Telegram Bot')}</h2>
-                            <p className="text-xs font-medium text-gray-500 mt-0.5">{label('Required for unpaid utility alerts', 'ចាំបាច់សម្រាប់ការដាស់តឿនវិក្កយបត្រមិនទាន់បង់ប្រាក់')}</p>
+                            <h2 className="text-lg font-bold text-gray-800 dark:text-gray-200">{label('Telegram Bot Integration', 'ការរួមបញ្ចូល Telegram Bot')}</h2>
+                            <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mt-0.5">{label('Required for unpaid utility alerts', 'ចាំបាច់សម្រាប់ការដាស់តឿនវិក្កយបត្រមិនទាន់បង់ប្រាក់')}</p>
                         </div>
                     </div>
 
                     {/* Bot Helper Info Box */}
                     {formData.telegramBotToken && (
-                        <div className="bg-blue-50 border border-blue-100 rounded-2xl p-4 flex gap-4 items-start shadow-sm shadow-blue-50">
-                            <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-                                <span className="text-blue-600 font-bold text-lg">💡</span>
+                        <div className="bg-blue-50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-900/30 rounded-2xl p-4 flex gap-4 items-start shadow-sm shadow-blue-50 dark:shadow-none">
+                            <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center flex-shrink-0">
+                                <span className="text-blue-600 dark:text-blue-400 font-bold text-lg">💡</span>
                             </div>
                             <div className="space-y-1">
-                                <h4 className="text-sm font-bold text-blue-900">{label('ID Helper Bot is Active', 'ID Helper Bot គឺសកម្ម')}</h4>
-                                <p className="text-[11px] text-blue-800 leading-relaxed opacity-80">
+                                <h4 className="text-sm font-bold text-blue-900 dark:text-blue-300">{label('ID Helper Bot is Active', 'ID Helper Bot គឺសកម្ម')}</h4>
+                                <p className="text-[11px] text-blue-800 dark:text-blue-400/80 leading-relaxed opacity-80">
                                     {label(
                                         'Your bot is now programmed to help customers. Tell your tenants to search for your bot and send ',
                                         'បច្ចុប្បន្ន Bot របស់អ្នកត្រូវបានកំណត់ដើម្បីជួយអតិថិជន។ សូមប្រាប់អតិថិជនឱ្យស្វែងរក Bot របស់អ្នក ហើយផ្ញើ '
                                     )}
-                                    <code className="bg-white px-1.5 py-0.5 rounded border border-blue-200 text-blue-700 font-bold mx-1">/myid</code>
+                                    <code className="bg-white dark:bg-slate-800 px-1.5 py-0.5 rounded border border-blue-200 dark:border-blue-800/50 text-blue-700 dark:text-blue-400 font-bold mx-1">/myid</code>
                                     {label(
                                         'to get their Chat ID instantly.',
                                         'ដើម្បីទទួលបានលេខសម្គាល់ Chat របស់ពួកគេភ្លាមៗ។'
@@ -148,7 +148,7 @@ export default function SettingsForm() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {/* Bot Token */}
                         <div className="space-y-2">
-                            <label className="text-xs font-bold text-gray-600 uppercase tracking-wider block">
+                            <label className="text-xs font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider block">
                                 {label('Bot Token', 'លេខកូដសម្ងាត់ Bot')} <span className="text-red-500">*</span>
                             </label>
                             <input
@@ -156,17 +156,17 @@ export default function SettingsForm() {
                                 required
                                 value={formData.telegramBotToken}
                                 onChange={(e) => setFormData({ ...formData, telegramBotToken: e.target.value })}
-                                className="w-full bg-gray-50/50 border border-gray-200 text-gray-800 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none"
+                                className="w-full bg-gray-50/50 dark:bg-slate-800/50 border border-gray-200 dark:border-slate-700 text-gray-800 dark:text-gray-200 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none"
                                 placeholder="123456789:ABCDefGHIJKlmnOpQrstuVWxYZ"
                             />
-                            <p className="text-[10px] text-gray-400">
+                            <p className="text-[10px] text-gray-400 dark:text-gray-500">
                                 {label('Get this from @BotFather in Telegram', 'ទទួលបានវាពី @BotFather នៅក្នុង Telegram')}
                             </p>
                         </div>
 
                         {/* Chat ID */}
                         <div className="space-y-2">
-                            <label className="text-xs font-bold text-gray-600 uppercase tracking-wider block">
+                            <label className="text-xs font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider block">
                                 {label('Chat ID', 'លេខសម្គាល់ក្រុម Chat')} <span className="text-red-500">*</span>
                             </label>
                             <input
@@ -174,17 +174,17 @@ export default function SettingsForm() {
                                 required
                                 value={formData.telegramChatId}
                                 onChange={(e) => setFormData({ ...formData, telegramChatId: e.target.value })}
-                                className="w-full bg-gray-50/50 border border-gray-200 text-gray-800 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none"
+                                className="w-full bg-gray-50/50 dark:bg-slate-800/50 border border-gray-200 dark:border-slate-700 text-gray-800 dark:text-gray-200 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none"
                                 placeholder="-100123456789"
                             />
-                            <p className="text-[10px] text-gray-400">
+                            <p className="text-[10px] text-gray-400 dark:text-gray-500">
                                 {label('The group or user ID where alerts will be sent', 'លេខសម្គាល់ក្រុម ឬអ្នកប្រើប្រាស់ដែលការដាស់តឿននឹងត្រូវបញ្ជូនទៅ')}
                             </p>
                         </div>
 
                         {/* Alert Language */}
                         <div className="space-y-2 md:col-span-2">
-                            <label className="text-xs font-bold text-gray-600 uppercase tracking-wider block">
+                            <label className="text-xs font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider block">
                                 {label('Alert Language', 'ភាសាដាស់តឿន')}
                             </label>
                             <CustomDropdown
@@ -193,7 +193,7 @@ export default function SettingsForm() {
                                 onChange={(val) => setFormData({ ...formData, telegramLanguage: val })}
                                 placeholder={label('Select language', 'ជ្រើសរើសភាសា')}
                             />
-                            <p className="text-[10px] text-gray-400">
+                            <p className="text-[10px] text-gray-400 dark:text-gray-500">
                                 {label('Language used for the automated Telegram alert messages', 'ភាសាដែលប្រើសម្រាប់សារដាស់តឿន Telegram ស្វ័យប្រវត្តិ')}
                             </p>
                         </div>
@@ -201,78 +201,78 @@ export default function SettingsForm() {
                 </div>
 
                 {/* Payment Integrations */}
-                <div className="space-y-6 pt-8 border-t border-gray-100">
-                    <div className="flex items-center gap-3 pb-4 border-b border-gray-100">
-                        <div className="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center">
+                <div className="space-y-6 pt-8 border-t border-gray-100 dark:border-slate-800">
+                    <div className="flex items-center gap-3 pb-4 border-b border-gray-100 dark:border-slate-800">
+                        <div className="w-10 h-10 rounded-xl bg-green-50 dark:bg-green-900/20 flex items-center justify-center">
                             <span className="text-xl">🇰🇭</span>
                         </div>
                         <div>
-                            <h2 className="text-lg font-bold text-gray-800">{label('Payment Integration', 'ការរួមបញ្ចូលការបង់ប្រាក់')}</h2>
-                            <p className="text-xs font-medium text-gray-500 mt-0.5">{label('Configure KHQR & Payway for automatic bill payments', 'កំណត់ KHQR និង Payway សម្រាប់ការបង់វិក្កយបត្រដោយស្វ័យប្រវត្តិ')}</p>
+                            <h2 className="text-lg font-bold text-gray-800 dark:text-gray-200">{label('Payment Integration', 'ការរួមបញ្ចូលការបង់ប្រាក់')}</h2>
+                            <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mt-0.5">{label('Configure KHQR & Payway for automatic bill payments', 'កំណត់ KHQR និង Payway សម្រាប់ការបង់វិក្កយបត្រដោយស្វ័យប្រវត្តិ')}</p>
                         </div>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {/* Bakong Account ID */}
                         <div className="space-y-2 md:col-span-2">
-                            <label className="text-xs font-bold text-gray-600 uppercase tracking-wider block">
+                            <label className="text-xs font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider block">
                                 {label('Bakong KHQR Account ID', 'លេខគណនី Bakong KHQR')}
                             </label>
                             <input
                                 type="text"
                                 value={formData.paymentBakongAccountId}
                                 onChange={(e) => setFormData({ ...formData, paymentBakongAccountId: e.target.value })}
-                                className="w-full bg-gray-50/50 border border-gray-200 text-gray-800 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none"
+                                className="w-full bg-gray-50/50 dark:bg-slate-800/50 border border-gray-200 dark:border-slate-700 text-gray-800 dark:text-gray-200 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none"
                                 placeholder="clientaccount@bank"
                             />
-                            <p className="text-[10px] text-gray-400">
+                            <p className="text-[10px] text-gray-400 dark:text-gray-500">
                                 {label('Your Bakong Account ID used to generate static payment QR codes.', 'លេខគណនី Bakong របស់អ្នកដែលប្រើសម្រាប់បង្កើតកូដ QR បង់ប្រាក់។')}
                             </p>
                         </div>
 
                         {/* Payway Merchant ID */}
                         <div className="space-y-2">
-                            <label className="text-xs font-bold text-gray-600 uppercase tracking-wider block">
+                            <label className="text-xs font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider block">
                                 {label('Payway Merchant ID', 'លេខសម្គាល់អាជីវករ Payway')}
                             </label>
                             <input
                                 type="text"
                                 value={formData.paywayMerchantId}
                                 onChange={(e) => setFormData({ ...formData, paywayMerchantId: e.target.value })}
-                                className="w-full bg-gray-50/50 border border-gray-200 text-gray-800 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none"
+                                className="w-full bg-gray-50/50 dark:bg-slate-800/50 border border-gray-200 dark:border-slate-700 text-gray-800 dark:text-gray-200 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none"
                                 placeholder="rths_merchant"
                             />
                         </div>
 
                         {/* Payway API Key */}
                         <div className="space-y-2">
-                            <label className="text-xs font-bold text-gray-600 uppercase tracking-wider block">
+                            <label className="text-xs font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider block">
                                 {label('Payway API Key', 'សោរ API Payway')}
                             </label>
                             <input
                                 type="password"
                                 value={formData.paywayApiKey}
                                 onChange={(e) => setFormData({ ...formData, paywayApiKey: e.target.value })}
-                                className="w-full bg-gray-50/50 border border-gray-200 text-gray-800 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none"
+                                className="w-full bg-gray-50/50 dark:bg-slate-800/50 border border-gray-200 dark:border-slate-700 text-gray-800 dark:text-gray-200 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none"
                                 placeholder="****************"
                             />
                         </div>
 
                         {/* Utility Rates Group */}
                         <div className="md:col-span-2 pt-4">
-                            <div className="flex items-center gap-3 pb-4 border-b border-gray-100 mb-6">
-                                <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center">
+                            <div className="flex items-center gap-3 pb-4 border-b border-gray-100 dark:border-slate-800 mb-6">
+                                <div className="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-900/20 flex items-center justify-center">
                                     <span className="text-xl">⚡</span>
                                 </div>
                                 <div>
-                                    <h2 className="text-lg font-bold text-gray-800">{label('Utility Rates', 'ថ្លៃសេវាប្រើប្រាស់')}</h2>
-                                    <p className="text-xs font-medium text-gray-500 mt-0.5">{label('Set your standard rates for electricity and water', 'កំណត់តម្លៃស្តង់ដារសម្រាប់អគ្គិសនី និងទឹក')}</p>
+                                    <h2 className="text-lg font-bold text-gray-800 dark:text-gray-200">{label('Utility Rates', 'ថ្លៃសេវាប្រើប្រាស់')}</h2>
+                                    <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mt-0.5">{label('Set your standard rates for electricity and water', 'កំណត់តម្លៃស្តង់ដារសម្រាប់អគ្គិសនី និងទឹក')}</p>
                                 </div>
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
-                                    <label className="text-xs font-bold text-gray-600 uppercase tracking-wider block">
+                                    <label className="text-xs font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider block">
                                         {label('Electricity Rate ($/kWh)', 'ថ្លៃអគ្គិសនី ($/kWh)')}
                                     </label>
                                     <input
@@ -280,12 +280,12 @@ export default function SettingsForm() {
                                         step="any"
                                         value={formData.electricityRate}
                                         onChange={(e) => setFormData({ ...formData, electricityRate: parseFloat(e.target.value) || 0 })}
-                                        className="w-full bg-gray-50/50 border border-gray-200 text-gray-800 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none"
+                                        className="w-full bg-gray-50/50 dark:bg-slate-800/50 border border-gray-200 dark:border-slate-700 text-gray-800 dark:text-gray-200 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none"
                                         placeholder="0.25"
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="text-xs font-bold text-gray-600 uppercase tracking-wider block">
+                                    <label className="text-xs font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider block">
                                         {label('Water Rate ($/m³)', 'ថ្លៃទឹក ($/m³)')}
                                     </label>
                                     <input
@@ -293,12 +293,12 @@ export default function SettingsForm() {
                                         step="any"
                                         value={formData.waterRate}
                                         onChange={(e) => setFormData({ ...formData, waterRate: parseFloat(e.target.value) || 0 })}
-                                        className="w-full bg-gray-50/50 border border-gray-200 text-gray-800 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none"
+                                        className="w-full bg-gray-50/50 dark:bg-slate-800/50 border border-gray-200 dark:border-slate-700 text-gray-800 dark:text-gray-200 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none"
                                         placeholder="0.15"
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="text-xs font-bold text-gray-600 uppercase tracking-wider block">
+                                    <label className="text-xs font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider block">
                                         {label('Exchange Rate (1$ = ? KHR)', 'អត្រាប្តូរប្រាក់ (1$ = ? KHR)')}
                                     </label>
                                     <input
@@ -306,7 +306,7 @@ export default function SettingsForm() {
                                         step="any"
                                         value={formData.exchangeRate}
                                         onChange={(e) => setFormData({ ...formData, exchangeRate: parseFloat(e.target.value) || 0 })}
-                                        className="w-full bg-gray-50/50 border border-gray-200 text-gray-800 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none"
+                                        className="w-full bg-gray-50/50 dark:bg-slate-800/50 border border-gray-200 dark:border-slate-700 text-gray-800 dark:text-gray-200 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none"
                                         placeholder="4100"
                                     />
                                 </div>
@@ -316,7 +316,7 @@ export default function SettingsForm() {
                 </div>
 
                 {/* Submit Action */}
-                <div className="pt-6 border-t border-gray-100 flex justify-end">
+                <div className="pt-6 border-t border-gray-100 dark:border-slate-800 flex justify-end">
                     <button
                         type="submit"
                         disabled={saving}
