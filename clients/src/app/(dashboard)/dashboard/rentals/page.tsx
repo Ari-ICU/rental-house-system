@@ -134,65 +134,38 @@ const RentalPageContent: React.FC = () => {
             label: lang === "en" ? "Total Units" : "យូនីតសរុប",
             value: allRentals.length,
             icon: FaHome,
-            color: "from-violet-500 to-indigo-600",
-            shadow: "shadow-violet-200",
-            bg: "bg-violet-50",
-            text: "text-violet-700",
+            wrapperClass: "bg-indigo-50 text-indigo-600",
         },
         {
             label: lang === "en" ? "Renting" : "កំពុងជួល",
             value: activeCount,
             icon: FaCheckCircle,
-            color: "from-emerald-500 to-teal-600",
-            shadow: "shadow-emerald-200",
-            bg: "bg-emerald-50",
-            text: "text-emerald-700",
+            wrapperClass: "bg-emerald-50 text-emerald-600",
         },
         {
             label: lang === "en" ? "Reserved" : "បានកក់",
             value: reservedCount,
             icon: FaClock,
-            color: "from-blue-500 to-indigo-500",
-            shadow: "shadow-blue-200",
-            bg: "bg-blue-50",
-            text: "text-blue-700",
+            wrapperClass: "bg-blue-50 text-blue-600",
         },
         {
             label: lang === "en" ? "Completed" : "បានបញ្ចប់",
             value: completedCount,
-            icon: FaHome,
-            color: "from-gray-400 to-gray-500",
-            shadow: "shadow-gray-200",
-            bg: "bg-gray-50",
-            text: "text-gray-600",
+            icon: FaCheckCircle,
+            wrapperClass: "bg-slate-100 text-slate-600",
         },
         {
             label: lang === "en" ? "Maintenance" : "ការជួសជុល",
             value: maintenanceCount,
             icon: FaTimesCircle,
-            color: "from-rose-500 to-pink-500",
-            shadow: "shadow-rose-200",
-            bg: "bg-rose-50",
-            text: "text-rose-700",
+            wrapperClass: "bg-rose-50 text-rose-600",
         },
     ];
 
     if (loading) {
         return (
             <div className="min-h-[60vh] flex items-center justify-center">
-                <div className="flex flex-col items-center gap-4">
-                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-violet-200 animate-pulse">
-                        <FaHome className="text-white text-lg" />
-                    </div>
-                    <div className="text-center">
-                        <p className="text-sm font-semibold text-gray-700">
-                            {lang === "en" ? "Loading rentals..." : "កំពុងផ្ទុក..."}
-                        </p>
-                        <p className="text-xs text-gray-400 mt-1">
-                            {lang === "en" ? "Please wait a moment" : "សូមរង់ចាំ"}
-                        </p>
-                    </div>
-                </div>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
             </div>
         );
     }
@@ -200,13 +173,13 @@ const RentalPageContent: React.FC = () => {
     if (error) {
         return (
             <div className="min-h-[60vh] flex items-center justify-center">
-                <div className="bg-red-50 border border-red-200 text-red-700 px-6 py-5 rounded-2xl text-sm flex items-center gap-3 shadow-sm">
-                    <FaTimesCircle className="text-red-400 flex-shrink-0 text-xl" />
+                <div className="bg-rose-50 border border-rose-200 text-rose-700 px-6 py-5 rounded-md text-sm flex items-center gap-3 shadow-sm">
+                    <FaTimesCircle className="text-rose-500 flex-shrink-0 text-xl" />
                     <div>
-                        <p className="font-semibold">
+                        <p className="font-medium text-rose-900">
                             {lang === "en" ? "Failed to load" : "ផ្ទុកបានបរាជ័យ"}
                         </p>
-                        <p className="text-xs text-red-400 mt-0.5">{error}</p>
+                        <p className="text-xs text-rose-600 mt-0.5">{error}</p>
                     </div>
                 </div>
             </div>
@@ -224,20 +197,24 @@ const RentalPageContent: React.FC = () => {
             />
 
             {/* Stat Cards */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
                 {statCards.map((card) => {
                     const Icon = card.icon;
                     return (
                         <div
                             key={card.label}
-                            className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 flex items-center gap-4 hover:shadow-md transition-shadow"
+                            className="bg-white p-4 rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between"
                         >
-                            <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${card.color} flex items-center justify-center shadow-md ${card.shadow} flex-shrink-0`}>
-                                <Icon className="text-white text-base" />
-                            </div>
-                            <div>
-                                <p className="text-2xl font-bold text-gray-900">{card.value}</p>
-                                <p className="text-xs text-gray-400 leading-tight">{card.label}</p>
+                            <div className="flex items-start justify-between mb-3">
+                                <div>
+                                    <h3 className="text-slate-500 text-xs font-medium uppercase tracking-wider">
+                                        {card.label}
+                                    </h3>
+                                    <p className="text-2xl font-semibold text-slate-900 mt-1">{card.value}</p>
+                                </div>
+                                <div className={`p-2.5 rounded-md ${card.wrapperClass}`}>
+                                    <Icon className="text-lg" />
+                                </div>
                             </div>
                         </div>
                     );
@@ -253,11 +230,7 @@ const RentalPage: React.FC = () => {
     return (
         <Suspense fallback={
             <div className="min-h-[60vh] flex items-center justify-center">
-                <div className="flex flex-col items-center gap-4">
-                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-violet-200 animate-pulse">
-                        <FaHome className="text-white text-lg" />
-                    </div>
-                </div>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
             </div>
         }>
             <RentalPageContent />

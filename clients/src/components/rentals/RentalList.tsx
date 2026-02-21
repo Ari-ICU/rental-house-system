@@ -17,10 +17,10 @@ interface RentalListProps {
 }
 
 const statusConfig: { [key in RentalStatus]: { label: string; labelKm: string; dot: string; badge: string } } = {
-    "Active": { label: "Active", labelKm: "កំពុងជួល", dot: "bg-emerald-400", badge: "bg-emerald-50 text-emerald-700 border border-emerald-200" },
-    "Reserved": { label: "Reserved", labelKm: "កក់ទុក", dot: "bg-blue-400", badge: "bg-blue-50 text-blue-700 border border-blue-200" },
-    "Completed": { label: "Completed", labelKm: "បានបញ្ចប់", dot: "bg-gray-400", badge: "bg-gray-100 text-gray-600 border border-gray-200" },
-    "Maintenance": { label: "Maintenance", labelKm: "កំពុងជួសជុល", dot: "bg-rose-400", badge: "bg-rose-50 text-rose-700 border border-rose-200" },
+    "Active": { label: "Active", labelKm: "កំពុងជួល", dot: "bg-emerald-400", badge: "bg-emerald-50 text-emerald-700 bg-opacity-70" },
+    "Reserved": { label: "Reserved", labelKm: "កក់ទុក", dot: "bg-blue-400", badge: "bg-blue-50 text-blue-700 bg-opacity-70" },
+    "Completed": { label: "Completed", labelKm: "បានបញ្ចប់", dot: "bg-slate-400", badge: "bg-slate-100 text-slate-700 bg-opacity-70" },
+    "Maintenance": { label: "Maintenance", labelKm: "កំពុងជួសជុល", dot: "bg-rose-400", badge: "bg-rose-50 text-rose-700 bg-opacity-70" },
 };
 
 const allStatuses: RentalStatus[] = ["Active", "Reserved", "Completed", "Maintenance"];
@@ -32,14 +32,6 @@ function getInitials(name: string): string {
         .map((w) => w[0]?.toUpperCase() || "")
         .join("");
 }
-
-const avatarGradients = [
-    "from-violet-500 to-indigo-500",
-    "from-blue-500 to-cyan-500",
-    "from-rose-500 to-pink-500",
-    "from-amber-500 to-orange-500",
-    "from-emerald-500 to-teal-500",
-];
 
 const RentalList: React.FC<RentalListProps> = ({
     rentals = [],
@@ -132,7 +124,7 @@ const RentalList: React.FC<RentalListProps> = ({
         client: lang === "en" ? "Client" : "អតិថិជន",
         room: lang === "en" ? "Room" : "បន្ទប់",
         status: lang === "en" ? "Status" : "ស្ថានភាព",
-        rentAmount: lang === "en" ? "Rent / mo" : "ចំនួនជួល",
+        rentAmount: lang === "en" ? "Rent" : "ចំនួនជួល",
         startDate: lang === "en" ? "Start Date" : "ថ្ងៃចាប់ផ្តើម",
         endDate: lang === "en" ? "End Date" : "ថ្ងៃបញ្ចប់",
         actions: lang === "en" ? "Actions" : "សកម្មភាព",
@@ -143,11 +135,9 @@ const RentalList: React.FC<RentalListProps> = ({
     };
 
     return (
-        <div className="space-y-4">
-
-            {/* Stats + Filters Bar */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-white rounded-2xl border border-gray-100 shadow-sm px-5 py-3.5">
-
+        <div className="flex flex-col w-full">
+            {/* Filters Bar */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 px-1 pb-4">
                 {/* Status Pills */}
                 <div className="flex items-center gap-2 flex-wrap">
                     {(["All", ...allStatuses] as (RentalStatus | "All")[]).map((s) => {
@@ -157,9 +147,9 @@ const RentalList: React.FC<RentalListProps> = ({
                             <button
                                 key={s}
                                 onClick={() => { setStatusFilter(s); setCurrentPage(1); }}
-                                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${isActive
-                                    ? "bg-violet-600 text-white shadow-md shadow-violet-200"
-                                    : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                                className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${isActive
+                                    ? "bg-indigo-600 text-white shadow-sm"
+                                    : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
                                     }`}
                             >
                                 {s === "All"
@@ -171,99 +161,94 @@ const RentalList: React.FC<RentalListProps> = ({
                 </div>
 
                 {/* Items Per Page */}
-                <div className="flex items-center gap-2 text-xs text-gray-500">
-                    <span>{lang === "en" ? "Show" : "បង្ហាញ"}</span>
+                <div className="flex items-center gap-2 text-xs font-medium text-slate-500">
+                    <span>{lang === "en" ? "Show:" : "បង្ហាញ:"}</span>
                     <CustomDropdown
                         options={itemsPerPageOptions.map(opt => ({ value: String(opt), label: String(opt) }))}
                         value={String(itemsPerPage)}
                         onChange={(val) => { setItemsPerPage(parseInt(val)); setCurrentPage(1); }}
-                        className="w-20"
+                        className="w-16"
                     />
-                    <span>{lang === "en" ? "per page" : "ក្នុងមួយទំព័រ"}</span>
                 </div>
             </div>
 
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden w-full">
+            <div className="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden w-full">
                 <div className="overflow-x-auto w-full">
-                    <table className="min-w-[1000px] w-full">
-                        <thead>
-                            <tr className="border-b border-gray-100">
-                                <th className="px-5 py-3.5 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">#</th>
-                                <th className="px-5 py-3.5 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">{t.client}</th>
-                                <th className="px-5 py-3.5 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">{t.room}</th>
-                                <th className="px-5 py-3.5 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">{t.status}</th>
-                                <th className="px-5 py-3.5 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">{t.rentAmount}</th>
-                                <th className="px-5 py-3.5 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">{t.startDate}</th>
-                                <th className="px-5 py-3.5 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">{t.endDate}</th>
-                                <th className="px-5 py-3.5 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">{t.actions}</th>
+                    <table className="w-full text-sm text-left border-collapse">
+                        <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-medium">
+                            <tr>
+                                <th className="px-6 py-3 font-medium text-[13px]">#</th>
+                                <th className="px-6 py-3 font-medium text-[13px]">{t.client}</th>
+                                <th className="px-6 py-3 font-medium text-[13px]">{t.room}</th>
+                                <th className="px-6 py-3 font-medium text-[13px]">{t.status}</th>
+                                <th className="px-6 py-3 font-medium text-[13px]">{t.rentAmount}</th>
+                                <th className="px-6 py-3 font-medium text-[13px]">{t.startDate}</th>
+                                <th className="px-6 py-3 font-medium text-[13px]">{t.endDate}</th>
+                                <th className="px-6 py-3 font-medium text-[13px]">{t.actions}</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-50">
+                        <tbody className="divide-y divide-slate-100">
                             {currentRentals.length === 0 ? (
                                 <tr>
                                     <td colSpan={8}>
-                                        <div className="flex flex-col items-center justify-center py-16 text-gray-400 gap-3">
-                                            <div className="w-14 h-14 rounded-2xl bg-gray-100 flex items-center justify-center">
-                                                <FaInbox className="text-2xl text-gray-300" />
+                                        <div className="flex flex-col items-center justify-center py-20 text-slate-500 gap-3">
+                                            <div className="w-12 h-12 rounded bg-slate-50 flex items-center justify-center">
+                                                <FaInbox className="text-xl text-slate-300" />
                                             </div>
-                                            <p className="text-sm font-medium text-gray-400">{t.noRentals}</p>
+                                            <p className="text-sm font-medium">{t.noRentals}</p>
                                         </div>
                                     </td>
                                 </tr>
                             ) : currentRentals.map((rental, idx) => {
                                 const isEditing = editingId === rental.id;
                                 const cfg = statusConfig[rental.status];
-                                const gradient = avatarGradients[rental.id % avatarGradients.length];
                                 const initials = getInitials(rental.ClientName || "?");
 
                                 return (
                                     <tr
                                         key={rental.id}
-                                        className={`group transition-colors hover:bg-violet-50/40 ${isEditing ? "bg-violet-50/60" : ""}`}
+                                        className={`group transition-colors hover:bg-slate-50 ${isEditing ? "bg-slate-50/70" : ""}`}
                                     >
                                         {/* ID */}
-                                        <td className="px-5 py-3.5 text-xs text-gray-400 font-mono">
+                                        <td className="px-6 py-4 text-slate-500 tabular-nums whitespace-nowrap">
                                             {String(idx + 1 + (currentPage - 1) * itemsPerPage).padStart(2, "0")}
                                         </td>
 
                                         {/* Client */}
-                                        <td className="px-5 py-3.5">
+                                        <td className="px-6 py-4 whitespace-nowrap">
                                             {isEditing ? (
                                                 <input
                                                     type="text"
                                                     value={editForm.ClientName || ""}
                                                     onChange={(e) => updateEditForm("ClientName", e.target.value)}
-                                                    className="border border-violet-300 rounded-lg px-2.5 py-1.5 w-full text-xs focus:outline-none focus:ring-2 focus:ring-violet-500/20"
+                                                    className="border border-slate-300 rounded-md px-2 py-1.5 w-full text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
                                                 />
                                             ) : (
                                                 <div className="flex items-center gap-3">
-                                                    <div className={`w-8 h-8 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center flex-shrink-0 shadow-sm`}>
-                                                        <span className="text-white text-xs font-bold">{initials}</span>
+                                                    <div className="w-8 h-8 rounded bg-slate-100 text-slate-600 flex items-center justify-center flex-shrink-0 text-xs font-medium">
+                                                        {initials}
                                                     </div>
-                                                    <span className="text-sm font-medium text-gray-800">{rental.ClientName || "N/A"}</span>
+                                                    <span className="font-medium text-slate-900">{rental.ClientName || "N/A"}</span>
                                                 </div>
                                             )}
                                         </td>
 
                                         {/* Room */}
-                                        <td className="px-5 py-3.5">
+                                        <td className="px-6 py-4 whitespace-nowrap text-slate-600">
                                             {isEditing ? (
                                                 <input
                                                     type="text"
                                                     value={editForm.roomNumber || ""}
                                                     onChange={(e) => updateEditForm("roomNumber", e.target.value)}
-                                                    className="border border-violet-300 rounded-lg px-2.5 py-1.5 w-full text-xs focus:outline-none focus:ring-2 focus:ring-violet-500/20"
+                                                    className="border border-slate-300 rounded-md px-2 py-1.5 w-full text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
                                                 />
                                             ) : (
-                                                <div className="flex items-center gap-1.5">
-                                                    <FaHome className="text-gray-300 text-xs" />
-                                                    <span className="text-sm text-gray-700 font-medium">{rental.roomNumber || "N/A"}</span>
-                                                </div>
+                                                rental.roomNumber || "N/A"
                                             )}
                                         </td>
 
                                         {/* Status */}
-                                        <td className="px-5 py-3.5">
+                                        <td className="px-6 py-4 whitespace-nowrap">
                                             {isEditing ? (
                                                 <CustomDropdown
                                                     options={allStatuses.map(status => ({
@@ -275,105 +260,101 @@ const RentalList: React.FC<RentalListProps> = ({
                                                     className="w-full"
                                                 />
                                             ) : (
-                                                <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${cfg.badge}`}>
-                                                    <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`}></span>
+                                                <span className={`inline-flex px-2 py-0.5 rounded text-[11px] font-medium leading-tight ${cfg.badge}`}>
                                                     {lang === "en" ? cfg.label : cfg.labelKm}
                                                 </span>
                                             )}
                                         </td>
 
                                         {/* Rent Amount */}
-                                        <td className="px-5 py-3.5">
+                                        <td className="px-6 py-4 whitespace-nowrap font-medium text-slate-900">
                                             {isEditing ? (
                                                 <input
                                                     type="number"
                                                     value={editForm.rentAmount || 0}
                                                     onChange={(e) => updateEditForm("rentAmount", parseFloat(e.target.value) || 0)}
-                                                    className="border border-violet-300 rounded-lg px-2.5 py-1.5 w-24 text-xs focus:outline-none focus:ring-2 focus:ring-violet-500/20"
+                                                    className="border border-slate-300 rounded-md px-2 py-1.5 w-24 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
                                                     min="0" step="0.01"
                                                 />
                                             ) : (
-                                                <span className="text-sm font-semibold text-gray-800">
-                                                    ${rental.rentAmount.toLocaleString()}
-                                                    <span className="text-xs text-gray-400 font-normal">/mo</span>
-                                                </span>
+                                                <>${rental.rentAmount.toLocaleString()}</>
                                             )}
                                         </td>
 
                                         {/* Start Date */}
-                                        <td className="px-5 py-3.5">
+                                        <td className="px-6 py-4 whitespace-nowrap text-slate-600">
                                             {isEditing ? (
                                                 <button
                                                     type="button"
-                                                    className="flex items-center gap-2 border border-violet-300 rounded-lg px-2.5 py-1.5 hover:bg-violet-50 text-xs w-full"
+                                                    className="flex items-center gap-2 border border-slate-300 rounded-md bg-white px-2 py-1.5 text-sm w-full hover:bg-slate-50"
                                                     onClick={() => handleDateEdit("startDate")}
                                                 >
-                                                    <FaCalendarAlt className="text-violet-400 text-xs" />
+                                                    <FaCalendarAlt className="text-slate-400 text-xs" />
                                                     <span>{formatKhmerDate(editForm.startDate as string, lang) || "—"}</span>
                                                 </button>
                                             ) : (
-                                                <span className="text-sm text-gray-600">{formatKhmerDate(rental.startDate, lang) || "—"}</span>
+                                                formatKhmerDate(rental.startDate, lang) || "—"
                                             )}
                                         </td>
 
                                         {/* End Date */}
-                                        <td className="px-5 py-3.5">
+                                        <td className="px-6 py-4 whitespace-nowrap text-slate-600">
                                             {isEditing ? (
                                                 <button
                                                     type="button"
-                                                    className="flex items-center gap-2 border border-violet-300 rounded-lg px-2.5 py-1.5 hover:bg-violet-50 text-xs w-full"
+                                                    className="flex items-center gap-2 border border-slate-300 rounded-md bg-white px-2 py-1.5 text-sm w-full hover:bg-slate-50"
                                                     onClick={() => handleDateEdit("endDate")}
                                                 >
-                                                    <FaCalendarAlt className="text-violet-400 text-xs" />
+                                                    <FaCalendarAlt className="text-slate-400 text-xs" />
                                                     <span>{formatKhmerDate(editForm.endDate as string, lang) || "—"}</span>
                                                 </button>
                                             ) : (
-                                                <span className="text-sm text-gray-600">{formatKhmerDate(rental.endDate, lang) || "—"}</span>
+                                                formatKhmerDate(rental.endDate, lang) || "—"
                                             )}
                                         </td>
 
                                         {/* Actions */}
-                                        <td className="px-5 py-3.5">
-                                            <div className="flex items-center gap-1.5">
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="flex items-center gap-1 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
                                                 {isEditing ? (
                                                     <>
                                                         <button
                                                             onClick={() => handleSaveEdit(rental.id)}
-                                                            className="w-7 h-7 rounded-lg bg-emerald-500 text-white flex items-center justify-center hover:bg-emerald-600 transition shadow-sm"
+                                                            className="p-1.5 bg-emerald-600 text-white rounded hover:bg-emerald-700 transition-colors"
                                                             title={lang === "en" ? "Save" : "រក្សាទុក"}
                                                         >
-                                                            <FaSave size={11} />
+                                                            <FaSave size={14} />
                                                         </button>
                                                         <button
                                                             onClick={handleCancelEdit}
-                                                            className="w-7 h-7 rounded-lg bg-gray-200 text-gray-600 flex items-center justify-center hover:bg-gray-300 transition"
+                                                            className="p-1.5 bg-slate-200 text-slate-700 rounded hover:bg-slate-300 transition-colors"
                                                             title={lang === "en" ? "Cancel" : "បោះបង់"}
                                                         >
-                                                            <FaTimes size={11} />
+                                                            <FaTimes size={14} />
                                                         </button>
                                                     </>
                                                 ) : (
                                                     <>
                                                         <button
                                                             onClick={() => handleViewDetails(rental)}
-                                                            className="w-7 h-7 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center hover:bg-indigo-100 transition"
+                                                            className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-slate-100 rounded transition-colors"
                                                             title={lang === "en" ? "View" : "មើល"}
                                                         >
-                                                            <FaEye size={11} />
+                                                            <FaEye size={14} />
                                                         </button>
                                                         <button
                                                             onClick={() => handleEditStart(rental)}
-                                                            className="w-7 h-7 rounded-lg bg-violet-50 text-violet-600 flex items-center justify-center hover:bg-violet-100 transition"
+                                                            className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-slate-100 rounded transition-colors"
                                                             title={lang === "en" ? "Edit" : "កែប្រែ"}
                                                         >
-                                                            <FaEdit size={11} />
+                                                            <FaEdit size={14} />
                                                         </button>
                                                         <button
                                                             onClick={() => handleDelete(rental.id)}
-                                                            className="w-7 h-7 rounded-lg bg-red-50 text-red-500 flex items-center justify-center hover:bg-red-100 transition"
+                                                            className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-slate-100 rounded transition-colors"
                                                             title={lang === "en" ? "Delete" : "លុប"}
                                                         >
-                                                            <FaTrash size={11} />
+                                                            <FaTrash size={13} />
                                                         </button>
                                                     </>
                                                 )}
@@ -388,48 +369,49 @@ const RentalList: React.FC<RentalListProps> = ({
 
                 {/* Pagination */}
                 {totalPages > 1 && (
-                    <div className="flex items-center justify-between border-t border-gray-100 px-5 py-3.5">
-                        <p className="text-xs text-gray-400">
-                            {lang === "en"
-                                ? `Showing ${(currentPage - 1) * itemsPerPage + 1}–${Math.min(currentPage * itemsPerPage, filteredRentals.length)} of ${filteredRentals.length}`
-                                : `${(currentPage - 1) * itemsPerPage + 1}–${Math.min(currentPage * itemsPerPage, filteredRentals.length)} នៃ ${filteredRentals.length}`}
-                        </p>
+                    <div className="flex items-center justify-between px-6 py-4 border-t border-slate-200 bg-slate-50">
+                        <button
+                            onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+                            disabled={currentPage === 1}
+                            className={`flex items-center px-4 py-2 rounded border text-sm font-medium transition-colors ${currentPage === 1
+                                ? "border-slate-200 text-slate-300 cursor-not-allowed bg-white"
+                                : "border-slate-300 text-slate-700 hover:bg-slate-50 bg-white shadow-sm"
+                                }`}
+                        >
+                            {lang === 'en' ? 'Previous' : 'មុន'}
+                        </button>
                         <div className="flex items-center gap-1.5">
-                            <button
-                                onClick={() => setCurrentPage(p => Math.max(p - 1, 1))}
-                                disabled={currentPage === 1}
-                                className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm transition ${currentPage === 1 ? "text-gray-300 cursor-not-allowed" : "text-gray-600 hover:bg-gray-100 border border-gray-200"}`}
-                            >
-                                <FaChevronLeft size={11} />
-                            </button>
                             {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
                                 <button
                                     key={page}
                                     onClick={() => setCurrentPage(page)}
-                                    className={`w-8 h-8 rounded-lg text-xs font-semibold transition ${page === currentPage
-                                        ? "bg-violet-600 text-white shadow-md shadow-violet-200"
-                                        : "text-gray-500 hover:bg-gray-100 border border-gray-200"
+                                    className={`w-8 h-8 rounded text-sm font-medium transition-colors ${page === currentPage
+                                        ? "bg-indigo-600 text-white shadow-sm"
+                                        : "bg-transparent text-slate-600 hover:bg-slate-200"
                                         }`}
                                 >
                                     {page}
                                 </button>
                             ))}
-                            <button
-                                onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))}
-                                disabled={currentPage === totalPages}
-                                className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm transition ${currentPage === totalPages ? "text-gray-300 cursor-not-allowed" : "text-gray-600 hover:bg-gray-100 border border-gray-200"}`}
-                            >
-                                <FaChevronRight size={11} />
-                            </button>
                         </div>
+                        <button
+                            onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+                            disabled={currentPage === totalPages}
+                            className={`flex items-center px-4 py-2 rounded border text-sm font-medium transition-colors ${currentPage === totalPages
+                                ? "border-slate-200 text-slate-300 cursor-not-allowed bg-white"
+                                : "border-slate-300 text-slate-700 hover:bg-slate-50 bg-white shadow-sm"
+                                }`}
+                        >
+                            {lang === 'en' ? 'Next' : 'បន្ទាប់'}
+                        </button>
                     </div>
                 )}
             </div>
 
             {/* Date Picker Popup */}
             {showDatePopup && editingId && editForm && (
-                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md">
+                <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+                    <div className="bg-white rounded-lg shadow-xl border border-slate-200 w-full max-w-md">
                         <KhmerCalendar
                             selectedDate={editingDateField ? (editForm[editingDateField] as string) || "" : ""}
                             onChange={handleDateChange}
