@@ -18,9 +18,9 @@ export const metadata: Metadata = {
   themeColor: "#4f46e5",
   viewport: "width=device-width, initial-scale=1, maximum-scale=1",
   icons: {
-    icon: "/favicon.ico",
-    shortcut: "/favicon.ico",
-    apple: "/apple-touch-icon.png",
+    icon: "/logo.png",
+    shortcut: "/logo.png",
+    apple: "/logo.png",
   },
   openGraph: {
     title: "RentFlow | Professional Rental Management",
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     siteName: "RentFlow Premium",
     images: [
       {
-        url: "/og-image.jpg",
+        url: "/logo.png",
         width: 1200,
         height: 630,
         alt: "Rental House Management Dashboard",
