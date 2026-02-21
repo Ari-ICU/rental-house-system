@@ -1,6 +1,7 @@
 const PDFDocument = require('pdfkit-table');
 const qrcode = require('qrcode');
 const { BakongKHQR, IndividualInfo } = require('bakong-khqr');
+const path = require('path');
 
 const generateBillPdfBuffer = async (bill, settings) => {
     return new Promise(async (resolve, reject) => {
@@ -13,12 +14,23 @@ const generateBillPdfBuffer = async (bill, settings) => {
                 resolve(pdfData);
             });
 
+            // Load & Register Khmer Fonts
+            const regularFontPath = path.join(__dirname, 'Battambang-Regular.ttf');
+            const boldFontPath = path.join(__dirname, 'Battambang-Bold.ttf');
+
+            try {
+                doc.registerFont('Khmer-Regular', regularFontPath);
+                doc.registerFont('Khmer-Bold', boldFontPath);
+            } catch (err) {
+                console.warn('Could not load Khmer fonts, falling back to defaults:', err.message);
+            }
+
             // HEADER
-            doc.fontSize(20).text('INVOICE / វិក្កយបត្រ', { align: 'center' });
+            doc.font('Khmer-Bold').fontSize(20).text('INVOICE / វិក្កយបត្រ', { align: 'center' });
             doc.moveDown();
 
             // RENTAL INFO
-            doc.fontSize(12);
+            doc.font('Khmer-Regular').fontSize(12);
             doc.text(`Tenant Name: ${bill.rental?.ClientName || 'Unknown'}`);
             doc.text(`Room Number: ${bill.rental?.roomNumber || 'Unknown'}`);
             doc.text(`Billing Month: ${bill.month || 'Unknown'}`);
@@ -43,8 +55,8 @@ const generateBillPdfBuffer = async (bill, settings) => {
             };
 
             await doc.table(table, {
-                prepareHeader: () => doc.font("Helvetica-Bold").fontSize(12),
-                prepareRow: () => doc.font("Helvetica").fontSize(12)
+                prepareHeader: () => doc.font("Khmer-Bold").fontSize(12),
+                prepareRow: () => doc.font("Khmer-Regular").fontSize(12)
             });
 
             // DYNAMIC KHQR
@@ -72,11 +84,11 @@ const generateBillPdfBuffer = async (bill, settings) => {
 
             if (qrCodeDataURL) {
                 doc.moveDown();
-                doc.fontSize(12).text('Scan to Pay (KHQR)', { align: 'center' });
+                doc.font('Khmer-Regular').fontSize(12).text('Scan to Pay (KHQR)', { align: 'center' });
                 doc.image(qrCodeDataURL, { fit: [150, 150], align: 'center' });
             } else if (amountToPay === 0) {
                 doc.moveDown();
-                doc.fontSize(14).fillColor('green').text('Fully Paid', { align: 'center' });
+                doc.font('Khmer-Bold').fontSize(14).fillColor('green').text('Fully Paid', { align: 'center' });
             }
 
             doc.end();
