@@ -48,24 +48,24 @@ const BillHeader: React.FC<BillHeaderProps> = ({ onSearch, onAdd, onPrint }) => 
                 </p>
             </div>
 
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full lg:w-auto">
-                <div className="relative group flex-grow sm:w-80">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full lg:w-auto">
+                <div className="relative group flex-grow sm:w-72">
                     <input
                         type="text"
                         placeholder={placeholderText}
                         value={searchQuery}
                         onChange={handleSearch}
-                        className="w-full pl-12 pr-4 py-3.5 bg-white border border-gray-100 rounded-[22px] shadow-sm group-hover:shadow-md focus:outline-none focus:ring-4 focus:ring-violet-50 focus:border-violet-200 transition-all text-sm font-medium placeholder:text-gray-300"
+                        className="w-full pl-10 pr-3 py-2 bg-white border border-slate-300 hover:border-slate-400 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 transition-colors text-sm text-slate-900 placeholder:text-slate-400"
                         aria-label={placeholderText}
                     />
-                    <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-300 text-lg transition-colors group-focus-within:text-violet-500" />
+                    <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 text-sm" />
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2">
                     {onAdd && (
                         <button
                             onClick={onAdd}
-                            className="flex items-center justify-center gap-2.5 bg-gradient-to-br from-violet-600 to-indigo-600 text-white px-8 py-3.5 rounded-[22px] hover:shadow-xl hover:shadow-violet-200 hover:-translate-y-0.5 active:translate-y-0 transition-all text-sm font-bold shadow-lg shadow-violet-100 whitespace-nowrap"
+                            className="flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md transition-colors text-sm font-medium shadow-sm whitespace-nowrap"
                             aria-label={addButtonText}
                         >
                             <FaPlus className="text-xs" /> {addButtonText}
@@ -75,10 +75,10 @@ const BillHeader: React.FC<BillHeaderProps> = ({ onSearch, onAdd, onPrint }) => 
                     {onPrint && (
                         <button
                             onClick={onPrint}
-                            className="flex items-center justify-center gap-2.5 bg-white text-gray-700 border border-gray-100 px-6 py-3.5 rounded-[22px] hover:bg-gray-50 hover:border-gray-200 transition-all text-sm font-bold shadow-sm whitespace-nowrap"
+                            className="flex items-center justify-center gap-2 bg-white text-slate-700 border border-slate-300 hover:bg-slate-50 px-4 py-2 rounded-md transition-colors text-sm font-medium shadow-sm whitespace-nowrap"
                             aria-label={printButtonText}
                         >
-                            <FaPrint className="text-gray-400 text-sm" /> {printButtonText}
+                            <FaPrint className="text-slate-400 text-sm" /> {printButtonText}
                         </button>
                     )}
                 </div>

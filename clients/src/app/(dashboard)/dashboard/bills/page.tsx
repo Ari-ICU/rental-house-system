@@ -100,82 +100,85 @@ const BillsPage: React.FC = () => {
 
                 {/* Summary Cards */}
                 {!isLoading && bills.length > 0 && (
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 mt-4">
-                        <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-                            <div className="flex items-center gap-4 text-violet-600 mb-2">
-                                <div className="p-3 bg-violet-50 rounded-2xl">
-                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6 mt-2">
+                        <div className="bg-white p-5 rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+                            <div className="flex items-start justify-between mb-4">
+                                <div>
+                                    <h3 className="text-slate-500 text-sm font-medium">
+                                        {lang === 'km' ? 'វិក្កយបត្រសរុប' : 'Total Bills'}
+                                    </h3>
+                                    <p className="text-2xl font-semibold text-slate-900 mt-1">{stats.total}</p>
+                                </div>
+                                <div className="p-2.5 bg-indigo-50 text-indigo-600 rounded-md">
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                     </svg>
                                 </div>
-                                <span className="text-sm font-semibold uppercase tracking-wider text-gray-500">
-                                    {lang === 'km' ? 'វិក្កយបត្រសរុប' : 'Total Bills'}
-                                </span>
                             </div>
-                            <div className="text-3xl font-bold text-gray-800">{stats.total}</div>
                         </div>
 
-                        <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-                            <div className="flex items-center gap-4 text-rose-600 mb-2">
-                                <div className="p-3 bg-rose-50 rounded-2xl">
-                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div className="bg-white p-5 rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+                            <div className="flex items-start justify-between mb-4">
+                                <div>
+                                    <h3 className="text-slate-500 text-sm font-medium">
+                                        {lang === 'km' ? 'មិនទាន់បង់' : 'Unpaid Bills'}
+                                    </h3>
+                                    <p className="text-2xl font-semibold text-slate-900 mt-1">{stats.unpaidCount}</p>
+                                </div>
+                                <div className="p-2.5 bg-rose-50 text-rose-600 rounded-md">
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
                                 </div>
-                                <span className="text-sm font-semibold uppercase tracking-wider text-gray-500">
-                                    {lang === 'km' ? 'មិនទាន់បង់' : 'Unpaid Bills'}
-                                </span>
                             </div>
-                            <div className="text-3xl font-bold text-gray-800">{stats.unpaidCount}</div>
                         </div>
 
-                        <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-                            <div className="flex items-center gap-4 text-emerald-600 mb-2">
-                                <div className="p-3 bg-emerald-50 rounded-2xl">
-                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div className="bg-white p-5 rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+                            <div className="flex items-start justify-between mb-4">
+                                <div>
+                                    <h3 className="text-slate-500 text-sm font-medium">
+                                        {lang === 'km' ? 'ចំណូលសរុប' : 'Total Revenue'}
+                                    </h3>
+                                    <p className="text-2xl font-semibold text-slate-900 mt-1">${stats.totalRevenue.toLocaleString()}</p>
+                                </div>
+                                <div className="p-2.5 bg-emerald-50 text-emerald-600 rounded-md">
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
                                 </div>
-                                <span className="text-sm font-semibold uppercase tracking-wider text-gray-500">
-                                    {lang === 'km' ? 'ចំណូលសរុប' : 'Total Revenue'}
-                                </span>
                             </div>
-                            <div className="text-3xl font-bold text-gray-800">${stats.totalRevenue.toLocaleString()}</div>
                         </div>
                     </div>
                 )}
 
                 {isLoading ? (
                     <div className="flex justify-center items-center py-40">
-                        <div className="relative">
-                            <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-violet-600"></div>
-                            <div className="absolute top-0 left-0 animate-ping rounded-full h-16 w-16 border-2 border-violet-400 opacity-20"></div>
-                        </div>
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
                     </div>
                 ) : filteredBills.length > 0 ? (
-                    <div className="bg-white rounded-[32px] border border-gray-100 shadow-xl overflow-hidden animate-in fade-in duration-700">
+                    <div className="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden">
                         <BillsList bills={filteredBills} onRefresh={fetchBills} />
                     </div>
                 ) : (
-                    <div className="flex flex-col items-center justify-center py-24 px-6 bg-white rounded-[40px] border border-dashed border-gray-200 shadow-sm text-center animate-in slide-in-from-bottom-4 duration-500">
-                        <div className="w-32 h-32 bg-gray-50 rounded-full flex items-center justify-center mb-6">
-                            <svg className="w-16 h-16 text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="flex flex-col items-center justify-center py-24 px-6 bg-white rounded-lg border border-dashed border-slate-300 shadow-sm text-center">
+                        <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
+                            <svg className="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
                         </div>
-                        <h3 className="text-2xl font-bold text-gray-800 mb-2">
+                        <h3 className="text-lg font-medium text-slate-900 mb-1">
                             {lang === "km" ? "មិនមានវិក្កយបត្រទេ" : "No Bills Found"}
                         </h3>
-                        <p className="text-gray-500 mb-8 max-w-sm">
+                        <p className="text-sm text-slate-500 mb-6 max-w-sm">
                             {lang === "km"
                                 ? "ចាប់ផ្តើមដោយការបង្កើតវិក្កយបត្រថ្មីសម្រាប់អតិថិជនរបស់អ្នក។"
                                 : "Start by creating a new bill for your customers to track their monthly payments."}
                         </p>
                         <button
                             onClick={handleAdd}
-                            className="flex items-center gap-3 bg-violet-600 text-white px-8 py-4 rounded-2xl hover:bg-violet-700 active:scale-95 transition-all shadow-lg shadow-violet-200 font-bold"
+                            className="flex items-center gap-2 bg-indigo-600 text-white px-5 py-2.5 rounded-md hover:bg-indigo-700 transition-colors shadow-sm text-sm font-medium"
                         >
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 4v16m8-8H4" />
                             </svg>
                             {lang === 'km' ? 'បង្កើតវិក្កយបត្រថ្មី' : 'Create First Bill'}
