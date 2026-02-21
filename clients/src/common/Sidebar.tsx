@@ -95,6 +95,13 @@ const Sidebar: React.FC<{ isMobileOpen: boolean; onClose: () => void }> = ({ isM
                 { name: "System Settings", nameKh: "ការកំណត់", href: "/dashboard/settings", icon: <FaCog /> },
             ],
         },
+        {
+            title: "Help & Support",
+            titleKh: "ជំនួយ និងការគាំទ្រ",
+            links: [
+                { name: "Support Hub", nameKh: "មជ្ឈមណ្ឌលគាំទ្រ", href: "/dashboard/support", icon: <FaLifeRing /> },
+            ],
+        },
     ];
 
     const isActive = (href?: string) => {
@@ -274,20 +281,28 @@ const Sidebar: React.FC<{ isMobileOpen: boolean; onClose: () => void }> = ({ isM
                 {/* PRO BANNER / Support Card */}
                 {!isCollapsed && (
                     <div className="p-6 mt-auto">
-                        <div className="relative group p-5 rounded-[2.5rem] bg-gradient-to-br from-[#0d1117] to-[#080a0f] border border-slate-800/50 overflow-hidden shadow-2xl">
+                        <Link href="/dashboard/support" className="block relative group p-5 rounded-[2.5rem] bg-gradient-to-br from-[#0d1117] to-[#080a0f] border border-slate-800/50 overflow-hidden shadow-2xl transition-all hover:border-indigo-500/30">
                             {/* Animated Inner Glow */}
                             <div className="absolute -top-12 -right-12 w-24 h-24 bg-indigo-500/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700" />
                             <div className="absolute -bottom-12 -left-12 w-24 h-24 bg-violet-500/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700" />
 
                             <div className="relative z-10 space-y-4">
                                 <div className="flex items-center justify-between">
-                                    <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center">
+                                    <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center border border-indigo-500/20">
                                         <FaLifeRing className="text-indigo-400 text-xl animate-[spin_8s_linear_infinite]" />
                                     </div>
                                     <div className="flex -space-x-2">
                                         {[1, 2, 3].map(i => (
-                                            <div key={i} className={`w-8 h-8 rounded-full border-2 border-[#0d1117] bg-slate-800 flex items-center justify-center text-[10px] font-bold text-white shadow-lg shadow-black/30`}>
-                                                {i === 3 ? '+' : ''}
+                                            <div key={i} className={`w-8 h-8 rounded-full border-2 border-[#0d1117] bg-slate-800 flex items-center justify-center text-[10px] font-bold text-white shadow-lg shadow-black/30 overflow-hidden`}>
+                                                {i === 3 ? (
+                                                    <span className="text-indigo-400">+</span>
+                                                ) : (
+                                                    <img
+                                                        src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${i + 20}`}
+                                                        alt="Agent"
+                                                        className="w-full h-full object-cover"
+                                                    />
+                                                )}
                                             </div>
                                         ))}
                                     </div>
@@ -300,12 +315,12 @@ const Sidebar: React.FC<{ isMobileOpen: boolean; onClose: () => void }> = ({ isM
                                         {lang === 'en' ? 'Get help with your rental management instantly.' : 'ទទួលបានជំនួយភ្លាមៗ។'}
                                     </p>
                                 </div>
-                                <button className="w-full py-3.5 bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white rounded-2xl text-[11px] font-black transition-all shadow-[0_8px_20px_-6px_rgba(79,70,229,0.5)] active:scale-[0.97] flex items-center justify-center gap-2 group/btn">
+                                <div className="w-full py-3.5 bg-indigo-600 group-hover:bg-indigo-500 active:bg-indigo-700 text-white rounded-2xl text-[11px] font-black transition-all shadow-[0_8px_20px_-6px_rgba(79,70,229,0.5)] active:scale-[0.97] flex items-center justify-center gap-2">
                                     {lang === 'en' ? 'Contact Us' : 'ទាក់ទងមកយើង'}
-                                    <FaChevronLeft className="rotate-180 group-hover/btn:translate-x-1 transition-transform" size={10} />
-                                </button>
+                                    <FaChevronLeft className="rotate-180 group-hover:translate-x-1 transition-transform" size={10} />
+                                </div>
                             </div>
-                        </div>
+                        </Link>
                     </div>
                 )}
 
@@ -362,16 +377,18 @@ const Sidebar: React.FC<{ isMobileOpen: boolean; onClose: () => void }> = ({ isM
                             {renderNav(false, onClose)}
 
                             <div className="p-8">
-                                <div className="p-6 rounded-[2.5rem] bg-gradient-to-br from-[#0d1117] to-[#080a0f] border border-slate-800/50 shadow-2xl">
-                                    <div className="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center mb-4">
+                                <Link href="/dashboard/support" onClick={onClose} className="block p-6 rounded-[2.5rem] bg-gradient-to-br from-[#0d1117] to-[#080a0f] border border-slate-800/50 shadow-2xl relative overflow-hidden group">
+                                    <div className="absolute -top-12 -right-12 w-24 h-24 bg-indigo-500/10 rounded-full blur-2xl" />
+                                    <div className="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center mb-4 border border-indigo-500/20">
                                         <FaLifeRing className="text-indigo-400 text-xl" />
                                     </div>
                                     <h4 className="text-sm font-black text-white mb-2 leading-none">Need Assistance?</h4>
                                     <p className="text-[11px] text-slate-500 font-bold mb-5 leading-relaxed">Our experts are available 24/7 to help with any system issues.</p>
-                                    <button className="w-full py-3.5 bg-indigo-600 text-white rounded-2xl text-[11px] font-black shadow-lg shadow-indigo-600/30">
+                                    <div className="w-full py-3.5 bg-indigo-600 text-white rounded-2xl text-[11px] font-black shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-2">
                                         Contact Support
-                                    </button>
-                                </div>
+                                        <FaChevronLeft className="rotate-180" size={10} />
+                                    </div>
+                                </Link>
                             </div>
                         </motion.aside>
                     </>
