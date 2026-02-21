@@ -182,7 +182,7 @@ const ReportsTable: React.FC<ReportsTableProps> = ({
                                                 </span>
                                             </td>
                                             <td className="px-8 py-6">
-                                                <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                                <div className="flex items-center gap-2">
                                                     <button
                                                         onClick={() => onView?.(report)}
                                                         className="bg-indigo-50 hover:bg-indigo-100 text-indigo-600 p-2.5 rounded-xl transition-all active:scale-90"

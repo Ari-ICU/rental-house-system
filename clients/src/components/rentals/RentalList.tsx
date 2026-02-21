@@ -315,7 +315,7 @@ const RentalList: React.FC<RentalListProps> = ({
 
                                         {/* Actions */}
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="flex items-center gap-1 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
+                                            <div className="flex items-center gap-1">
                                                 {isEditing ? (
                                                     <>
                                                         <button

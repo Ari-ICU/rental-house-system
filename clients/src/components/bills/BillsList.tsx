@@ -264,7 +264,7 @@ const BillsList: React.FC<BillsListProps> = ({
 
                                         {/* Actions */}
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="flex items-center gap-1 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
+                                            <div className="flex items-center gap-1">
                                                 <button
                                                     onClick={() => handleView(bill)}
                                                     className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-slate-100 rounded transition-colors"
