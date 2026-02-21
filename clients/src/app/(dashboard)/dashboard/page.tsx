@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from 'next/link';
 import MetricCard from "@/components/MetricCard";
 import RecentRentalsTable from "@/components/RecentRentalsTable";
+import TableSkeleton from "@/components/common/TableSkeleton";
 import { FaBed, FaUser, FaMoneyBillWave, FaExclamationTriangle } from "react-icons/fa";
 import { useLang } from "@/context/LangContext";
 import { Rental } from "@/types/rents";
@@ -93,9 +94,7 @@ export default function DashboardPage() {
                 </div>
 
                 {loading ? (
-                    <div className="flex items-center justify-center py-10">
-                        <div className="w-7 h-7 border-4 border-purple-500 border-t-transparent rounded-full animate-spin" />
-                    </div>
+                    <TableSkeleton rows={6} cols={5} />
                 ) : (
                     <RecentRentalsTable rentals={rentals.slice(0, 10)} />
                 )}

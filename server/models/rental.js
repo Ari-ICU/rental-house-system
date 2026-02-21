@@ -19,13 +19,33 @@ const convertDecimalToNumber = (rental) => {
 };
 
 const Rental = {
-    findAll: async () => {
-        const rentals = await prisma.rental.findMany({
-            orderBy: {
-                createdAt: 'desc',
-            },
-        });
-        return rentals.map(convertDecimalToNumber);
+    findAll: async (options = {}) => {
+        const { search, skip, take } = options;
+
+        const where = search ? {
+            OR: [
+                { ClientName: { contains: search, mode: 'insensitive' } },
+                { roomNumber: { contains: search, mode: 'insensitive' } },
+                { clientPhone: { contains: search, mode: 'insensitive' } },
+            ]
+        } : {};
+
+        const [rentals, total] = await Promise.all([
+            prisma.rental.findMany({
+                where,
+                orderBy: {
+                    createdAt: 'desc',
+                },
+                skip: skip ? parseInt(skip) : undefined,
+                take: take ? parseInt(take) : undefined,
+            }),
+            prisma.rental.count({ where })
+        ]);
+
+        return {
+            data: rentals.map(convertDecimalToNumber),
+            total
+        };
     },
 
     findById: async (id) => {

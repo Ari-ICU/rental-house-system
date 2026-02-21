@@ -1,7 +1,7 @@
 const Rental = require('../models/rental');
 
-const getAllRentals = async () => {
-    return await Rental.findAll();
+const getAllRentals = async (options = {}) => {
+    return await Rental.findAll(options);
 };
 
 const getRentalById = async (id) => {

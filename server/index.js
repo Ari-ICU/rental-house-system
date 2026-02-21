@@ -6,6 +6,7 @@ const morgan = require('morgan');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const hpp = require('hpp');
+const xssSanitizer = require('./middleware/xssSanitizer');
 const logger = require('./utils/logger');
 const cronJobs = require('./utils/cronJobs');
 const telegramBot = require('./utils/telegramBot');
@@ -50,20 +51,43 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 // ── Security headers ──────────────────────────────────────────────────────────
-app.use(helmet());
+app.use(helmet({
+    contentSecurityPolicy: false, // Disable if you're serving a frontend separately, or configure properly
+    crossOriginEmbedderPolicy: false,
+}));
 
 // ── Rate limiting ─────────────────────────────────────────────────────────────
+// More generous for standard routes, tighter for auth/payment if needed
 const limiter = rateLimit({
-    windowMs: 10 * 60 * 1000, // 10 mins
-    max: 100,
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 1000, // Limit each IP to 1000 requests per window
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { success: false, message: 'Too many requests from this IP, please try again after 15 minutes' }
 });
 app.use(limiter);
 
-// ── Prevent HTTP param pollution ──────────────────────────────────────────────
+// ── Security & Sanitization ──────────────────────────────────────────────────
+app.use(xssSanitizer);
 app.use(hpp());
 
 // ── CORS ──────────────────────────────────────────────────────────────────────
-app.use(cors());
+const allowedOrigins = process.env.ALLOWED_ORIGINS
+    ? process.env.ALLOWED_ORIGINS.split(',')
+    : ['http://localhost:3000', 'http://localhost:4000'];
+
+app.use(cors({
+    origin: (origin, callback) => {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+}));
 
 // ── Routes ────────────────────────────────────────────────────────────────────
 const rentalRoutes = require('./routes/rental.route');
@@ -100,7 +124,7 @@ app.use((err, req, res, next) => {
 });
 
 // ── Start ─────────────────────────────────────────────────────────────────────
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
     logger.server(`Server is running on port ${logger.bold(String(PORT))}`);
     logger.info(`Environment : ${logger.colorize(logger.colors.FG.yellow, process.env.NODE_ENV || 'development')}`);
     logger.db(`Database    : ${logger.colorize(logger.colors.FG.cyan, process.env.DATABASE_URL ? 'Connected via env' : 'No DATABASE_URL set')}`);
@@ -111,3 +135,25 @@ app.listen(PORT, () => {
     // Start Telegram Bot listener (polling)
     telegramBot.initializeBot();
 });
+
+// ── Graceful Shutdown ──────────────────────────────────────────────────────────
+const gracefulShutdown = async (signal) => {
+    logger.warn(`Received ${signal}. Shutting down gracefully...`);
+
+    server.close(() => {
+        logger.info('HTTP server closed.');
+
+        // Add DB disconnect logic if prisma is exported or accessible here
+        // For now, let the process exit
+        process.exit(0);
+    });
+
+    // If server takes too long to close, force it
+    setTimeout(() => {
+        logger.error('Could not close connections in time, forcefully shutting down.');
+        process.exit(1);
+    }, 10000);
+};
+
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
