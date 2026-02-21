@@ -4,7 +4,7 @@
 import { useLang } from "@/context/LangContext";
 import { Report } from "@/types/report";
 import React, { useState, useEffect } from "react";
-import { FaEdit, FaTrash, FaFileExport, FaEye, FaSave, FaTimes, FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { FaEdit, FaTrash, FaFileExport, FaEye, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import CustomDropdown from "@/common/CustomDropdown";
 import { formatKhmerDate } from "@/utils/dateFormatter";
 
@@ -35,8 +35,6 @@ const ReportsTable: React.FC<ReportsTableProps> = ({
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(itemsPerPageOptions[0]);
     const [statusFilter, setStatusFilter] = useState<Report["status"] | "All">("All");
-    const [editingId, setEditingId] = useState<number | null>(null);
-    const [editForm, setEditForm] = useState<Report | null>(null);
 
     useEffect(() => {
         setLocalReports(reports);
@@ -47,25 +45,6 @@ const ReportsTable: React.FC<ReportsTableProps> = ({
 
     const totalPages = Math.ceil(filteredReports.length / itemsPerPage);
     const currentReports = filteredReports.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
-
-    const handleEditStart = (report: Report) => {
-        setEditingId(report.id);
-        setEditForm({ ...report });
-    };
-
-    const handleSave = () => {
-        if (editForm && editingId !== null) {
-            setLocalReports((prev) => prev.map((r) => (r.id === editingId ? editForm : r)));
-            onEdit?.(editForm);
-        }
-        setEditingId(null);
-        setEditForm(null);
-    };
-
-    const handleCancel = () => {
-        setEditingId(null);
-        setEditForm(null);
-    };
 
     const handleDelete = (report: Report) => {
         const confirmMsg = lang === 'km'
@@ -161,8 +140,6 @@ const ReportsTable: React.FC<ReportsTableProps> = ({
                                 </tr>
                             ) : (
                                 currentReports.map((report) => {
-                                    const isEditing = editingId === report.id;
-                                    const currentEditForm = isEditing ? editForm : null;
 
                                     return (
                                         <tr
@@ -170,42 +147,15 @@ const ReportsTable: React.FC<ReportsTableProps> = ({
                                             className="group hover:bg-blue-50/30 dark:hover:bg-slate-800/50 transition-colors duration-200"
                                         >
                                             <td className="px-8 py-6">
-                                                {isEditing ? (
-                                                    <input
-                                                        type="text"
-                                                        value={currentEditForm?.name || ""}
-                                                        onChange={(e) =>
-                                                            setEditForm((prev) =>
-                                                                prev ? { ...prev, name: e.target.value } : prev
-                                                            )
-                                                        }
-                                                        className="w-full px-4 py-2.5 bg-white border border-blue-200 rounded-xl focus:ring-4 focus:ring-blue-100 outline-none transition-all shadow-sm font-medium"
-                                                        autoFocus
-                                                    />
-                                                ) : (
-                                                    <div className="flex flex-col gap-0.5">
-                                                        <span className="text-[15px] font-bold text-gray-900 dark:text-gray-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{report.name}</span>
-                                                        <span className="text-[11px] text-gray-400 dark:text-gray-500 font-medium font-mono uppercase tracking-tighter">ID: #{report.id.toString().padStart(4, '0')}</span>
-                                                    </div>
-                                                )}
+                                                <div className="flex flex-col gap-0.5">
+                                                    <span className="text-[15px] font-bold text-gray-900 dark:text-gray-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{report.name}</span>
+                                                    <span className="text-[11px] text-gray-400 dark:text-gray-500 font-medium font-mono uppercase tracking-tighter">ID: #{report.id.toString().padStart(4, '0')}</span>
+                                                </div>
                                             </td>
                                             <td className="px-8 py-6">
-                                                {isEditing ? (
-                                                    <input
-                                                        type="text"
-                                                        value={currentEditForm?.type || ""}
-                                                        onChange={(e) =>
-                                                            setEditForm((prev) =>
-                                                                prev ? { ...prev, type: e.target.value } : prev
-                                                            )
-                                                        }
-                                                        className="w-full px-4 py-2.5 bg-white border border-blue-200 rounded-xl focus:ring-4 focus:ring-blue-100 outline-none transition-all shadow-sm"
-                                                    />
-                                                ) : (
-                                                    <span className="text-sm font-semibold text-gray-600 dark:text-gray-400 bg-gray-100/50 dark:bg-slate-800 px-3 py-1.5 rounded-lg border border-gray-100 dark:border-slate-700">
-                                                        {report.type}
-                                                    </span>
-                                                )}
+                                                <span className="text-sm font-semibold text-gray-600 dark:text-gray-400 bg-gray-100/50 dark:bg-slate-800 px-3 py-1.5 rounded-lg border border-gray-100 dark:border-slate-700">
+                                                    {report.type}
+                                                </span>
                                             </td>
                                             <td className="px-8 py-6">
                                                 <div className="flex flex-col gap-0.5">
@@ -222,83 +172,46 @@ const ReportsTable: React.FC<ReportsTableProps> = ({
                                                 </div>
                                             </td>
                                             <td className="px-8 py-6">
-                                                {isEditing ? (
-                                                    <CustomDropdown
-                                                        options={[
-                                                            { value: "Completed", label: lang === 'km' ? 'បានបញ្ចប់' : 'Completed' },
-                                                            { value: "In-Review", label: lang === 'km' ? 'កំពុងពិនិត្យ' : 'In-Review' }
-                                                        ]}
-                                                        value={currentEditForm?.status || ""}
-                                                        onChange={(val) =>
-                                                            setEditForm((prev) =>
-                                                                prev ? { ...prev, status: val as Report["status"] } : prev
-                                                            )
-                                                        }
-                                                        className="w-full !rounded-xl !border-blue-200"
-                                                    />
-                                                ) : (
-                                                    <span
-                                                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold border ${statusColors[report.status]}`}
-                                                    >
-                                                        <span className={`w-1.5 h-1.5 rounded-full ${report.status === 'Completed' ? 'bg-emerald-500' : 'bg-amber-500'}`}></span>
-                                                        {report.status === 'Completed'
-                                                            ? (lang === 'km' ? 'បានបញ្ចប់' : 'Completed')
-                                                            : (lang === 'km' ? 'កំពុងពិនិត្យ' : 'In-Review')}
-                                                    </span>
-                                                )}
+                                                <span
+                                                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold border ${statusColors[report.status]}`}
+                                                >
+                                                    <span className={`w-1.5 h-1.5 rounded-full ${report.status === 'Completed' ? 'bg-emerald-500' : 'bg-amber-500'}`}></span>
+                                                    {report.status === 'Completed'
+                                                        ? (lang === 'km' ? 'បានបញ្ចប់' : 'Completed')
+                                                        : (lang === 'km' ? 'កំពុងពិនិត្យ' : 'In-Review')}
+                                                </span>
                                             </td>
                                             <td className="px-8 py-6">
                                                 <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                                                    {isEditing ? (
-                                                        <>
-                                                            <button
-                                                                onClick={handleSave}
-                                                                className="bg-emerald-500 hover:bg-emerald-600 text-white p-2.5 rounded-xl shadow-lg shadow-emerald-200 transition-all active:scale-90"
-                                                                title="Save Changes"
-                                                            >
-                                                                <FaSave size={14} />
-                                                            </button>
-                                                            <button
-                                                                onClick={handleCancel}
-                                                                className="bg-gray-400 hover:bg-gray-500 text-white p-2.5 rounded-xl shadow-lg shadow-gray-200 transition-all active:scale-90"
-                                                                title={lang === 'km' ? 'បោះបង់' : 'Cancel'}
-                                                            >
-                                                                <FaTimes size={14} />
-                                                            </button>
-                                                        </>
-                                                    ) : (
-                                                        <>
-                                                            <button
-                                                                onClick={() => onView?.(report)}
-                                                                className="bg-indigo-50 hover:bg-indigo-100 text-indigo-600 p-2.5 rounded-xl transition-all active:scale-90"
-                                                                title={lang === 'km' ? 'មើលលម្អិត' : 'View Details'}
-                                                            >
-                                                                <FaEye size={16} />
-                                                            </button>
-                                                            <button
-                                                                onClick={() => handleEditStart(report)}
-                                                                className="bg-blue-50 hover:bg-blue-100 text-blue-600 p-2.5 rounded-xl transition-all active:scale-90"
-                                                                title="Edit Report"
-                                                            >
-                                                                <FaEdit size={16} />
-                                                            </button>
-                                                            <button
-                                                                onClick={() => onExport?.(report)}
-                                                                className="bg-emerald-50 hover:bg-emerald-100 text-emerald-600 p-2.5 rounded-xl transition-all active:scale-90"
-                                                                title="Export Data"
-                                                            >
-                                                                <FaFileExport size={16} />
-                                                            </button>
-                                                            <div className="w-px h-6 bg-gray-100 mx-1"></div>
-                                                            <button
-                                                                onClick={() => handleDelete(report)}
-                                                                className="bg-rose-50 hover:bg-rose-100 text-rose-500 p-2.5 rounded-xl transition-all active:scale-90"
-                                                                title="Delete Report"
-                                                            >
-                                                                <FaTrash size={16} />
-                                                            </button>
-                                                        </>
-                                                    )}
+                                                    <button
+                                                        onClick={() => onView?.(report)}
+                                                        className="bg-indigo-50 hover:bg-indigo-100 text-indigo-600 p-2.5 rounded-xl transition-all active:scale-90"
+                                                        title={lang === 'km' ? 'មើលលម្អិត' : 'View Details'}
+                                                    >
+                                                        <FaEye size={16} />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => onEdit?.(report)}
+                                                        className="bg-blue-50 hover:bg-blue-100 text-blue-600 p-2.5 rounded-xl transition-all active:scale-90"
+                                                        title="Edit Report"
+                                                    >
+                                                        <FaEdit size={16} />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => onExport?.(report)}
+                                                        className="bg-emerald-50 hover:bg-emerald-100 text-emerald-600 p-2.5 rounded-xl transition-all active:scale-90"
+                                                        title="Export Data"
+                                                    >
+                                                        <FaFileExport size={16} />
+                                                    </button>
+                                                    <div className="w-px h-6 bg-gray-100 mx-1"></div>
+                                                    <button
+                                                        onClick={() => handleDelete(report)}
+                                                        className="bg-rose-50 hover:bg-rose-100 text-rose-500 p-2.5 rounded-xl transition-all active:scale-90"
+                                                        title="Delete Report"
+                                                    >
+                                                        <FaTrash size={16} />
+                                                    </button>
                                                 </div>
                                             </td>
                                         </tr>

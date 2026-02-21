@@ -46,17 +46,8 @@ const ReportsPage: React.FC = () => {
         setReports(filtered);
     };
 
-    const handleEdit = async (report: Report) => {
-        try {
-            await reportService.updateReport(report.id, {
-                name: report.name,
-                type: report.type,
-                status: report.status,
-            });
-            await fetchReports();
-        } catch (error) {
-            console.error("Failed to update report:", error);
-        }
+    const handleEdit = (report: Report) => {
+        router.push(`/dashboard/reports/edit/${report.id}`);
     };
 
     const handleDelete = async (report: Report) => {
