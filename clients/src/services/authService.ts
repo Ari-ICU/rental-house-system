@@ -12,11 +12,11 @@ export interface AuthResponse {
     token: string;
 }
 
-export const loginUser = async (credentials: any) => {
+export const loginUser = async (credentials: Record<string, string>) => {
     return await api.post<AuthResponse>('/api/auth/login', credentials);
 };
 
-export const registerUser = async (data: any) => {
+export const registerUser = async (data: Record<string, string | undefined>) => {
     return await api.post<AuthResponse>('/api/auth/register', data);
 };
 

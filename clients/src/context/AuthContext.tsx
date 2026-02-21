@@ -26,7 +26,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 if (res.success && res.data) {
                     setUser(res.data.user);
                 }
-            } catch (err) {
+            } catch {
                 console.debug('Not authenticated');
             } finally {
                 setLoading(false);
@@ -41,7 +41,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             setUser(null);
             router.push('/login');
             toast.success('Logged out successfully');
-        } catch (err) {
+        } catch {
             toast.error('Failed to logout');
         }
     };
