@@ -116,6 +116,29 @@ export default function SettingsForm() {
                         </div>
                     </div>
 
+                    {/* Bot Helper Info Box */}
+                    {formData.telegramBotToken && (
+                        <div className="bg-blue-50 border border-blue-100 rounded-2xl p-4 flex gap-4 items-start shadow-sm shadow-blue-50">
+                            <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                                <span className="text-blue-600 font-bold text-lg">💡</span>
+                            </div>
+                            <div className="space-y-1">
+                                <h4 className="text-sm font-bold text-blue-900">{label('ID Helper Bot is Active', 'ID Helper Bot គឺសកម្ម')}</h4>
+                                <p className="text-[11px] text-blue-800 leading-relaxed opacity-80">
+                                    {label(
+                                        'Your bot is now programmed to help customers. Tell your tenants to search for your bot and send ',
+                                        'បច្ចុប្បន្ន Bot របស់អ្នកត្រូវបានកំណត់ដើម្បីជួយអតិថិជន។ សូមប្រាប់អតិថិជនឱ្យស្វែងរក Bot របស់អ្នក ហើយផ្ញើ '
+                                    )}
+                                    <code className="bg-white px-1.5 py-0.5 rounded border border-blue-200 text-blue-700 font-bold mx-1">/myid</code>
+                                    {label(
+                                        'to get their Chat ID instantly.',
+                                        'ដើម្បីទទួលបានលេខសម្គាល់ Chat របស់ពួកគេភ្លាមៗ។'
+                                    )}
+                                </p>
+                            </div>
+                        </div>
+                    )}
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {/* Bot Token */}
                         <div className="space-y-2">

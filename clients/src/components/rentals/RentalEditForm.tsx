@@ -407,8 +407,10 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
                                     className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 outline-none transition-all text-sm text-gray-800 placeholder-gray-300 bg-gray-50/50 hover:bg-white hover:border-gray-300"
                                 />
                             </div>
-                            <p className="text-[10px] text-gray-400 mt-1 italic">
-                                {lang === 'km' ? '* ប្រើដើម្បីផ្ញើវិក្កយបត្រផ្ទាល់ខ្លួនទៅកាន់អតិថិជន។' : '* Used to send personal invoices directly to the tenant.'}
+                            <p className="text-[10px] text-gray-400 mt-1 italic leading-relaxed">
+                                {lang === 'km'
+                                    ? '* ផ្ញើវិក្កយបត្រផ្ទាល់ខ្លួនទៅអតិថិជន។ ប្រាប់អតិថិជនឱ្យផ្ញើ /myid ទៅកាន់បូតរបស់អ្នកដើម្បីទទួលបានលេខសម្គាល់នេះ។'
+                                    : '* Sends personal invoices to the tenant. Ask them to send /myid to your bot to get this ID.'}
                             </p>
                         </div>
                     </div>

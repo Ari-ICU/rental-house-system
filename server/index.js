@@ -8,6 +8,7 @@ const rateLimit = require('express-rate-limit');
 const hpp = require('hpp');
 const logger = require('./utils/logger');
 const cronJobs = require('./utils/cronJobs');
+const telegramBot = require('./utils/telegramBot');
 
 dotenv.config();
 
@@ -106,4 +107,7 @@ app.listen(PORT, () => {
 
     // Start hourly/monthly auto checks
     cronJobs.initializeCronJobs();
+
+    // Start Telegram Bot listener (polling)
+    telegramBot.initializeBot();
 });
