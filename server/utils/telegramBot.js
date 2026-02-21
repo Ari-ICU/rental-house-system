@@ -34,6 +34,19 @@ const initializeBot = async () => {
         botInstance = new TelegramBot(token, { polling: true });
         currentToken = token;
 
+        // Handle polling errors to prevent console spam and stop bot if token is invalid
+        botInstance.on('polling_error', (error) => {
+            logger.error(`Telegram Polling Error: ${error.message}`);
+            if (error.code === 'ETELEGRAM' && error.message.includes('404')) {
+                logger.error('Invalid Telegram Bot Token detected (404 Not Found). Stopping polling.');
+                if (botInstance) {
+                    botInstance.stopPolling();
+                    botInstance = null;
+                    currentToken = null;
+                }
+            }
+        });
+
         botInstance.on('message', async (msg) => {
             const chatId = msg.chat.id;
             const text = msg.text;
