@@ -125,14 +125,14 @@ const Header: React.FC<HeaderProps> = ({ onMobileMenuToggle }) => {
                 {/* Search */}
                 <div className="hidden md:block relative w-72" ref={searchRef}>
                     <div className={`
-                        flex items-center px-3 py-2 bg-white border rounded-md transition-colors
-                        ${showResults ? 'border-indigo-500 ring-1 ring-indigo-500/20' : 'border-slate-300 hover:border-slate-400'}
+                        flex items-center px-3 py-2 bg-white dark:bg-slate-900 border rounded-md transition-colors
+                        ${showResults ? 'border-indigo-500 ring-1 ring-indigo-500/20' : 'border-slate-300 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-600'}
                     `}>
                         <FaSearch className="w-4 h-4 text-slate-400 mr-2" />
                         <input
                             type="text"
                             placeholder={lang === 'en' ? 'Search...' : 'ស្វែងរក...'}
-                            className="bg-transparent border-none outline-none text-sm text-slate-900 w-full placeholder-slate-400"
+                            className="bg-transparent border-none outline-none text-sm text-slate-900 dark:text-slate-100 w-full placeholder-slate-400 dark:placeholder-slate-500"
                             value={searchQuery}
                             onChange={(e) => handleSearch(e.target.value)}
                             onFocus={() => searchQuery && setShowResults(true)}
@@ -146,9 +146,9 @@ const Header: React.FC<HeaderProps> = ({ onMobileMenuToggle }) => {
                                 initial={{ opacity: 0, y: 5 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: 5 }}
-                                className="absolute top-full mt-2 left-0 right-0 bg-white rounded-md shadow-lg border border-slate-200 overflow-hidden z-50"
+                                className="absolute top-full mt-2 left-0 right-0 bg-white dark:bg-slate-900 rounded-md shadow-lg border border-slate-200 dark:border-slate-800 overflow-hidden z-50"
                             >
-                                <div className="px-3 py-2 text-xs font-semibold text-slate-500 bg-slate-50 border-b border-slate-100">
+                                <div className="px-3 py-2 text-xs font-semibold text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800">
                                     {lang === 'en' ? 'Results' : 'លទ្ធផល'}
                                 </div>
                                 <div className="max-h-64 overflow-y-auto">
@@ -156,21 +156,21 @@ const Header: React.FC<HeaderProps> = ({ onMobileMenuToggle }) => {
                                         <button
                                             key={r.id}
                                             onClick={() => handleSelectResult(r.id)}
-                                            className="w-full flex items-center gap-3 p-3 hover:bg-slate-50 transition-colors text-left border-b border-slate-100 last:border-0"
+                                            className="w-full flex items-center gap-3 p-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors text-left border-b border-slate-100 dark:border-slate-800 last:border-0"
                                         >
-                                            <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 flex-shrink-0">
+                                            <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 dark:text-slate-400 flex-shrink-0">
                                                 <FaUser className="w-4 h-4" />
                                             </div>
                                             <div className="flex-1 min-w-0">
                                                 <div className="flex justify-between items-center">
-                                                    <p className="text-sm font-medium text-slate-900 truncate">
+                                                    <p className="text-sm font-medium text-slate-900 dark:text-slate-100 truncate">
                                                         {r.ClientName}
                                                     </p>
-                                                    <span className="text-xs text-slate-500">
+                                                    <span className="text-xs text-slate-500 dark:text-slate-400">
                                                         {r.roomNumber}
                                                     </span>
                                                 </div>
-                                                <p className="text-xs text-slate-500 truncate mt-0.5">
+                                                <p className="text-xs text-slate-500 dark:text-slate-400 truncate mt-0.5">
                                                     {r.clientPhone || 'No Phone'}
                                                 </p>
                                             </div>
@@ -182,7 +182,7 @@ const Header: React.FC<HeaderProps> = ({ onMobileMenuToggle }) => {
                                         router.push(`/dashboard/rentals?search=${searchQuery}`);
                                         setShowResults(false);
                                     }}
-                                    className="w-full py-2.5 bg-slate-50 hover:bg-slate-100 text-indigo-600 text-xs font-semibold transition-colors border-t border-slate-200"
+                                    className="w-full py-2.5 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 text-indigo-600 dark:text-indigo-400 text-xs font-semibold transition-colors border-t border-slate-200 dark:border-slate-800"
                                 >
                                     {lang === 'en' ? 'View All Results' : 'មើលទាំងអស់'}
                                 </button>
