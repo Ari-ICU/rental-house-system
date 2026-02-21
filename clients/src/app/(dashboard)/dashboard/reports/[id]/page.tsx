@@ -35,7 +35,7 @@ const ReportViewPage: React.FC = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-[#f8fafc]">
+            <div className="min-h-screen flex items-center justify-center bg-[#f8fafc] dark:bg-slate-950">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
             </div>
         );
@@ -43,13 +43,13 @@ const ReportViewPage: React.FC = () => {
 
     if (!report) {
         return (
-            <div className="min-h-screen flex flex-col items-center justify-center bg-[#f8fafc] gap-4">
-                <div className="bg-white p-8 rounded-[2rem] shadow-xl text-center border border-gray-100">
-                    <div className="bg-rose-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="min-h-screen flex flex-col items-center justify-center bg-[#f8fafc] dark:bg-slate-950 gap-4">
+                <div className="bg-white dark:bg-slate-900 p-8 rounded-[2rem] shadow-xl dark:shadow-none text-center border border-gray-100 dark:border-slate-800">
+                    <div className="bg-rose-50 dark:bg-rose-900/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                         <FaFileAlt className="text-rose-500" size={24} />
                     </div>
-                    <h1 className="text-2xl font-bold text-gray-900">Report Not Found</h1>
-                    <p className="text-gray-500 mt-2 font-medium">
+                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Report Not Found</h1>
+                    <p className="text-gray-500 dark:text-gray-400 mt-2 font-medium">
                         {lang === 'km' ? 'របាយការណ៍ដែលអ្នកកំពុងស្វែងរកមិនមាន ឬត្រូវបានលុបចេញ។' : 'The report you\'re looking for doesn\'t exist or was removed.'}
                     </p>
                     <button
@@ -64,7 +64,7 @@ const ReportViewPage: React.FC = () => {
     }
 
     return (
-        <div className="min-h-screen bg-[#f8fafc] p-4 sm:p-8 md:p-12">
+        <div className="min-h-screen bg-[#f8fafc] dark:bg-slate-950 p-4 sm:p-8 md:p-12">
             <div className="max-w-4xl mx-auto">
                 {/* Navigation & Actions */}
                 <div className="flex flex-wrap items-center justify-between gap-6 mb-8">
@@ -77,8 +77,8 @@ const ReportViewPage: React.FC = () => {
                     </button>
 
                     <div className="flex items-center gap-3">
-                        <button className="flex items-center gap-2 bg-white text-gray-700 px-5 py-2.5 rounded-xl border border-gray-200 hover:bg-gray-50 transition-all font-bold shadow-sm active:scale-95">
-                            <FaPrint size={14} className="text-gray-400" />
+                        <button className="flex items-center gap-2 bg-white dark:bg-slate-900 text-gray-700 dark:text-gray-200 px-5 py-2.5 rounded-xl border border-gray-200 dark:border-slate-800 hover:bg-gray-50 dark:hover:bg-slate-800 transition-all font-bold shadow-sm active:scale-95">
+                            <FaPrint size={14} className="text-gray-400 dark:text-gray-500" />
                             {lang === 'km' ? 'បោះពុម្ព' : 'Print'}
                         </button>
                         <button className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-2.5 rounded-xl transition-all font-bold shadow-lg shadow-blue-500/25 active:scale-95">
@@ -89,9 +89,9 @@ const ReportViewPage: React.FC = () => {
                 </div>
 
                 {/* Main Content Card */}
-                <div className="bg-white rounded-[2.5rem] shadow-2xl shadow-blue-900/5 border border-white overflow-hidden">
+                <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-2xl shadow-blue-900/5 dark:shadow-none border border-white dark:border-slate-800 overflow-hidden">
                     {/* Header Section */}
-                    <div className="bg-gradient-to-br from-gray-900 to-gray-800 p-8 sm:p-12 text-white">
+                    <div className="bg-gradient-to-br from-gray-900 to-gray-800 dark:from-slate-800 dark:to-slate-950 p-8 sm:p-12 text-white">
                         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
                             <div className="space-y-4">
                                 <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest border border-white/10 text-blue-300">
@@ -114,38 +114,38 @@ const ReportViewPage: React.FC = () => {
                     </div>
 
                     {/* Meta Info Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-gray-100 bg-gray-50/50">
+                    <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-gray-100 dark:divide-slate-800 bg-gray-50/50 dark:bg-slate-900/50">
                         <div className="p-8 flex items-center gap-4">
-                            <div className="bg-blue-100 p-3.5 rounded-2xl">
+                            <div className="bg-blue-100 dark:bg-blue-900/30 p-3.5 rounded-2xl">
                                 <FaTag className="text-blue-600" size={18} />
                             </div>
                             <div>
-                                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                                <p className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest">
                                     {lang === 'km' ? 'ចំណាត់ថ្នាក់' : 'Category'}
                                 </p>
-                                <p className="text-lg font-extrabold text-gray-800">{report.type}</p>
+                                <p className="text-lg font-extrabold text-gray-800 dark:text-gray-200">{report.type}</p>
                             </div>
                         </div>
                         <div className="p-8 flex items-center gap-4">
-                            <div className="bg-indigo-100 p-3.5 rounded-2xl">
-                                <FaCalendarAlt className="text-indigo-600" size={18} />
+                            <div className="bg-indigo-100 dark:bg-indigo-900/30 p-3.5 rounded-2xl">
+                                <FaCalendarAlt className="text-indigo-600 dark:text-indigo-400" size={18} />
                             </div>
                             <div>
-                                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                                <p className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest">
                                     {lang === 'km' ? 'ថ្ងៃបង្កើត' : 'Generated On'}
                                 </p>
-                                <p className="text-lg font-extrabold text-gray-800">{formatKhmerDate(report.generatedAt as unknown as string, lang)}</p>
+                                <p className="text-lg font-extrabold text-gray-800 dark:text-gray-200">{formatKhmerDate(report.generatedAt as unknown as string, lang)}</p>
                             </div>
                         </div>
                         <div className="p-8 flex items-center gap-4">
-                            <div className="bg-emerald-100 p-3.5 rounded-2xl">
-                                <FaCheckCircle className="text-emerald-600" size={18} />
+                            <div className="bg-emerald-100 dark:bg-emerald-900/30 p-3.5 rounded-2xl">
+                                <FaCheckCircle className="text-emerald-600 dark:text-emerald-400" size={18} />
                             </div>
                             <div>
-                                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                                <p className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest">
                                     {lang === 'km' ? 'រយៈពេលរាយការណ៍' : 'Report Period'}
                                 </p>
-                                <p className="text-sm font-extrabold text-gray-800">
+                                <p className="text-sm font-extrabold text-gray-800 dark:text-gray-200">
                                     {report.startDate && report.endDate
                                         ? `${formatKhmerDate(report.startDate, lang)} - ${formatKhmerDate(report.endDate, lang)}`
                                         : (lang === 'km' ? 'មិ​នកំណត់' : 'Not specified')}
@@ -157,11 +157,11 @@ const ReportViewPage: React.FC = () => {
                     {/* Detailed Content Section */}
                     <div className="p-8 sm:p-12 space-y-10">
                         <div className="space-y-4">
-                            <h3 className="text-2xl font-black text-gray-900 flex items-center gap-3">
+                            <h3 className="text-2xl font-black text-gray-900 dark:text-white flex items-center gap-3">
                                 <div className="w-2 h-8 bg-blue-600 rounded-full"></div>
                                 {lang === 'km' ? 'សេចក្តីសង្ខេបប្រតិបត្តិ' : 'Executive Summary'}
                             </h3>
-                            <div className="prose prose-blue max-w-none text-gray-600 font-medium leading-relaxed">
+                            <div className="prose prose-blue max-w-none text-gray-600 dark:text-gray-300 font-medium leading-relaxed">
                                 <p className="text-lg">
                                     {lang === 'km'
                                         ? `ទិដ្ឋភាពទូទៅនៃបណ្តុំទិន្នន័យ "${report.name}" ។ សេចក្តីសង្ខេបដែលបានបង្កើតដោយស្វ័យប្រវត្តិនេះ ផ្តល់នូវរង្វាស់ស្នូល និងសូចនាករការអនុវត្តសំខាន់ៗដែលពាក់ព័ន្ធនឹងប្រភេទ ${report.type} ។`
@@ -169,27 +169,27 @@ const ReportViewPage: React.FC = () => {
                                 </p>
                                 <p>
                                     {lang === 'km'
-                                        ? <>ទិន្នន័យទាំងអស់ត្រូវបានផ្ទៀងផ្ទាត់ជាមួយនឹងឃ្លាំងជួលមេ ហើយបច្ចុប្បន្នត្រូវបានសម្គាល់ថា <strong className="text-gray-900 underline decoration-blue-500 decoration-4 underline-offset-4">{report.status === 'Completed' ? 'បានបញ្ចប់' : 'កំពុងពិនិត្យ'}</strong> ។ សម្រាប់ការវិភាគលម្អិតនៃអនុរង្វាស់ សូមយោងទៅលើសន្លឹកកិច្ចការលម្អិតដែលបានភ្ជាប់មកជាមួយ ឬតារាងព័ត៌មានអន្តរកម្មឌីជីថល។</>
-                                        : <>All data points have been verified against the master rental repository and are currently marked as <strong className="text-gray-900 underline decoration-blue-500 decoration-4 underline-offset-4">{report.status}</strong>. For detailed breakdown of sub-metrics, please refer to the attached detailed spreadsheet or the digital interactive dashboard.</>}
+                                        ? <>ទិន្នន័យទាំងអស់ត្រូវបានផ្ទៀងផ្ទាត់ជាមួយនឹងឃ្លាំងជួលមេ ហើយបច្ចុប្បន្នត្រូវបានសម្គាល់ថា <strong className="text-gray-900 dark:text-white underline decoration-blue-500 decoration-4 underline-offset-4">{report.status === 'Completed' ? 'បានបញ្ចប់' : 'កំពុងពិនិត្យ'}</strong> ។ សម្រាប់ការវិភាគលម្អិតនៃអនុរង្វាស់ សូមយោងទៅលើសន្លឹកកិច្ចការលម្អិតដែលបានភ្ជាប់មកជាមួយ ឬតារាងព័ត៌មានអន្តរកម្មឌីជីថល។</>
+                                        : <>All data points have been verified against the master rental repository and are currently marked as <strong className="text-gray-900 dark:text-white underline decoration-blue-500 decoration-4 underline-offset-4">{report.status}</strong>. For detailed breakdown of sub-metrics, please refer to the attached detailed spreadsheet or the digital interactive dashboard.</>}
                                 </p>
                             </div>
                         </div>
 
                         {/* Visual Separator */}
-                        <div className="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent"></div>
+                        <div className="h-px bg-gradient-to-r from-transparent via-gray-200 dark:via-slate-700 to-transparent"></div>
 
                         {/* Analysis Note */}
-                        <div className="bg-blue-50/50 rounded-3xl p-8 border border-blue-100/50 flex flex-col sm:flex-row gap-6 items-start">
+                        <div className="bg-blue-50/50 dark:bg-blue-900/10 rounded-3xl p-8 border border-blue-100/50 dark:border-blue-900/30 flex flex-col sm:flex-row gap-6 items-start">
                             <div className="bg-blue-600 text-white p-4 rounded-2xl shadow-lg shadow-blue-500/20">
                                 <FaFileAlt size={24} />
                             </div>
                             <div className="space-y-2">
-                                <h4 className="text-xl font-bold text-blue-900 italic">
+                                <h4 className="text-xl font-bold text-blue-900 dark:text-blue-300 italic">
                                     {lang === 'km' ? 'អនុសាសន៍របស់អ្នកវិភាគ' : 'Analyst Recommendation'}
                                 </h4>
-                                <p className="text-blue-800/70 font-medium leading-normal">
+                                <p className="text-blue-800/70 dark:text-blue-400/80 font-medium leading-normal">
                                     {lang === 'km'
-                                        ? `ផ្អែកលើស្ថានភាព ${report.status === 'Completed' ? 'បានបញ្ចប់' : 'កំពុងពិនិត្យ'} បច្ចុប្បន្ន យើងសូមណែនាំឱ្យបន្តការត្រួតពិនិត្យប្រចាំត្រីមាស។ គ្មានភាពមិនប្រក្រតីសំខាន់ៗត្រូវបានរកឃើញនៅក្នុងចរន្ត ${report.type} សម្រាប់រយៈពេលរាយការណ៍នេះទេ។`
+                                        ? `ផ្អែកលើស្ថានភាព ${report.status === 'Completed' ? 'បានបញ្ចប់' : 'កំពុងពិនិត្យ'} บច្ចុប្បន្ន យើងសូមណែនាំឱ្យបន្តការត្រួតពិនិត្យប្រចាំត្រីមាស។ គ្មានភាពមិនប្រក្រតីសំខាន់ៗត្រូវបានរកឃើញនៅក្នុងចរន្ត ${report.type} សម្រាប់រយៈពេលរាយការណ៍នេះទេ។`
                                         : `Based on the current ${report.status} state, we recommend proceeding with the quarterly review. No significant anomalies were detected in the ${report.type} stream for this reporting period.`}
                                 </p>
                             </div>

@@ -42,7 +42,7 @@ const CreateReportPage: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-[#f8fafc] p-4 sm:p-8 md:p-12">
+        <div className="min-h-screen bg-[#f8fafc] dark:bg-slate-950 p-4 sm:p-8 md:p-12">
             <div className="max-w-2xl mx-auto">
                 {/* Back Button */}
                 <button
@@ -54,13 +54,13 @@ const CreateReportPage: React.FC = () => {
                 </button>
 
                 {/* Form Card */}
-                <div className="bg-white rounded-[2rem] shadow-2xl shadow-blue-900/5 border border-white overflow-hidden">
+                <div className="bg-white dark:bg-slate-900 rounded-[2rem] shadow-2xl shadow-blue-900/5 dark:shadow-none border border-white dark:border-slate-800 overflow-hidden">
                     <div className="p-8 sm:p-12">
                         <div className="flex flex-col gap-2 mb-10">
-                            <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">
+                            <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight">
                                 {lang === 'km' ? 'បង្កើតរបាយការណ៍ថ្មី' : 'Create New Report'}
                             </h1>
-                            <p className="text-gray-500 font-medium">
+                            <p className="text-gray-500 dark:text-gray-400 font-medium">
                                 {lang === 'km' ? 'កំណត់រចនាសម្ព័ន្ធ និងបង្កើតរបាយការណ៍អាជីវកម្មថ្មី' : 'Configure and generate a new business insights report'}
                             </p>
                         </div>
@@ -77,7 +77,7 @@ const CreateReportPage: React.FC = () => {
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
                                     placeholder={lang === 'km' ? 'ឧ. ការអនុវត្តការជួលក្នុងខែតុលា' : 'e.g. October Rental Performance'}
-                                    className="w-full px-5 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white transition-all shadow-sm font-medium placeholder:text-gray-300"
+                                    className="w-full px-5 py-4 bg-gray-50 dark:bg-slate-800/50 border border-gray-100 dark:border-slate-700 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400 focus:bg-white dark:focus:bg-slate-900 transition-all shadow-sm font-medium placeholder:text-gray-300 dark:placeholder:text-gray-600 text-gray-900 dark:text-gray-100"
                                     required
                                 />
                             </div>
@@ -97,7 +97,7 @@ const CreateReportPage: React.FC = () => {
                                     ]}
                                     value={type}
                                     onChange={(val) => setType(val)}
-                                    className="!rounded-2xl !bg-gray-50 !border-gray-100 !py-2 hover:!border-blue-400 transition-colors"
+                                    className="!rounded-2xl !bg-gray-50 dark:!bg-slate-800/50 !border-gray-100 dark:!border-slate-700 !py-2 hover:!border-blue-400 transition-colors"
                                 />
                             </div>
 
@@ -113,7 +113,7 @@ const CreateReportPage: React.FC = () => {
                                         <button
                                             type="button"
                                             onClick={() => setShowStartCalendar(true)}
-                                            className="w-full px-5 py-4 bg-gray-50 border border-gray-100 rounded-2xl flex justify-between items-center hover:border-blue-400 hover:bg-white transition-all text-sm font-bold text-gray-700 text-left"
+                                            className="w-full px-5 py-4 bg-gray-50 dark:bg-slate-800/50 border border-gray-100 dark:border-slate-700 rounded-2xl flex justify-between items-center hover:border-blue-400 hover:bg-white dark:hover:bg-slate-900 transition-all text-sm font-bold text-gray-700 dark:text-gray-300 text-left"
                                         >
                                             <span>
                                                 {startDate || (lang === 'km' ? 'ជ្រើសរើសថ្ងៃ' : 'Select Date')}
@@ -145,7 +145,7 @@ const CreateReportPage: React.FC = () => {
                                         <button
                                             type="button"
                                             onClick={() => setShowEndCalendar(true)}
-                                            className="w-full px-5 py-4 bg-gray-50 border border-gray-100 rounded-2xl flex justify-between items-center hover:border-blue-400 hover:bg-white transition-all text-sm font-bold text-gray-700 text-left"
+                                            className="w-full px-5 py-4 bg-gray-50 dark:bg-slate-800/50 border border-gray-100 dark:border-slate-700 rounded-2xl flex justify-between items-center hover:border-blue-400 hover:bg-white dark:hover:bg-slate-900 transition-all text-sm font-bold text-gray-700 dark:text-gray-300 text-left"
                                         >
                                             <span>
                                                 {endDate || (lang === 'km' ? 'ជ្រើសរើសថ្ងៃ' : 'Select Date')}
@@ -181,7 +181,7 @@ const CreateReportPage: React.FC = () => {
                                     ]}
                                     value={status}
                                     onChange={(val) => setStatus(val)}
-                                    className="!rounded-2xl !bg-gray-50 !border-gray-100 !py-2 hover:!border-blue-400 transition-colors"
+                                    className="!rounded-2xl !bg-gray-50 dark:!bg-slate-800/50 !border-gray-100 dark:!border-slate-700 !py-2 hover:!border-blue-400 transition-colors"
                                 />
                             </div>
 
@@ -190,7 +190,7 @@ const CreateReportPage: React.FC = () => {
                                 <button
                                     type="button"
                                     onClick={() => router.push("/dashboard/reports")}
-                                    className="flex-1 bg-gray-100 text-gray-600 px-6 py-4 rounded-2xl hover:bg-gray-200 transition-all font-bold active:scale-95"
+                                    className="flex-1 bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-gray-300 px-6 py-4 rounded-2xl hover:bg-gray-200 dark:hover:bg-slate-700 transition-all font-bold active:scale-95"
                                 >
                                     {lang === 'km' ? 'បោះបង់' : 'Cancel'}
                                 </button>
