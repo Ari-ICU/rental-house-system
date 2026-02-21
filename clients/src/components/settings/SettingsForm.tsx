@@ -27,7 +27,7 @@ export default function SettingsForm() {
     useEffect(() => {
         const fetchSettings = async () => {
             try {
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api'}/settings`);
+                const res = await fetch('/api/settings');
                 if (res.ok) {
                     const data = await res.json();
                     if (data.data) {
@@ -58,7 +58,7 @@ export default function SettingsForm() {
         e.preventDefault();
         setSaving(true);
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api'}/settings`, {
+            const res = await fetch('/api/settings', {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

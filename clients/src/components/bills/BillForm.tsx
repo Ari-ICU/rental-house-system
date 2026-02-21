@@ -69,7 +69,7 @@ const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
     useEffect(() => {
         const fetchRates = async () => {
             try {
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api'}/settings`);
+                const res = await fetch('/api/settings');
                 if (res.ok) {
                     const data = await res.json();
                     if (data.data) {
