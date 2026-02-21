@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { FaBars, FaSearch, FaUser, FaBell } from "react-icons/fa";
+import { FaBars, FaSearch, FaUser } from "react-icons/fa";
 import { useLang } from "@/context/LangContext";
 import { Rental } from "@/types/rents";
 import { getAllRentals } from "@/services/rentalService";
@@ -215,14 +215,6 @@ const Header: React.FC<HeaderProps> = ({ onMobileMenuToggle }) => {
                         </div>
                     </motion.button>
 
-                    {/* Notifications */}
-                    <motion.button
-                        whileTap={{ scale: 0.95 }}
-                        className="w-11 h-11 flex items-center justify-center rounded-2xl text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition-all relative border border-transparent hover:border-indigo-100"
-                    >
-                        <FaBell size={18} />
-                        <span className="absolute top-3 right-3 w-2 h-2 bg-rose-500 rounded-full ring-2 ring-white animate-pulse" />
-                    </motion.button>
 
                     {/* User Profile */}
                     <motion.button

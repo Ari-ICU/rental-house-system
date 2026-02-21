@@ -102,7 +102,7 @@ export default function SettingsForm() {
                             {label('System Settings', 'ការកំណត់ប្រព័ន្ធ')}
                         </h1>
                         <p className="text-indigo-200 mt-2 text-sm max-w-xl leading-relaxed opacity-90">
-                            {label('Manage your global system configurations and notification integrations.', 'គ្រប់គ្រងការកំណត់ប្រព័ន្ធទូទៅរបស់អ្នក និងការរួមបញ្ចូលការជូនដំណឹង។')}
+                            {label('Manage your global system configurations.', 'គ្រប់គ្រងការកំណត់ប្រព័ន្ធទូទៅរបស់អ្នក។')}
                         </p>
                     </div>
                 </div>
