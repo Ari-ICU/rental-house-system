@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import InputField from "./InputField";
+import { FaEnvelope, FaLock, FaUser, FaArrowRight, FaHome } from "react-icons/fa";
+import { motion } from "framer-motion";
 
 interface AuthFormProps {
     type: "login" | "register";
@@ -19,72 +21,93 @@ const AuthForm = ({ type, onSubmit }: AuthFormProps) => {
     };
 
     return (
-        <div className="flex min-h-screen items-center justify-center px-4">
+        <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+            className="w-full max-w-md"
+        >
             <form
                 onSubmit={handleSubmit}
-                className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-100"
+                className="bg-white p-10 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-slate-100 flex flex-col gap-8 relative overflow-hidden"
             >
-                <h2 className="text-3xl font-semibold text-center text-gray-800 mb-6">
-                    {type === "login" ? "Welcome Back 👋" : "Create Your Account 📝"}
-                </h2>
+                {/* Decorative Background Mesh */}
+                <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 blur-3xl rounded-full -mr-16 -mt-16 pointer-events-none" />
+                <div className="absolute bottom-0 left-0 w-32 h-32 bg-violet-500/5 blur-3xl rounded-full -ml-16 -mb-16 pointer-events-none" />
 
-                {type === "register" && (
+                {/* Logo Section */}
+                <div className="flex flex-col items-center gap-4 mb-4">
+                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center shadow-lg shadow-indigo-200">
+                        <FaHome className="text-white text-3xl" />
+                    </div>
+                    <div className="text-center">
+                        <h2 className="text-3xl font-black text-slate-900 tracking-tight">
+                            {type === "login" ? "Welcome Back" : "Join RentFlow"}
+                        </h2>
+                        <p className="text-sm font-bold text-slate-400 mt-1 uppercase tracking-widest px-2">
+                            {type === "login" ? "Secure Dashboard Access" : "Premium Management Ecosystem"}
+                        </p>
+                    </div>
+                </div>
+
+                <div className="space-y-4">
+                    {type === "register" && (
+                        <InputField
+                            label="Full Name"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            placeholder="Enter your name"
+                            icon={<FaUser />}
+                            required
+                        />
+                    )}
+
                     <InputField
-                        label="Full Name"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        placeholder="Enter your full name"
+                        label="Email Address"
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="name@example.com"
+                        icon={<FaEnvelope />}
+                        required
                     />
-                )}
 
-                <InputField
-                    label="Email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Enter your email"
-                />
-
-                <InputField
-                    label="Password"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Enter your password"
-                />
+                    <InputField
+                        label="Account Password"
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="••••••••"
+                        icon={<FaLock />}
+                        required
+                    />
+                </div>
 
                 <button
                     type="submit"
-                    className="w-full mt-6 bg-blue-600 text-white py-3 rounded-lg font-medium text-lg shadow hover:bg-blue-700 transition-all duration-200"
+                    className="group relative w-full mt-2 bg-slate-900 text-white py-5 rounded-2xl font-black text-sm uppercase tracking-[0.2em] shadow-xl hover:bg-slate-800 transition-all duration-300 active:scale-[0.98] overflow-hidden"
                 >
-                    {type === "login" ? "Sign In" : "Sign Up"}
+                    <div className="absolute inset-0 bg-gradient-to-r from-indigo-600/20 to-violet-600/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <span className="relative flex items-center justify-center gap-3">
+                        {type === "login" ? "Authenticate" : "Create Account"}
+                        <FaArrowRight className="group-hover:translate-x-1 transition-transform" />
+                    </span>
                 </button>
 
-                <p className="text-sm text-gray-600 text-center mt-6">
-                    {type === "login" ? (
-                        <>
-                            Don’t have an account?{" "}
-                            <a
-                                href="/register"
-                                className="text-blue-600 font-medium hover:underline"
-                            >
-                                Sign up
-                            </a>
-                        </>
-                    ) : (
-                        <>
-                            Already have an account?{" "}
-                            <a
-                                href="/login"
-                                className="text-blue-600 font-medium hover:underline"
-                            >
-                                Log in
-                            </a>
-                        </>
-                    )}
-                </p>
+                <div className="text-center pt-2">
+                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+                        {type === "login" ? "New to the system?" : "Already have an account?"}{" "}
+                        <motion.a
+                            whileHover={{ scale: 1.05 }}
+                            href={type === "login" ? "/register" : "/login"}
+                            className="text-indigo-600 hover:text-indigo-700 underline underline-offset-4 decoration-2"
+                        >
+                            {type === "login" ? "Sign Up Free" : "Log In Now"}
+                        </motion.a>
+                    </p>
+                </div>
             </form>
-        </div>
+        </motion.div>
     );
 };
 

@@ -1,30 +1,38 @@
-interface InputFieldProps {
+import React from "react";
+
+interface InputFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
     label: string;
-    type?: string;
-    value: string;
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    placeholder?: string;
+    icon?: React.ReactNode;
 }
 
 const InputField = ({
     label,
-    type = "text",
-    value,
-    onChange,
-    placeholder,
+    icon,
+    className = "",
+    ...props
 }: InputFieldProps) => {
     return (
-        <div className="mb-5">
-            <label className="block text-gray-700 font-medium mb-2 text-sm">
+        <div className={`space-y-1.5 ${className}`}>
+            <label className="text-xs font-bold text-slate-500 uppercase tracking-widest ml-1">
                 {label}
             </label>
-            <input
-                type={type}
-                value={value}
-                onChange={onChange}
-                placeholder={placeholder}
-                className="w-full p-3 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-150"
-            />
+            <div className="relative group">
+                {icon && (
+                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors duration-300">
+                        {icon}
+                    </div>
+                )}
+                <input
+                    {...props}
+                    className={`
+                        w-full bg-slate-50 border border-slate-200 rounded-2xl py-4 
+                        ${icon ? 'pl-12' : 'px-6'} pr-6
+                        text-slate-900 font-medium placeholder:text-slate-400
+                        focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500/50
+                        hover:border-slate-300 transition-all duration-300
+                    `}
+                />
+            </div>
         </div>
     );
 };
