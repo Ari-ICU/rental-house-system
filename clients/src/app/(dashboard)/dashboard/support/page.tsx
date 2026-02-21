@@ -48,7 +48,7 @@ export default function SupportPage() {
                 <motion.h1
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    className="text-4xl font-black text-gray-900 tracking-tight"
+                    className="text-4xl font-black text-gray-900 dark:text-white tracking-tight"
                 >
                     {text.title}
                 </motion.h1>
@@ -56,7 +56,7 @@ export default function SupportPage() {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.1 }}
-                    className="text-gray-500 text-lg font-medium"
+                    className="text-gray-500 dark:text-gray-400 text-lg font-medium"
                 >
                     {text.subtitle}
                 </motion.p>
@@ -104,12 +104,12 @@ export default function SupportPage() {
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: index * 0.1 }}
-                                className="flex items-center gap-4 p-6 rounded-3xl bg-white border border-gray-100 shadow-sm hover:shadow-md hover:border-indigo-100 transition-all group text-left"
+                                className="flex items-center gap-4 p-6 rounded-3xl bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 shadow-sm hover:shadow-md hover:border-indigo-100 dark:hover:border-indigo-900/50 transition-all group text-left"
                             >
                                 <div className={`w-12 h-12 rounded-2xl ${action.bg} ${action.color} flex items-center justify-center text-xl transition-transform group-hover:scale-110`}>
                                     {action.icon}
                                 </div>
-                                <span className="font-bold text-gray-700 tracking-tight">{action.title}</span>
+                                <span className="font-bold text-gray-700 dark:text-gray-200 tracking-tight">{action.title}</span>
                             </motion.button>
                         ))}
                     </div>
@@ -119,17 +119,17 @@ export default function SupportPage() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.3 }}
-                        className="bg-white rounded-[3rem] p-10 border border-gray-100 shadow-xl shadow-gray-200/50"
+                        className="bg-white dark:bg-slate-900 rounded-[3rem] p-10 border border-gray-100 dark:border-slate-800 shadow-xl shadow-gray-200/50 dark:shadow-none"
                     >
                         <div className="flex items-center gap-4 mb-8">
-                            <div className="w-14 h-14 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-500 text-2xl">
+                            <div className="w-14 h-14 rounded-2xl bg-indigo-50 dark:bg-indigo-900/20 flex items-center justify-center text-indigo-500 dark:text-indigo-400 text-2xl">
                                 <FaEnvelopeOpenText />
                             </div>
                             <div>
-                                <h3 className="text-2xl font-black text-gray-900 tracking-tight">
+                                <h3 className="text-2xl font-black text-gray-900 dark:text-white tracking-tight">
                                     {text.contactFormTitle}
                                 </h3>
-                                <p className="text-gray-500 font-medium">
+                                <p className="text-gray-500 dark:text-gray-400 font-medium">
                                     {text.contactFormSubtitle}
                                 </p>
                             </div>

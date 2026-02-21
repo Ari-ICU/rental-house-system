@@ -70,7 +70,7 @@ const ContactForm = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Name */}
                 <div className="space-y-2">
-                    <label className="text-xs font-bold text-gray-500 uppercase tracking-widest flex items-center gap-2">
+                    <label className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest flex items-center gap-2">
                         <FaUser className="text-indigo-400" />
                         {isKhmer ? "ឈ្មោះ" : "Name"}
                     </label>
@@ -79,14 +79,14 @@ const ContactForm = () => {
                         required
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        className="w-full bg-gray-50 border border-gray-100 text-gray-800 rounded-2xl px-5 py-4 text-sm font-medium focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none"
+                        className="w-full bg-gray-50 dark:bg-slate-800/50 border border-gray-100 dark:border-slate-700 text-gray-800 dark:text-gray-100 rounded-2xl px-5 py-4 text-sm font-medium focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none placeholder:text-gray-400 dark:placeholder:text-gray-500"
                         placeholder={isKhmer ? "ឈ្មោះរបស់អ្នក" : "Your Name"}
                     />
                 </div>
 
                 {/* Email */}
                 <div className="space-y-2">
-                    <label className="text-xs font-bold text-gray-500 uppercase tracking-widest flex items-center gap-2">
+                    <label className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest flex items-center gap-2">
                         <FaEnvelope className="text-indigo-400" />
                         {isKhmer ? "អ៊ីមែល" : "Email"}
                     </label>
@@ -95,7 +95,7 @@ const ContactForm = () => {
                         required
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        className="w-full bg-gray-50 border border-gray-100 text-gray-800 rounded-2xl px-5 py-4 text-sm font-medium focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none"
+                        className="w-full bg-gray-50 dark:bg-slate-800/50 border border-gray-100 dark:border-slate-700 text-gray-800 dark:text-gray-100 rounded-2xl px-5 py-4 text-sm font-medium focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none placeholder:text-gray-400 dark:placeholder:text-gray-500"
                         placeholder="example@mail.com"
                     />
                 </div>
@@ -103,7 +103,7 @@ const ContactForm = () => {
 
             {/* Subject */}
             <div className="space-y-2">
-                <label className="text-xs font-bold text-gray-500 uppercase tracking-widest flex items-center gap-2">
+                <label className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest flex items-center gap-2">
                     <FaTag className="text-indigo-400" />
                     {isKhmer ? "ប្រធានបទ" : "Subject"}
                 </label>
@@ -112,12 +112,13 @@ const ContactForm = () => {
                     value={formData.subject}
                     onChange={(val) => setFormData({ ...formData, subject: val })}
                     placeholder={isKhmer ? "ជ្រើសរើសប្រធានបទ" : "Select Subject"}
+                    className="!bg-gray-50 dark:!bg-slate-800/50 !border-gray-100 dark:!border-slate-700 !text-gray-800 dark:!text-gray-100 !rounded-2xl"
                 />
             </div>
 
             {/* Message */}
             <div className="space-y-2">
-                <label className="text-xs font-bold text-gray-500 uppercase tracking-widest flex items-center gap-2">
+                <label className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest flex items-center gap-2">
                     <FaCommentAlt className="text-indigo-400" />
                     {isKhmer ? "សារ" : "Message"}
                 </label>
@@ -126,7 +127,7 @@ const ContactForm = () => {
                     rows={5}
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                    className="w-full bg-gray-50 border border-gray-100 text-gray-800 rounded-2xl px-5 py-4 text-sm font-medium focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none resize-none"
+                    className="w-full bg-gray-50 dark:bg-slate-800/50 border border-gray-100 dark:border-slate-700 text-gray-800 dark:text-gray-100 rounded-2xl px-5 py-4 text-sm font-medium focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none resize-none placeholder:text-gray-400 dark:placeholder:text-gray-500"
                     placeholder={isKhmer ? "តើយើងអាចជួយអ្នកបានយ៉ាងដូចម្តេច?" : "How can we help you?"}
                 />
             </div>
@@ -137,7 +138,7 @@ const ContactForm = () => {
                 className={`
                     w-full py-5 rounded-2xl font-black text-sm shadow-xl transition-all flex items-center justify-center gap-3
                     ${sending
-                        ? "bg-slate-200 text-slate-400 cursor-not-allowed"
+                        ? "bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed"
                         : "bg-gradient-to-r from-indigo-600 to-violet-600 text-white hover:shadow-indigo-500/25 active:scale-[0.98]"
                     }
                 `}
