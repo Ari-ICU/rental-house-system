@@ -1,6 +1,11 @@
 const User = require('../models/user');
 const { generateToken } = require('../utils/auth');
-const apiResponse = require('../utils/apiResponse');
+const {
+    successResponse,
+    errorResponse,
+    unauthorizedResponse,
+    validationErrorResponse
+} = require('../utils/apiResponse');
 
 const authController = {
     register: async (req, res) => {
@@ -9,7 +14,7 @@ const authController = {
 
             const userExists = await User.findByEmail(email);
             if (userExists) {
-                return apiResponse.error(res, 'User already exists', 400);
+                return validationErrorResponse(res, 'User already exists');
             }
 
             const user = await User.create({
@@ -29,7 +34,7 @@ const authController = {
                 sameSite: 'lax'
             });
 
-            return apiResponse.success(res, {
+            return successResponse(res, {
                 user: {
                     id: user.id,
                     name: user.name,
@@ -40,7 +45,7 @@ const authController = {
             }, 'User registered successfully');
         } catch (error) {
             console.error('Register error:', error);
-            return apiResponse.error(res, 'Server error during registration');
+            return errorResponse(res, 'Server error during registration');
         }
     },
 
@@ -50,12 +55,12 @@ const authController = {
 
             const user = await User.findByEmail(email);
             if (!user) {
-                return apiResponse.error(res, 'Invalid credentials', 401);
+                return unauthorizedResponse(res, 'Invalid credentials');
             }
 
             const isMatch = await User.comparePassword(password, user.password);
             if (!isMatch) {
-                return apiResponse.error(res, 'Invalid credentials', 401);
+                return unauthorizedResponse(res, 'Invalid credentials');
             }
 
             const token = generateToken(user.id);
@@ -68,7 +73,7 @@ const authController = {
                 sameSite: 'lax'
             });
 
-            return apiResponse.success(res, {
+            return successResponse(res, {
                 user: {
                     id: user.id,
                     name: user.name,
@@ -79,7 +84,7 @@ const authController = {
             }, 'Logged in successfully');
         } catch (error) {
             console.error('Login error:', error);
-            return apiResponse.error(res, 'Server error during login');
+            return errorResponse(res, 'Server error during login');
         }
     },
 
@@ -88,17 +93,17 @@ const authController = {
             httpOnly: true,
             expires: new Date(0),
         });
-        return apiResponse.success(res, null, 'Logged out successfully');
+        return successResponse(res, null, 'Logged out successfully');
     },
 
     getMe: async (req, res) => {
         try {
             const user = await User.findById(req.user.id);
             if (!user) {
-                return apiResponse.error(res, 'User not found', 404);
+                return errorResponse(res, 'User not found', null, 404);
             }
 
-            return apiResponse.success(res, {
+            return successResponse(res, {
                 user: {
                     id: user.id,
                     name: user.name,
@@ -108,7 +113,7 @@ const authController = {
             });
         } catch (error) {
             console.error('GetMe error:', error);
-            return apiResponse.error(res, 'Server error fetching user');
+            return errorResponse(res, 'Server error fetching user');
         }
     }
 };

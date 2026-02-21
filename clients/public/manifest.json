@@ -1,0 +1,16 @@
+{
+    "name": "Rental House System",
+    "short_name": "RentalHouse",
+    "description": "Premium Rental House Management System",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#4f46e5",
+    "icons": [
+        {
+            "src": "/globe.svg",
+            "sizes": "any",
+            "type": "image/svg+xml"
+        }
+    ]
+}
