@@ -93,7 +93,6 @@ const Sidebar: React.FC<{ isMobileOpen: boolean; onClose: () => void }> = ({ isM
             titleKh: "ចំណូលចិត្ត",
             links: [
                 { name: "System Settings", nameKh: "ការកំណត់", href: "/dashboard/settings", icon: <FaCog /> },
-                { name: "Support Center", nameKh: "មជ្ឈមណ្ឌល​ជំនួយ", href: "/dashboard/help", icon: <FaLifeRing /> }
             ],
         },
     ];
