@@ -66,8 +66,7 @@ export async function downloadBillPdf(id: number | string): Promise<Blob> {
         headers['Authorization'] = `Bearer ${token}`;
     }
 
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-    const response = await fetch(`${apiUrl}${BASE}/${id}/pdf`, {
+    const response = await fetch(`${BASE}/${id}/pdf`, {
         method: 'GET',
         headers
     });
