@@ -47,8 +47,8 @@ const RentalView: React.FC<RentalViewProps> = ({ rental }) => {
     const InfoRow = ({ icon, value }: { icon: React.ReactNode; value?: string }) => {
         if (!value) return null;
         return (
-            <div className="flex items-center gap-3 text-sm text-gray-700">
-                <span className="text-gray-400 flex-shrink-0">{icon}</span>
+            <div className="flex items-center gap-3 text-sm text-gray-700 dark:text-gray-300">
+                <span className="text-gray-400 dark:text-gray-500 flex-shrink-0">{icon}</span>
                 <span>{value}</span>
             </div>
         );
@@ -59,12 +59,12 @@ const RentalView: React.FC<RentalViewProps> = ({ rental }) => {
     }: {
         icon: React.ReactNode; iconBg: string; title: string; children: React.ReactNode;
     }) => (
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-            <div className="px-6 py-4 border-b border-gray-50 bg-gradient-to-r from-gray-50 to-white flex items-center gap-2.5">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800 overflow-hidden">
+            <div className="px-6 py-4 border-b border-gray-50 dark:border-slate-800 bg-gradient-to-r from-gray-50 to-white dark:from-slate-800 dark:to-slate-900 flex items-center gap-2.5">
                 <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${iconBg}`}>
                     {icon}
                 </div>
-                <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wider">{title}</h2>
+                <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wider">{title}</h2>
             </div>
             <div className="p-6">{children}</div>
         </div>
@@ -144,12 +144,12 @@ const RentalView: React.FC<RentalViewProps> = ({ rental }) => {
             {/* Stat chips row */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {[
-                    { icon: <FaDollarSign />, label: label('Monthly Rent', 'ថ្លៃជួល/ខែ'), value: `$${rental.rentAmount.toLocaleString()}`, color: 'text-violet-600', bg: 'bg-violet-50' },
-                    { icon: <FaDoorOpen />, label: label('Room', 'បន្ទប់'), value: rental.roomNumber, color: 'text-blue-600', bg: 'bg-blue-50' },
-                    { icon: <FaCalendarAlt />, label: label('Start Date', 'ចាប់ផ្តើម'), value: formatKhmerDate(rental.startDate ?? '', lang) || '—', color: 'text-emerald-600', bg: 'bg-emerald-50' },
-                    { icon: <FaCalendarAlt />, label: label('End Date', 'ថ្ងៃបញ្ចប់'), value: formatKhmerDate(rental.endDate ?? '', lang) || '—', color: 'text-amber-600', bg: 'bg-amber-50' },
+                    { icon: <FaDollarSign />, label: label('Monthly Rent', 'ថ្លៃជួល/ខែ'), value: `$${rental.rentAmount.toLocaleString()}`, color: 'text-violet-600 dark:text-violet-400', bg: 'bg-violet-50 dark:bg-violet-900/20' },
+                    { icon: <FaDoorOpen />, label: label('Room', 'បន្ទប់'), value: rental.roomNumber, color: 'text-blue-600 dark:text-blue-400', bg: 'bg-blue-50 dark:bg-blue-900/20' },
+                    { icon: <FaCalendarAlt />, label: label('Start Date', 'ចាប់ផ្តើម'), value: formatKhmerDate(rental.startDate ?? '', lang) || '—', color: 'text-emerald-600 dark:text-emerald-400', bg: 'bg-emerald-50 dark:bg-emerald-900/20' },
+                    { icon: <FaCalendarAlt />, label: label('End Date', 'ថ្ងៃបញ្ចប់'), value: formatKhmerDate(rental.endDate ?? '', lang) || '—', color: 'text-amber-600 dark:text-amber-400', bg: 'bg-amber-50 dark:bg-amber-900/20' },
                 ].map(chip => (
-                    <div key={chip.label} className={`${chip.bg} rounded-2xl p-4 border border-gray-100`}>
+                    <div key={chip.label} className={`${chip.bg} rounded-2xl p-4 border border-gray-100 dark:border-slate-700/50`}>
                         <p className={`text-xs font-semibold uppercase tracking-wider mb-1 ${chip.color} opacity-70`}>{chip.label}</p>
                         <p className={`text-sm font-bold ${chip.color}`}>{chip.value}</p>
                     </div>
@@ -167,7 +167,7 @@ const RentalView: React.FC<RentalViewProps> = ({ rental }) => {
                     <InfoRow icon={<FaEnvelope size={13} />} value={rental.clientEmail} />
                     <InfoRow icon={<FaMapMarkerAlt size={13} />} value={rental.clientAddress} />
                     {!rental.clientPhone && !rental.clientEmail && !rental.clientAddress && (
-                        <p className="text-sm text-gray-400 italic">{label('No contact details provided.', 'មិនមានព័ត៌មានទំនាក់ទំនង។')}</p>
+                        <p className="text-sm text-gray-400 dark:text-gray-500 italic">{label('No contact details provided.', 'មិនមានព័ត៌មានទំនាក់ទំនង។')}</p>
                     )}
                 </div>
             </DetailCard>
@@ -181,11 +181,11 @@ const RentalView: React.FC<RentalViewProps> = ({ rental }) => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     {/* Front */}
                     <div className="space-y-2">
-                        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                        <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                             {label('Front Side', 'ខាងមុខ')}
                         </p>
                         {rental.clientImageCard?.front ? (
-                            <div className="relative w-full h-48 overflow-hidden rounded-xl border border-gray-200 shadow-sm">
+                            <div className="relative w-full h-48 overflow-hidden rounded-xl border border-gray-200 dark:border-slate-700 shadow-sm">
                                 <Image
                                     src={rental.clientImageCard.front}
                                     alt="Front ID"
@@ -194,19 +194,19 @@ const RentalView: React.FC<RentalViewProps> = ({ rental }) => {
                                 />
                             </div>
                         ) : (
-                            <div className="w-full h-32 rounded-xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center gap-2 bg-gray-50">
-                                <FaIdCard className="text-gray-300 text-2xl" />
-                                <p className="text-xs text-gray-400">{label('No image uploaded', 'មិនមានរូបភាព')}</p>
+                            <div className="w-full h-32 rounded-xl border-2 border-dashed border-gray-200 dark:border-slate-700 flex flex-col items-center justify-center gap-2 bg-gray-50 dark:bg-slate-800/50">
+                                <FaIdCard className="text-gray-300 dark:text-slate-600 text-2xl" />
+                                <p className="text-xs text-gray-400 dark:text-gray-500">{label('No image uploaded', 'មិនមានរូបភាព')}</p>
                             </div>
                         )}
                     </div>
                     {/* Back */}
                     <div className="space-y-2">
-                        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                        <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                             {label('Back Side', 'ខាងក្រោយ')}
                         </p>
                         {rental.clientImageCard?.back ? (
-                            <div className="relative w-full h-48 overflow-hidden rounded-xl border border-gray-200 shadow-sm">
+                            <div className="relative w-full h-48 overflow-hidden rounded-xl border border-gray-200 dark:border-slate-700 shadow-sm">
                                 <Image
                                     src={rental.clientImageCard.back}
                                     alt="Back ID"
@@ -215,9 +215,9 @@ const RentalView: React.FC<RentalViewProps> = ({ rental }) => {
                                 />
                             </div>
                         ) : (
-                            <div className="w-full h-32 rounded-xl border-2 border-dashed border-gray-200 flex flex-col items-center justify-center gap-2 bg-gray-50">
-                                <FaIdCard className="text-gray-300 text-2xl" />
-                                <p className="text-xs text-gray-400">{label('No image uploaded', 'មិនមានរូបភាព')}</p>
+                            <div className="w-full h-32 rounded-xl border-2 border-dashed border-gray-200 dark:border-slate-700 flex flex-col items-center justify-center gap-2 bg-gray-50 dark:bg-slate-800/50">
+                                <FaIdCard className="text-gray-300 dark:text-slate-600 text-2xl" />
+                                <p className="text-xs text-gray-400 dark:text-gray-500">{label('No image uploaded', 'មិនមានរូបភាព')}</p>
                             </div>
                         )}
                     </div>
@@ -234,23 +234,23 @@ const RentalView: React.FC<RentalViewProps> = ({ rental }) => {
                     <div className="flex flex-col sm:flex-row gap-6">
                         {rental.emergencyContactName && (
                             <div className="flex items-center gap-3">
-                                <div className="w-9 h-9 rounded-xl bg-red-50 flex items-center justify-center flex-shrink-0">
+                                <div className="w-9 h-9 rounded-xl bg-red-50 dark:bg-red-900/20 flex items-center justify-center flex-shrink-0">
                                     <FaUser className="text-red-400 text-sm" />
                                 </div>
                                 <div>
-                                    <p className="text-xs text-gray-400 uppercase tracking-wider font-semibold">{label('Name', 'ឈ្មោះ')}</p>
-                                    <p className="text-sm font-semibold text-gray-800">{rental.emergencyContactName}</p>
+                                    <p className="text-xs text-gray-400 dark:text-gray-500 uppercase tracking-wider font-semibold">{label('Name', 'ឈ្មោះ')}</p>
+                                    <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">{rental.emergencyContactName}</p>
                                 </div>
                             </div>
                         )}
                         {rental.emergencyContactPhone && (
                             <div className="flex items-center gap-3">
-                                <div className="w-9 h-9 rounded-xl bg-red-50 flex items-center justify-center flex-shrink-0">
+                                <div className="w-9 h-9 rounded-xl bg-red-50 dark:bg-red-900/20 flex items-center justify-center flex-shrink-0">
                                     <FaPhoneAlt className="text-red-400 text-sm" />
                                 </div>
                                 <div>
-                                    <p className="text-xs text-gray-400 uppercase tracking-wider font-semibold">{label('Phone', 'លេខទូរស័ព្ទ')}</p>
-                                    <p className="text-sm font-semibold text-gray-800">{rental.emergencyContactPhone}</p>
+                                    <p className="text-xs text-gray-400 dark:text-gray-500 uppercase tracking-wider font-semibold">{label('Phone', 'លេខទូរស័ព្ទ')}</p>
+                                    <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">{rental.emergencyContactPhone}</p>
                                 </div>
                             </div>
                         )}
@@ -267,7 +267,7 @@ const RentalView: React.FC<RentalViewProps> = ({ rental }) => {
                 {rental.bills && rental.bills.length > 0 ? (
                     <div className="overflow-x-auto w-full -mx-6 sm:mx-0">
                         <table className="min-w-[600px] w-full text-xs text-left">
-                            <thead className="bg-gray-50 text-gray-400 uppercase tracking-wider font-semibold">
+                            <thead className="bg-gray-50 dark:bg-slate-800/50 text-gray-400 dark:text-gray-500 uppercase tracking-wider font-semibold">
                                 <tr>
                                     <th className="px-4 py-2">{label('Month', 'ខែ')}</th>
                                     <th className="px-4 py-2">{label('Elec ($)', 'អគ្គិសនី')}</th>
@@ -275,20 +275,20 @@ const RentalView: React.FC<RentalViewProps> = ({ rental }) => {
                                     <th className="px-4 py-2">{label('Status', 'ស្ថានភាព')}</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-gray-50">
+                            <tbody className="divide-y divide-gray-50 dark:divide-slate-800/50">
                                 {rental.bills.map((bill) => (
-                                    <tr key={bill.id} className="hover:bg-gray-50/50">
-                                        <td className="px-4 py-3 font-medium text-gray-700">
+                                    <tr key={bill.id} className="hover:bg-gray-50/50 dark:hover:bg-slate-800/50">
+                                        <td className="px-4 py-3 font-medium text-gray-700 dark:text-gray-300">
                                             {formatKhmerDate(bill.month, lang)}
                                         </td>
-                                        <td className="px-4 py-3 text-gray-600">${bill.electricityAmount}</td>
-                                        <td className="px-4 py-3 text-gray-600">${bill.waterAmount}</td>
+                                        <td className="px-4 py-3 text-gray-600 dark:text-gray-400">${bill.electricityAmount}</td>
+                                        <td className="px-4 py-3 text-gray-600 dark:text-gray-400">${bill.waterAmount}</td>
                                         <td className="px-4 py-3">
                                             <div className="flex gap-1">
-                                                <span className={`px-1.5 py-0.5 rounded-md ${bill.electricityStatus === 'Paid' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                                                <span className={`px-1.5 py-0.5 rounded-md ${bill.electricityStatus === 'Paid' ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-800/50' : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800/50'}`}>
                                                     E: {label(bill.electricityStatus, bill.electricityStatus === 'Paid' ? 'បង់ហើយ' : 'នៅ')}
                                                 </span>
-                                                <span className={`px-1.5 py-0.5 rounded-md ${bill.waterStatus === 'Paid' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                                                <span className={`px-1.5 py-0.5 rounded-md ${bill.waterStatus === 'Paid' ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-800/50' : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800/50'}`}>
                                                     W: {label(bill.waterStatus, bill.waterStatus === 'Paid' ? 'បង់ហើយ' : 'នៅ')}
                                                 </span>
                                             </div>
@@ -299,7 +299,7 @@ const RentalView: React.FC<RentalViewProps> = ({ rental }) => {
                         </table>
                     </div>
                 ) : (
-                    <p className="text-sm text-gray-400 italic text-center py-4">
+                    <p className="text-sm text-gray-400 dark:text-gray-500 italic text-center py-4">
                         {label('No billing records found.', 'មិនទាន់មានប្រវត្តិនៃការបង់ប្រាក់នៅឡើយទេ។')}
                     </p>
                 )}
@@ -312,7 +312,7 @@ const RentalView: React.FC<RentalViewProps> = ({ rental }) => {
                     iconBg="bg-green-100"
                     title={label('Notes', 'កំណត់សម្គាល់')}
                 >
-                    <p className="text-sm text-gray-700 whitespace-pre-line leading-relaxed">{rental.notes}</p>
+                    <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-line leading-relaxed">{rental.notes}</p>
                 </DetailCard>
             )}
 
