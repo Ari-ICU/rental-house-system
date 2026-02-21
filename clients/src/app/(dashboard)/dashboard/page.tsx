@@ -77,7 +77,6 @@ export default function DashboardPage() {
                         title={metric.title}
                         value={metric.value}
                         icon={metric.icon}
-                        bgColor="bg-white"
                     />
                 ))}
             </div>

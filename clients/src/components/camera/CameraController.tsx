@@ -338,28 +338,28 @@ const CameraController: React.FC<CameraControllerProps> = ({
         <div className="max-w-7xl mx-auto space-y-10">
             {/* Header */}
             {/* Header */}
-            <div className="relative z-20 flex flex-col md:flex-row md:items-end justify-between gap-8 bg-white/40 backdrop-blur-md p-8 sm:p-10 rounded-[2.5rem] border border-white shadow-xl shadow-blue-900/5">
+            <div className="relative z-20 flex flex-col md:flex-row md:items-end justify-between gap-8 bg-white/40 dark:bg-slate-900/40 backdrop-blur-md p-8 sm:p-10 rounded-[2.5rem] border border-white dark:border-slate-800 shadow-xl shadow-blue-900/5 dark:shadow-none">
                 <div className="space-y-4">
-                    <div className="inline-flex items-center gap-2 bg-blue-500/10 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 border border-blue-200/50">
+                    <div className="inline-flex items-center gap-2 bg-blue-500/10 dark:bg-blue-500/20 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 dark:text-blue-400 border border-blue-200/50 dark:border-blue-500/30">
                         <FaVideo size={10} />
                         {lang === 'km' ? 'ប្រព័ន្ធត្រួតពិនិត្យសុវត្ថិភាព' : 'Security Monitoring System'}
                     </div>
                     <div className="flex items-center gap-4">
-                        <div className="w-14 h-14 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/30">
+                        <div className="w-14 h-14 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/30 dark:shadow-blue-900/50">
                             <FaBuilding className="text-white text-2xl" />
                         </div>
                         <div>
-                            <h1 className="text-4xl font-black text-gray-900 tracking-tight leading-tight">
+                            <h1 className="text-4xl font-black text-gray-900 dark:text-white tracking-tight leading-tight">
                                 {lang === 'km' ? 'មជ្ឈមណ្ឌលកាមេរ៉ា' : 'Camera Center'}
                             </h1>
-                            <p className="text-gray-500 font-bold text-sm">
+                            <p className="text-gray-500 dark:text-slate-400 font-bold text-sm">
                                 {lang === 'km' ? 'ការផ្សាយបន្តផ្ទាល់ និងការគ្រប់គ្រងផ្នែកសន្តិសុខ' : 'Live stream surveillance and security management'}
                             </p>
                         </div>
                     </div>
                 </div>
 
-                <div className="flex items-center gap-4 bg-white/60 p-2.5 rounded-[1.5rem] border border-white shadow-inner">
+                <div className="flex items-center gap-4 bg-white/60 dark:bg-slate-900/60 p-2.5 rounded-[1.5rem] border border-white dark:border-slate-800 shadow-inner dark:shadow-none">
                     <div className="w-56">
                         <CustomDropdown
                             options={[
@@ -377,7 +377,7 @@ const CameraController: React.FC<CameraControllerProps> = ({
                             ]}
                             value={selectedFloor}
                             onChange={(val) => setSelectedFloor(val)}
-                            className="!rounded-2xl !bg-white !border-gray-100/50 !shadow-sm hover:!border-blue-400 transition-all font-bold text-sm"
+                            className="!rounded-2xl !bg-white dark:!bg-slate-800 !border-gray-100/50 dark:!border-slate-700 !shadow-sm hover:!border-blue-400 dark:hover:!border-blue-500 transition-all font-bold text-sm"
                         />
                     </div>
                     <Tooltip text={lang === 'km' ? 'ការកំណត់' : 'Settings'}>
@@ -388,7 +388,7 @@ const CameraController: React.FC<CameraControllerProps> = ({
                                 }
                                 setIsSettingsOpen(true);
                             }}
-                            className="w-12 h-12 flex items-center justify-center rounded-2xl bg-white border border-gray-100 text-gray-700 hover:text-blue-600 hover:border-blue-200 transition-all shadow-sm active:scale-90"
+                            className="w-12 h-12 flex items-center justify-center rounded-2xl bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 text-gray-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:border-blue-200 dark:hover:border-blue-500/50 transition-all shadow-sm active:scale-90"
                             aria-label="Open settings"
                         >
                             <FaCog className="text-xl" />
@@ -399,14 +399,14 @@ const CameraController: React.FC<CameraControllerProps> = ({
 
             {/* Camera Grid */}
             {filteredCameras.length === 0 ? (
-                <div className="bg-white/60 backdrop-blur-xl rounded-[2.5rem] p-24 text-center border border-white shadow-xl shadow-blue-900/5 flex flex-col items-center justify-center">
-                    <div className="w-24 h-24 bg-gradient-to-tr from-gray-100 to-gray-50 rounded-full flex items-center justify-center mb-8 shadow-inner ring-8 ring-white">
-                        <FaVideo size={36} className="text-gray-300" />
+                <div className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl rounded-[2.5rem] p-24 text-center border border-white dark:border-slate-800 shadow-xl shadow-blue-900/5 dark:shadow-none flex flex-col items-center justify-center">
+                    <div className="w-24 h-24 bg-gradient-to-tr from-gray-100 to-gray-50 dark:from-slate-800 dark:to-slate-700 rounded-full flex items-center justify-center mb-8 shadow-inner ring-8 ring-white dark:ring-slate-800">
+                        <FaVideo size={36} className="text-gray-300 dark:text-slate-500" />
                     </div>
-                    <h3 className="text-2xl font-black text-gray-900 tracking-tight mb-2">
+                    <h3 className="text-2xl font-black text-gray-900 dark:text-white tracking-tight mb-2">
                         {lang === 'km' ? 'មិនមានកាមេរ៉ា' : 'No Cameras Found'}
                     </h3>
-                    <p className="text-gray-400 font-medium text-sm max-w-md mx-auto leading-relaxed">
+                    <p className="text-gray-400 dark:text-slate-500 font-medium text-sm max-w-md mx-auto leading-relaxed">
                         {lang === 'km'
                             ? 'មិនមានកាមេរ៉ាសម្រាប់ជម្រើសនេះទេ។ សូមជ្រើសរើសជាន់ផ្សេង ឬបន្ថែមឧបករណ៍ថ្មី។'
                             : 'There are no active camera feeds available for the selected floor. Please check your device configuration.'}
@@ -419,7 +419,7 @@ const CameraController: React.FC<CameraControllerProps> = ({
                         return (
                             <div
                                 key={cam.id}
-                                className="group bg-white rounded-[2rem] shadow-2xl shadow-blue-900/5 border border-white overflow-hidden hover:shadow-blue-500/10 transition-all duration-500 hover:-translate-y-1 animate-in fade-in zoom-in-95 duration-500"
+                                className="group bg-white dark:bg-slate-900 rounded-[2rem] shadow-2xl shadow-blue-900/5 dark:shadow-none border border-white dark:border-slate-800 overflow-hidden hover:shadow-blue-500/10 dark:hover:border-slate-700 transition-all duration-500 hover:-translate-y-1 animate-in fade-in zoom-in-95 duration-500"
                             >
                                 {/* Video Container */}
                                 <div className="relative bg-[#0b0e14] aspect-video">
@@ -494,12 +494,12 @@ const CameraController: React.FC<CameraControllerProps> = ({
                                 <div className="p-5">
                                     <div className="flex items-center justify-between mb-5">
                                         <div className="flex items-center gap-3">
-                                            <div className={`w-2 h-8 rounded-full ${cam.isActive ? 'bg-gradient-to-b from-blue-500 to-indigo-600' : 'bg-gray-200'}`}></div>
+                                            <div className={`w-2 h-8 rounded-full ${cam.isActive ? 'bg-gradient-to-b from-blue-500 to-indigo-600' : 'bg-gray-200 dark:bg-slate-700'}`}></div>
                                             <div>
-                                                <h2 className="text-base font-black text-gray-900 tracking-tight leading-none group-hover:text-blue-600 transition-colors">
+                                                <h2 className="text-base font-black text-gray-900 dark:text-white tracking-tight leading-none group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                                                     {cam.name}
                                                 </h2>
-                                                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mt-1.5">
+                                                <p className="text-[10px] font-bold text-gray-400 dark:text-slate-500 uppercase tracking-wider mt-1.5">
                                                     {lang === 'km' ? 'កាមេរ៉ាសុវត្ថិភាព IP' : 'IP Security Camera'}
                                                 </p>
                                             </div>
@@ -512,13 +512,13 @@ const CameraController: React.FC<CameraControllerProps> = ({
                                     </div>
 
                                     {/* Control Toolbar */}
-                                    <div className="flex items-center justify-between bg-gray-50/80 p-1.5 rounded-xl border border-gray-100">
+                                    <div className="flex items-center justify-between bg-gray-50/80 dark:bg-slate-800/80 p-1.5 rounded-xl border border-gray-100 dark:border-slate-700/50">
                                         <div className="flex items-center gap-1">
                                             <Tooltip text={lang === 'km' ? 'ចាប់ផ្តើម' : "Start"}>
                                                 <button
                                                     onClick={() => handleStart(cam.id)}
                                                     disabled={!cam.isActive || state.loading}
-                                                    className="w-10 h-10 flex items-center justify-center rounded-lg text-emerald-600 hover:bg-white hover:shadow-sm disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:shadow-none transition-all active:scale-90"
+                                                    className="w-10 h-10 flex items-center justify-center rounded-lg text-emerald-600 dark:text-emerald-500 hover:bg-white dark:hover:bg-slate-700 hover:shadow-sm disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:shadow-none transition-all active:scale-90"
                                                 >
                                                     <FaVideo size={14} />
                                                 </button>
@@ -527,21 +527,21 @@ const CameraController: React.FC<CameraControllerProps> = ({
                                                 <button
                                                     onClick={() => handleStop(cam.id)}
                                                     disabled={!cam.isActive || state.loading}
-                                                    className="w-10 h-10 flex items-center justify-center rounded-lg text-rose-600 hover:bg-white hover:shadow-sm disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:shadow-none transition-all active:scale-90"
+                                                    className="w-10 h-10 flex items-center justify-center rounded-lg text-rose-600 dark:text-rose-500 hover:bg-white dark:hover:bg-slate-700 hover:shadow-sm disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:shadow-none transition-all active:scale-90"
                                                 >
                                                     <FaStop size={14} />
                                                 </button>
                                             </Tooltip>
                                         </div>
 
-                                        <div className="w-px h-6 bg-gray-200"></div>
+                                        <div className="w-px h-6 bg-gray-200 dark:bg-slate-700"></div>
 
                                         <div className="flex items-center gap-1">
                                             <Tooltip text={lang === 'km' ? 'ថតរូប' : "Capture"}>
                                                 <button
                                                     onClick={() => handleCapture(cam.id)}
                                                     disabled={!cam.isActive || state.loading || state.error !== null}
-                                                    className="w-10 h-10 flex items-center justify-center rounded-lg text-blue-600 hover:bg-white hover:shadow-sm disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:shadow-none transition-all active:scale-90"
+                                                    className="w-10 h-10 flex items-center justify-center rounded-lg text-blue-600 dark:text-blue-500 hover:bg-white dark:hover:bg-slate-700 hover:shadow-sm disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:shadow-none transition-all active:scale-90"
                                                 >
                                                     <FaCamera size={14} />
                                                 </button>
@@ -550,7 +550,7 @@ const CameraController: React.FC<CameraControllerProps> = ({
                                                 <button
                                                     onClick={() => handleFullscreen(cam.id)}
                                                     disabled={!cam.isActive || state.loading || state.error !== null}
-                                                    className="w-10 h-10 flex items-center justify-center rounded-lg text-indigo-600 hover:bg-white hover:shadow-sm disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:shadow-none transition-all active:scale-90"
+                                                    className="w-10 h-10 flex items-center justify-center rounded-lg text-indigo-600 dark:text-indigo-400 hover:bg-white dark:hover:bg-slate-700 hover:shadow-sm disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:shadow-none transition-all active:scale-90"
                                                 >
                                                     <FaExpand size={14} />
                                                 </button>
