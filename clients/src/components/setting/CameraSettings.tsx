@@ -35,26 +35,26 @@ const CameraSettings: React.FC<CameraSettingsProps> = ({
 
     return (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-2xl max-w-md w-full max-h-[85vh] overflow-hidden shadow-2xl">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl max-w-md w-full max-h-[85vh] overflow-hidden shadow-2xl">
                 {/* Header */}
                 {/* Header */}
-                <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-white/80 backdrop-blur-md sticky top-0 z-10">
+                <div className="p-6 border-b border-gray-100 dark:border-slate-800 flex justify-between items-center bg-white/80 dark:bg-slate-900/80 backdrop-blur-md sticky top-0 z-10">
                     <div className="flex items-center gap-4">
                         <div className="bg-gradient-to-tr from-blue-600 to-indigo-600 p-2.5 rounded-xl shadow-lg shadow-blue-500/20">
                             <FaShieldAlt className="text-white text-lg" />
                         </div>
                         <div>
-                            <h2 className="text-xl font-black text-gray-900 tracking-tight">
+                            <h2 className="text-xl font-black text-gray-900 dark:text-white tracking-tight">
                                 {lang === 'km' ? 'ការកំណត់កាមេរ៉ា' : 'Camera Settings'}
                             </h2>
-                            <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">
+                            <p className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest">
                                 {lang === 'km' ? 'កំណត់រចនាសម្ព័ន្ធឧបករណ៍' : 'Device Configuration'}
                             </p>
                         </div>
                     </div>
                     <button
                         onClick={onClose}
-                        className="p-2 rounded-full hover:bg-gray-100 text-gray-500 transition-colors"
+                        className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 text-gray-500 dark:text-gray-400 transition-colors"
                         aria-label="Close settings"
                     >
                         <FaTimes className="text-lg" />
@@ -65,13 +65,13 @@ const CameraSettings: React.FC<CameraSettingsProps> = ({
                 <div className="p-5 max-h-[60vh] overflow-y-auto">
                     {!hasPermission ? (
                         <div className="text-center py-12 px-6">
-                            <div className="inline-flex items-center justify-center w-20 h-20 rounded-[2rem] bg-blue-50 mb-6 animate-bounce-slow">
-                                <FaVideo className="text-blue-600 text-3xl" />
+                            <div className="inline-flex items-center justify-center w-20 h-20 rounded-[2rem] bg-blue-50 dark:bg-blue-900/20 mb-6 animate-bounce-slow">
+                                <FaVideo className="text-blue-600 dark:text-blue-400 text-3xl" />
                             </div>
-                            <h3 className="text-xl font-black text-gray-900 mb-3 tracking-tight">
+                            <h3 className="text-xl font-black text-gray-900 dark:text-white mb-3 tracking-tight">
                                 {lang === 'km' ? 'ត្រូវការការអនុញ្ញាតកាមេរ៉ា' : 'Camera Access Required'}
                             </h3>
-                            <p className="text-gray-500 font-medium mb-8 max-w-xs mx-auto leading-relaxed text-sm">
+                            <p className="text-gray-500 dark:text-gray-400 font-medium mb-8 max-w-xs mx-auto leading-relaxed text-sm">
                                 {lang === 'km'
                                     ? 'សូមផ្តល់ការអនុញ្ញាតឱ្យប្រើប្រាស់កាមេរ៉ា ដើម្បីកំណត់រចនាសម្ព័ន្ធឧបករណ៍ក្នុងស្រុករបស់អ្នក'
                                     : 'Please grant camera permissions to configure and access your local video devices.'}
@@ -87,10 +87,10 @@ const CameraSettings: React.FC<CameraSettingsProps> = ({
                         <div className="space-y-5">
                             {cameras.length === 0 ? (
                                 <div className="text-center py-12">
-                                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gray-50 mb-4 border border-gray-100">
-                                        <FaVideo className="text-gray-300 text-2xl" />
+                                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gray-50 dark:bg-slate-800 mb-4 border border-gray-100 dark:border-slate-700">
+                                        <FaVideo className="text-gray-300 dark:text-gray-600 text-2xl" />
                                     </div>
-                                    <p className="text-gray-400 font-bold text-sm">
+                                    <p className="text-gray-400 dark:text-gray-500 font-bold text-sm">
                                         {lang === 'km' ? 'មិនមានកាមេរ៉ាត្រូវបានកំណត់ទេ' : 'No cameras configured yet'}
                                     </p>
                                 </div>
@@ -98,12 +98,12 @@ const CameraSettings: React.FC<CameraSettingsProps> = ({
                                 cameras.map((cam) => (
                                     <div
                                         key={cam.id}
-                                        className="border border-gray-200 rounded-xl p-4 bg-gray-50 hover:bg-gray-100 transition-colors"
+                                        className="border border-gray-200 dark:border-slate-800 rounded-xl p-4 bg-gray-50 dark:bg-slate-800/50 hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors"
                                     >
                                         <div className="flex justify-between items-start mb-3">
                                             <div>
-                                                <h3 className="font-bold text-gray-800">{cam.name}</h3>
-                                                <p className="text-sm text-gray-500">{cam.floor}</p>
+                                                <h3 className="font-bold text-gray-800 dark:text-gray-200">{cam.name}</h3>
+                                                <p className="text-sm text-gray-500 dark:text-gray-400">{cam.floor}</p>
                                             </div>
                                             <button
                                                 onClick={() => onToggleActive(cam.id)}
@@ -132,21 +132,21 @@ const CameraSettings: React.FC<CameraSettingsProps> = ({
                                                 <div>
                                                     <div className="flex items-center gap-2 mb-2">
                                                         <FaLink className="text-blue-500" />
-                                                        <label className="text-sm font-medium text-gray-700">Stream URL</label>
+                                                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Stream URL</label>
                                                     </div>
                                                     <input
                                                         type="text"
                                                         value={cam.streamUrl}
                                                         onChange={(e) => onUpdateStreamUrl(cam.id, e.target.value)}
                                                         placeholder="https://example.com/stream.m3u8"
-                                                        className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-medium text-gray-700 placeholder-gray-300 text-sm"
+                                                        className="w-full px-4 py-3 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-medium text-gray-700 dark:text-gray-200 placeholder-gray-300 dark:placeholder-gray-600 text-sm"
                                                     />
                                                 </div>
                                             ) : (
                                                 <div>
                                                     <div className="flex items-center gap-2 mb-2">
                                                         <FaVideo className="text-blue-500 text-xs" />
-                                                        <label className="text-[11px] font-black text-gray-500 uppercase tracking-wider">
+                                                        <label className="text-[11px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                                             {lang === 'km' ? 'ឧបករណ៍ក្នុងស្រុក' : 'Local Device'}
                                                         </label>
                                                     </div>
@@ -160,7 +160,7 @@ const CameraSettings: React.FC<CameraSettingsProps> = ({
                                                         ]}
                                                         value={cam.deviceId || ''}
                                                         onChange={(val) => onDeviceSelect(cam.id, val)}
-                                                        className="w-full !rounded-xl !border-gray-200 hover:!border-blue-400 transition-colors"
+                                                        className="w-full !rounded-xl !border-gray-200 dark:!border-slate-700 hover:!border-blue-400 transition-colors"
                                                         placeholder={lang === 'km' ? 'ជ្រើសរើសឧបករណ៍' : 'Select Device'}
                                                     />
                                                 </div>
