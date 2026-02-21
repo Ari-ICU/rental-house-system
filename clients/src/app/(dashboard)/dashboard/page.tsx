@@ -85,7 +85,7 @@ export default function DashboardPage() {
             {/* Recent Rentals */}
             <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                    <h2 className="text-lg font-bold text-gray-800">
+                    <h2 className="text-lg font-bold text-gray-800 dark:text-slate-100">
                         {lang === "en" ? "Recent Rentals" : "ការជួលថ្មីៗ"}
                     </h2>
                     <Link href="/dashboard/rentals" className="text-sm font-medium text-purple-600 hover:text-purple-700 transition-colors">
