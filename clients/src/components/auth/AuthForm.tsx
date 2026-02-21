@@ -6,18 +6,16 @@ import { FaEnvelope, FaLock, FaUser, FaArrowRight, FaHome } from "react-icons/fa
 import { motion } from "framer-motion";
 
 interface AuthFormProps {
-    type: "login" | "register";
-    onSubmit: (data: { email: string; password: string; name?: string }) => void;
+    onSubmit: (data: { email: string; password: string }) => void;
 }
 
-const AuthForm = ({ type, onSubmit }: AuthFormProps) => {
+const AuthForm = ({ onSubmit }: AuthFormProps) => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [name, setName] = useState("");
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        onSubmit({ email, password, name: type === "register" ? name : undefined });
+        onSubmit({ email, password });
     };
 
     return (
@@ -42,26 +40,15 @@ const AuthForm = ({ type, onSubmit }: AuthFormProps) => {
                     </div>
                     <div className="text-center">
                         <h2 className="text-3xl font-black text-slate-900 tracking-tight">
-                            {type === "login" ? "Welcome Back" : "Join RentFlow"}
+                            Welcome Back
                         </h2>
                         <p className="text-sm font-bold text-slate-400 mt-1 uppercase tracking-widest px-2">
-                            {type === "login" ? "Secure Dashboard Access" : "Premium Management Ecosystem"}
+                            Secure Dashboard Access
                         </p>
                     </div>
                 </div>
 
                 <div className="space-y-4">
-                    {type === "register" && (
-                        <InputField
-                            label="Full Name"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            placeholder="Enter your name"
-                            icon={<FaUser />}
-                            required
-                        />
-                    )}
-
                     <InputField
                         label="Email Address"
                         type="email"
@@ -89,21 +76,17 @@ const AuthForm = ({ type, onSubmit }: AuthFormProps) => {
                 >
                     <div className="absolute inset-0 bg-gradient-to-r from-indigo-600/20 to-violet-600/20 opacity-0 group-hover:opacity-100 transition-opacity" />
                     <span className="relative flex items-center justify-center gap-3">
-                        {type === "login" ? "Authenticate" : "Create Account"}
+                        Authenticate
                         <FaArrowRight className="group-hover:translate-x-1 transition-transform" />
                     </span>
                 </button>
 
                 <div className="text-center pt-2">
-                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-                        {type === "login" ? "New to the system?" : "Already have an account?"}{" "}
-                        <motion.a
-                            whileHover={{ scale: 1.05 }}
-                            href={type === "login" ? "/register" : "/login"}
-                            className="text-indigo-600 hover:text-indigo-700 underline underline-offset-4 decoration-2"
-                        >
-                            {type === "login" ? "Sign Up Free" : "Log In Now"}
-                        </motion.a>
+                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest leading-relaxed">
+                        Authorized Personnel Only<br />
+                        <span className="text-slate-300 opacity-50 mt-2 block font-medium tracking-normal text-[10px]">
+                            Access to this system is restricted and monitored.
+                        </span>
                     </p>
                 </div>
             </form>
