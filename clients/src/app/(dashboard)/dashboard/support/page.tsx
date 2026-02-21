@@ -2,9 +2,10 @@
 
 import React from "react";
 import SupportCard from "@/components/SupportCard";
+import ContactForm from "@/components/ContactForm";
 import { useLang } from "@/context/LangContext";
 import { motion } from "framer-motion";
-import { FaQuestionCircle, FaBook, FaHeadset, FaCommentDots } from "react-icons/fa";
+import { FaQuestionCircle, FaBook, FaHeadset, FaCommentDots, FaEnvelopeOpenText } from "react-icons/fa";
 
 export default function SupportPage() {
     const { lang } = useLang();
@@ -16,7 +17,9 @@ export default function SupportPage() {
             faq: "Frequently Asked Questions",
             documentation: "Documentation",
             community: "Community Forum",
-            liveChat: "Live Chat"
+            liveChat: "Live Chat",
+            contactFormTitle: "Send us a message",
+            contactFormSubtitle: "Have a specific question? Reach out to us directly."
         },
         kh: {
             title: "មជ្ឈមណ្ឌលគាំទ្រ",
@@ -24,7 +27,9 @@ export default function SupportPage() {
             faq: "សំណួរដែលសួរញឹកញាប់",
             documentation: "ឯកសារណែនាំ",
             community: "វេទិកាសហគមន៍",
-            liveChat: "ការជជែកផ្ទាល់"
+            liveChat: "ការជជែកផ្ទាល់",
+            contactFormTitle: "ផ្ញើសារមកយើង",
+            contactFormSubtitle: "តើមានសំណួរជាក់លាក់មែនទេ? ទាក់ទងមកយើងដោយផ្ទាល់។"
         }
     };
 
@@ -59,11 +64,38 @@ export default function SupportPage() {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Main Support Card */}
-                <div className="lg:col-span-1">
+                <div className="lg:col-span-1 space-y-8">
                     <SupportCard />
+
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.2 }}
+                        className="p-8 rounded-[2.5rem] bg-indigo-600 text-white relative overflow-hidden group shadow-xl"
+                    >
+                        <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-110 transition-transform duration-700">
+                            <FaHeadset size={120} />
+                        </div>
+                        <div className="relative z-10 space-y-4">
+                            <h3 className="text-2xl font-black tracking-tight">Need urgent help?</h3>
+                            <p className="text-indigo-100 font-medium text-sm leading-relaxed">
+                                Our technical support team is available 24/7 for urgent issues related to your property management system.
+                            </p>
+                            <div className="flex flex-col gap-3 pt-2">
+                                <span className="flex items-center gap-3 text-sm font-bold">
+                                    <div className="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center">📞</div>
+                                    +855 12 345 678
+                                </span>
+                                <span className="flex items-center gap-3 text-sm font-bold">
+                                    <div className="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center">✉️</div>
+                                    support@rentflow.com
+                                </span>
+                            </div>
+                        </div>
+                    </motion.div>
                 </div>
 
-                {/* Additional Support Info */}
+                {/* Additional Support Info & Contact Form */}
                 <div className="lg:col-span-2 space-y-8">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {quickActions.map((action, index) => (
@@ -82,29 +114,28 @@ export default function SupportPage() {
                         ))}
                     </div>
 
+                    {/* Contact Form Section */}
                     <motion.div
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: 0.4 }}
-                        className="p-8 rounded-[2.5rem] bg-indigo-600 text-white relative overflow-hidden group shadow-xl"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.3 }}
+                        className="bg-white rounded-[3rem] p-10 border border-gray-100 shadow-xl shadow-gray-200/50"
                     >
-                        <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-110 transition-transform duration-700">
-                            <FaHeadset size={120} />
-                        </div>
-                        <div className="relative z-10 space-y-4">
-                            <h3 className="text-2xl font-black tracking-tight">Need urgent help?</h3>
-                            <p className="text-indigo-100 font-medium max-w-sm">
-                                Our technical support team is available 24/7 for urgent issues related to your property management system.
-                            </p>
-                            <div className="flex flex-wrap gap-4 pt-4">
-                                <span className="px-4 py-2 rounded-xl bg-white/20 backdrop-blur-md text-sm font-bold">
-                                    Call: +855 12 345 678
-                                </span>
-                                <span className="px-4 py-2 rounded-xl bg-white/20 backdrop-blur-md text-sm font-bold">
-                                    Email: support@rentflow.com
-                                </span>
+                        <div className="flex items-center gap-4 mb-8">
+                            <div className="w-14 h-14 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-500 text-2xl">
+                                <FaEnvelopeOpenText />
+                            </div>
+                            <div>
+                                <h3 className="text-2xl font-black text-gray-900 tracking-tight">
+                                    {text.contactFormTitle}
+                                </h3>
+                                <p className="text-gray-500 font-medium">
+                                    {text.contactFormSubtitle}
+                                </p>
                             </div>
                         </div>
+
+                        <ContactForm />
                     </motion.div>
                 </div>
             </div>
