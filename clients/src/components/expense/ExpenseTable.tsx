@@ -5,7 +5,6 @@ import { FaEdit, FaTrash, FaChevronLeft, FaChevronRight, FaFileInvoiceDollar } f
 import { useLang } from "@/context/LangContext";
 import { Expense } from "@/types/expense";
 import { formatKhmerDate } from "@/utils/dateFormatter";
-import CustomDropdown from "@/common/CustomDropdown";
 
 interface ExpenseTableProps {
     expenses: Expense[];
@@ -24,7 +23,7 @@ const categoryColors: Record<string, string> = {
 const ExpenseTable: React.FC<ExpenseTableProps> = ({ expenses, onEdit, onDelete }) => {
     const { lang } = useLang();
     const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage, setItemsPerPage] = useState(10);
+    const [itemsPerPage] = useState(10);
 
     const totalPages = Math.ceil(expenses.length / itemsPerPage);
     const currentItems = expenses.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);

@@ -87,7 +87,12 @@ const ReportsPage: React.FC = () => {
                     return true;
                 });
 
-                const headers = ["Bill ID", "Rental ID", "Room Number", "Client Name", "Month", "Rent Amount", "Electricity Amount", "Water Amount", "Total Amount", "Electricity Status", "Water Status", "Notes"];
+                const headers = [
+                    "Bill ID", "Rental ID", "Room Number", "Client Name", "Month",
+                    "Rent Amount", "Prev Elec Reading", "Curr Elec Reading", "Electricity Amount",
+                    "Prev Water Reading", "Curr Water Reading", "Water Amount",
+                    "Total Amount", "Electricity Status", "Water Status", "Notes"
+                ];
                 const rows = bills.map(b => [
                     b.id,
                     b.rental?.id,
@@ -95,7 +100,11 @@ const ReportsPage: React.FC = () => {
                     formatCsvStr(b.rental?.ClientName),
                     formatCsvStr(b.month),
                     b.rentAmount || 0,
+                    b.prevElectricityReading || 0,
+                    b.currElectricityReading || 0,
                     b.electricityAmount,
+                    b.prevWaterReading || 0,
+                    b.currWaterReading || 0,
                     b.waterAmount,
                     (Number(b.rentAmount) || 0) + Number(b.electricityAmount) + Number(b.waterAmount),
                     formatCsvStr(b.electricityStatus),
@@ -127,16 +136,29 @@ const ReportsPage: React.FC = () => {
                     return true;
                 });
 
-                const headers = ["Rental ID", "Client Name", "Room Number", "Status", "Rent Amount", "Start Date", "End Date", "Phone", "Notes"];
+                const headers = [
+                    "Rental ID", "Client Name", "Gender", "Occupation", "Room Number",
+                    "Status", "Rent Amount", "Deposit", "Member Count", "Start Date",
+                    "End Date", "Phone", "Email", "Address", "Nationality", "ID Card Type", "ID Card Number", "Notes"
+                ];
                 const rows = rentals.map(r => [
                     r.id,
                     formatCsvStr(r.ClientName),
+                    formatCsvStr(r.gender),
+                    formatCsvStr(r.occupation),
                     formatCsvStr(r.roomNumber),
                     formatCsvStr(r.status),
                     r.rentAmount,
+                    r.depositAmount || 0,
+                    r.memberCount || 1,
                     formatCsvStr(r.startDate),
                     formatCsvStr(r.endDate),
                     formatCsvStr(r.clientPhone),
+                    formatCsvStr(r.clientEmail),
+                    formatCsvStr(r.clientAddress),
+                    formatCsvStr(r.nationality),
+                    formatCsvStr(r.idCardType),
+                    formatCsvStr(r.clientIDCard),
                     formatCsvStr(r.notes)
                 ]);
 
