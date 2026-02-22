@@ -161,7 +161,7 @@ export const printMultipleBills = (bills: Bill[], lang: "en" | "km" = "en", sign
       <style>
         @page { margin: 0; }
         body {
-          margin: 0;
+          margin: 0 auto;
           padding: 4mm 2mm;
           width: 76mm;
           font-family: ${lang === "km" ? "'Noto Sans Khmer', 'Khmer OS', sans-serif" : "'Noto Sans', Arial, sans-serif"};
