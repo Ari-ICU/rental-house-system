@@ -10,6 +10,7 @@ import FileUploader from '@/common/FileUploader';
 import { createRental, RentalPayload } from '@/services/rentalService';
 import { ApiError } from '@/lib/api';
 import CustomDropdown from '@/common/CustomDropdown';
+import Tesseract from 'tesseract.js';
 
 const RentalForm: React.FC = () => {
     const { lang } = useLang();
@@ -51,6 +52,10 @@ const RentalForm: React.FC = () => {
     const [profilePreview, setProfilePreview] = useState<string | null>(null);
     const [frontPreview, setFrontPreview] = useState<string | null>(null);
     const [backPreview, setBackPreview] = useState<string | null>(null);
+
+    // OCR States
+    const [ocrText, setOcrText] = useState<string>('');
+    const [isExtracting, setIsExtracting] = useState<boolean>(false);
 
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -101,7 +106,7 @@ const RentalForm: React.FC = () => {
             return;
         }
         const reader = new FileReader();
-        reader.onload = () => {
+        reader.onload = async () => {
             const base64 = reader.result as string;
             setFormData((prev) => ({
                 ...prev,
@@ -109,6 +114,22 @@ const RentalForm: React.FC = () => {
             }));
             if (side === 'front') setFrontPreview(base64);
             if (side === 'back') setBackPreview(base64);
+
+            if (side === 'front' && base64.startsWith('data:image')) {
+                setIsExtracting(true);
+                try {
+                    const { data: { text } } = await Tesseract.recognize(
+                        file,
+                        'eng+khm', // English and Khmer
+                        { logger: m => console.log(m) }
+                    );
+                    setOcrText(text);
+                } catch (error) {
+                    console.error("OCR Extraction failed:", error);
+                } finally {
+                    setIsExtracting(false);
+                }
+            }
         };
         reader.readAsDataURL(file);
     };
@@ -600,6 +621,34 @@ const RentalForm: React.FC = () => {
                                 />
                             </div>
                         </div>
+
+                        {/* OCR Extracted Text Display */}
+                        {(isExtracting || ocrText) && (
+                            <div className="mt-6 p-5 rounded-2xl bg-violet-50/50 dark:bg-slate-800/50 border border-violet-100 dark:border-slate-700 animate-fadeIn">
+                                <div className="flex justify-between items-center mb-3">
+                                    <h3 className="text-xs font-bold text-violet-700 dark:text-violet-400 uppercase tracking-widest flex items-center gap-2">
+                                        <FaCheckCircle /> {lang === 'km' ? 'អត្ថបទដែលបានស្រង់ចេញ (OCR)' : 'Extracted Text (OCR)'}
+                                    </h3>
+                                    {isExtracting && (
+                                        <div className="flex items-center gap-2 text-xs font-medium text-violet-600 dark:text-violet-400 animate-pulse">
+                                            <FaSpinner className="animate-spin" /> {lang === 'km' ? 'កំពុងស្រង់អត្ថបទ...' : 'Extracting...'}
+                                        </div>
+                                    )}
+                                </div>
+                                <textarea
+                                    className="w-full h-32 p-4 text-sm bg-white dark:bg-slate-900 border border-violet-200 dark:border-slate-600 rounded-xl text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-4 focus:ring-violet-500/10 focus:border-violet-400 transition-all custom-scrollbar"
+                                    value={isExtracting ? (lang === 'km' ? "សូមរង់ចាំបន្តិច ប្រព័ន្ធកំពុងអានអត្ថបទពីច្បាប់ចម្លង..." : "Please wait, scanning document...") : ocrText}
+                                    onChange={(e) => setOcrText(e.target.value)}
+                                    placeholder={lang === 'km' ? "អត្ថបទនឹងបង្ហាញនៅទីនេះ..." : "Extracted text will appear here..."}
+                                />
+                                <p className="text-[10px] text-gray-500 mt-2 italic flex items-start gap-1">
+                                    <FaExclamationTriangle className="text-amber-500 shrink-0 mt-0.5" />
+                                    {lang === 'km'
+                                        ? 'នេះជាអត្ថបទដែលប្រព័ន្ធអាចអានបាន អ្នកអាចចម្លង ឬកែសម្រួលវាបាន។ (ប្រហែលមិនត្រឹមត្រូវ១០០%)'
+                                        : 'This text is auto-extracted from the image using AI. You can selectively copy details. (Accuracy varies based on image quality)'}
+                                </p>
+                            </div>
+                        )}
                     </div>
                 </div>
 
