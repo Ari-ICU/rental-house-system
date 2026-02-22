@@ -161,14 +161,21 @@ export const printMultipleBills = (bills: Bill[], lang: "en" | "km" = "en", sign
       <style>
         @page { margin: 0; }
         body {
+          margin: 0;
+          padding: 0;
+          text-align: center;
+          background: #fff;
+        }
+        .receipt-wrapper {
+          display: inline-block;
+          width: 76mm;
+          text-align: left;
           margin: 0 auto;
           padding: 4mm 2mm;
-          width: 76mm;
           font-family: ${lang === "km" ? "'Noto Sans Khmer', 'Khmer OS', sans-serif" : "'Noto Sans', Arial, sans-serif"};
           font-size: 8.5pt;
           line-height: 1.4;
           color: #000;
-          background: #fff;
         }
         .center { text-align: center; }
         .bold { font-weight: 600; }
@@ -188,13 +195,16 @@ export const printMultipleBills = (bills: Bill[], lang: "en" | "km" = "en", sign
         .bill { page-break-inside: avoid; margin-bottom: 5mm; }
         @media print {
           @page { margin: 0; }
-          body { margin: 0; padding: 4mm 2mm; width: 76mm; }
+          body { margin: 0; padding: 0; text-align: center; }
+          .receipt-wrapper { padding: 4mm 2mm; width: 76mm; margin: 0 auto; }
           img { max-width: 100%; height: auto; }
         }
       </style>
     </head>
     <body>
-      ${billsHtml}
+      <div class="receipt-wrapper">
+        ${billsHtml}
+      </div>
     </body>
     </html>
   `;

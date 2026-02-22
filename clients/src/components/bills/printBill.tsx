@@ -84,14 +84,21 @@ const generateBillHtml = (bill: Bill, lang: "en" | "km", exchangeRate: number = 
         margin: 0;
       }
       body {
+        margin: 0;
+        padding: 0;
+        text-align: center;
+        background: #fff;
+      }
+      .receipt-wrapper {
+        display: inline-block;
+        width: 76mm;
+        text-align: left;
         margin: 0 auto;
         padding: 4mm 2mm;
-        width: 76mm;
         font-family: ${isKhmer ? "'Noto Sans Khmer', 'Khmer OS', sans-serif" : "'Noto Sans', Arial, sans-serif"};
         font-size: 8.5pt;
         line-height: 1.4;
         color: #000;
-        background: #fff;
       }
       .center { text-align: center; }
       .bold { font-weight: 600; }
@@ -177,13 +184,15 @@ const generateBillHtml = (bill: Bill, lang: "en" | "km", exchangeRate: number = 
 
       @media print {
         @page { margin: 0; }
-        body { margin: 0; padding: 4mm 2mm; width: 76mm; }
+        body { margin: 0; padding: 0; text-align: center; }
+        .receipt-wrapper { padding: 4mm 2mm; width: 76mm; margin: 0 auto; }
         img { max-width: 100%; height: auto; }
       }
     </style>
   </head>
   <body>
-    <div class="center">
+    <div class="receipt-wrapper">
+      <div class="center">
       <div class="bold company">${t.company}</div>
       <div class="address">${t.address}</div>
       <div class="contact">${t.contact}</div>
@@ -246,6 +255,7 @@ const generateBillHtml = (bill: Bill, lang: "en" | "km", exchangeRate: number = 
     <div class="footer center">
       <div>${t.footer}</div>
       <div style="margin-top: 4px;">${t.printed}: ${printedDate}</div>
+    </div>
     </div>
   </body>
   </html>`;
