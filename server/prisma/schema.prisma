@@ -13,7 +13,7 @@ model Rental {
   ClientName            String
   roomNumber            String
   status                String
-  rentAmount            Decimal
+  rentAmount            Decimal  @default(50)
   depositAmount         Decimal  @default(0)
   startDate             String?
   endDate               String?

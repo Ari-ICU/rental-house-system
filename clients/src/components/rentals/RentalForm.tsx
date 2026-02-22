@@ -20,7 +20,7 @@ const RentalForm: React.FC = () => {
         image: '',
         roomNumber: '',
         status: 'Active',
-        rentAmount: 0,
+        rentAmount: 50,
         depositAmount: 0,
         startDate: '',
         endDate: '',
