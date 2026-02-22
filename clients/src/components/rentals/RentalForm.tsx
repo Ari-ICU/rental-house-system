@@ -565,6 +565,19 @@ const RentalForm: React.FC = () => {
                                 value={formData.idCardType || ''}
                                 onChange={(val: string) => setFormData(prev => ({ ...prev, idCardType: val }))}
                             />
+                            <div className="space-y-1.5 md:col-span-2">
+                                <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                    {lang === 'km' ? 'លេខអត្តសញ្ញាណប័ណ្ណ' : 'ID Card Number'}
+                                </label>
+                                <input
+                                    type="text"
+                                    name="clientIDCard"
+                                    value={formData.clientIDCard}
+                                    onChange={handleChange}
+                                    placeholder={lang === 'km' ? 'បញ្ចូលលេខអត្តសញ្ញាណប័ណ្ណ...' : 'Enter ID number...'}
+                                    className="w-full px-4 py-3 border border-gray-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 outline-none transition-all text-sm text-gray-800 dark:text-gray-200 placeholder-gray-300 dark:placeholder-gray-600 bg-gray-50/50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 hover:border-gray-300 dark:hover:border-slate-600"
+                                />
+                            </div>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                             <div>

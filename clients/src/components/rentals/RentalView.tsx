@@ -196,9 +196,15 @@ const RentalView: React.FC<RentalViewProps> = ({ rental }) => {
                 iconBg="bg-amber-100"
                 title={label('ID Card Documents', 'អត្តសញ្ញាណប័ណ្ណ')}
             >
-                <div className="mb-6 flex items-center gap-3 text-sm text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-slate-800/50 p-3 rounded-xl border border-gray-100 dark:border-slate-800">
-                    <span className="text-gray-400 dark:text-gray-500 flex-shrink-0"><FaIdCard size={14} /></span>
-                    <span>{label('Card Type', 'ប្រភេទអត្តសញ្ញាណប័ណ្ណ')}: <strong className="text-gray-900 dark:text-white">{rental.idCardType || '—'}</strong></span>
+                <div className="mb-6 flex flex-wrap gap-4 items-center text-sm text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-slate-800/50 p-4 rounded-xl border border-gray-100 dark:border-slate-800">
+                    <div className="flex items-center gap-3 pr-4 border-r border-gray-200 dark:border-slate-700 last:border-0">
+                        <span className="text-gray-400 dark:text-gray-500 flex-shrink-0"><FaIdCard size={14} /></span>
+                        <span>{label('Card Type', 'ប្រភេទ')}: <strong className="text-gray-900 dark:text-white">{rental.idCardType || '—'}</strong></span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                        <span className="text-gray-400 dark:text-gray-500 flex-shrink-0"><FaUser size={14} /></span>
+                        <span>{label('ID Number', 'លេខអត្តសញ្ញាណប័ណ្ណ')}: <strong className="text-gray-900 dark:text-white">{rental.clientIDCard || '—'}</strong></span>
+                    </div>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     {/* Front */}
