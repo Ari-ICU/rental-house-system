@@ -388,6 +388,24 @@ const CameraController: React.FC<CameraControllerProps> = ({
         };
     }, [cameras, handleStart]);
 
+    const dynamicFloors = React.useMemo(() => {
+        const floorSet = new Set<string>();
+        // Add predefined floors if available
+        floors.forEach(f => floorSet.add(f));
+        // Add floors from existing cameras
+        cameras.forEach(c => {
+            if (c.floor) floorSet.add(c.floor);
+        });
+
+        // Return sorted list
+        return Array.from(floorSet).sort((a, b) => {
+            // Sort Ground Floor first, then by number
+            if (a === 'Ground Floor') return -1;
+            if (b === 'Ground Floor') return 1;
+            return a.localeCompare(b, undefined, { numeric: true });
+        });
+    }, [cameras, floors]);
+
     const getCameraState = (id: number) => cameraStates[id] || { loading: false, error: null };
 
     const filteredCameras =
@@ -424,7 +442,7 @@ const CameraController: React.FC<CameraControllerProps> = ({
                         <CustomDropdown
                             options={[
                                 { value: 'All Floors', label: lang === 'km' ? 'គ្រប់ជាន់' : 'All Floors' },
-                                ...floors.map(f => {
+                                ...dynamicFloors.map(f => {
                                     let label = f;
                                     if (lang === 'km') {
                                         if (f === 'Ground Floor') label = 'ជាន់ផ្ទាល់ដី';
@@ -636,7 +654,7 @@ const CameraController: React.FC<CameraControllerProps> = ({
                 onToggleActive={handleToggleActive}
                 onAddCamera={handleAddCamera}
                 onDeleteCamera={handleDeleteCamera}
-                floors={floors}
+                floors={dynamicFloors}
             />
         </div>
     );

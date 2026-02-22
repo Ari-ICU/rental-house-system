@@ -38,6 +38,7 @@ const CameraSettings: React.FC<CameraSettingsProps> = ({
 }) => {
     const { lang } = useLang();
     const [isAdding, setIsAdding] = useState(false);
+    const [showCustomFloor, setShowCustomFloor] = useState(false);
     const [newCam, setNewCam] = useState<Omit<Camera, 'id'>>({
         name: '',
         floor: floors[0] || 'Ground Floor',
@@ -57,6 +58,7 @@ const CameraSettings: React.FC<CameraSettingsProps> = ({
             streamUrl: '',
         });
         setIsAdding(false);
+        setShowCustomFloor(false);
     };
 
     return (
@@ -145,13 +147,31 @@ const CameraSettings: React.FC<CameraSettingsProps> = ({
                                     </div>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div className="space-y-2">
-                                            <label className="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-widest ml-1">Floor</label>
-                                            <CustomDropdown
-                                                options={floors.map(f => ({ value: f, label: f }))}
-                                                value={newCam.floor}
-                                                onChange={(val) => setNewCam({ ...newCam, floor: val })}
-                                                className="!rounded-2xl !border-gray-200 dark:!border-slate-800 !bg-white dark:!bg-slate-900"
-                                            />
+                                            <div className="flex justify-between items-center ml-1">
+                                                <label className="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-widest">Floor</label>
+                                                <button
+                                                    onClick={() => setShowCustomFloor(!showCustomFloor)}
+                                                    className="text-[9px] font-black text-blue-500 uppercase tracking-widest hover:text-blue-600 transition-colors"
+                                                >
+                                                    {showCustomFloor ? (lang === 'km' ? 'ជ្រើសរើសជាន់' : 'Select Floor') : (lang === 'km' ? 'បន្ថែមជាន់ថ្មី' : 'New Floor')}
+                                                </button>
+                                            </div>
+                                            {showCustomFloor ? (
+                                                <input
+                                                    type="text"
+                                                    value={newCam.floor}
+                                                    onChange={(e) => setNewCam({ ...newCam, floor: e.target.value })}
+                                                    placeholder="e.g. Roof Top"
+                                                    className="w-full px-5 py-3.5 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-2xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all font-bold text-sm"
+                                                />
+                                            ) : (
+                                                <CustomDropdown
+                                                    options={floors.map(f => ({ value: f, label: f }))}
+                                                    value={newCam.floor}
+                                                    onChange={(val) => setNewCam({ ...newCam, floor: val })}
+                                                    className="!rounded-2xl !border-gray-200 dark:!border-slate-800 !bg-white dark:!bg-slate-900"
+                                                />
+                                            )}
                                         </div>
                                         <div className="space-y-2">
                                             <label className="text-[10px] font-black text-gray-400 dark:text-slate-500 uppercase tracking-widest ml-1">Initial Status</label>
