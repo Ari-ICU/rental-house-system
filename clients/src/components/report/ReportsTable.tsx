@@ -19,7 +19,10 @@ interface ReportsTableProps {
 
 const statusColors: Record<Report["status"], string> = {
     Completed: "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400",
-    "In-Review": "bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400"
+    "In-Review": "bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400",
+    Pending: "bg-slate-50 dark:bg-slate-500/10 text-slate-700 dark:text-slate-400",
+    Generating: "bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400",
+    Archived: "bg-gray-100 dark:bg-gray-500/10 text-gray-800 dark:text-gray-400"
 };
 
 const ReportsTable: React.FC<ReportsTableProps> = ({
@@ -68,8 +71,11 @@ const ReportsTable: React.FC<ReportsTableProps> = ({
                         <CustomDropdown
                             options={[
                                 { value: "All", label: lang === 'km' ? 'ស្ថានភាពទាំងអស់' : 'All Statuses' },
+                                { value: "Pending", label: lang === 'km' ? 'រង់ចាំ' : 'Pending' },
+                                { value: "Generating", label: lang === 'km' ? 'កំពុងបង្កើត' : 'Generating' },
+                                { value: "In-Review", label: lang === 'km' ? 'កំពុងពិនិត្យ' : 'In-Review' },
                                 { value: "Completed", label: lang === 'km' ? 'បានបញ្ចប់' : 'Completed' },
-                                { value: "In-Review", label: lang === 'km' ? 'កំពុងពិនិត្យ' : 'In-Review' }
+                                { value: "Archived", label: lang === 'km' ? 'បានទុក' : 'Archived' }
                             ]}
                             value={statusFilter}
                             onChange={(val) => {
@@ -177,9 +183,11 @@ const ReportsTable: React.FC<ReportsTableProps> = ({
                                                 <span
                                                     className={`inline-flex px-2 py-0.5 rounded text-[11px] font-medium leading-tight ${statusColors[report.status]}`}
                                                 >
-                                                    {report.status === 'Completed'
-                                                        ? (lang === 'km' ? 'បានបញ្ចប់' : 'Completed')
-                                                        : (lang === 'km' ? 'កំពុងពិនិត្យ' : 'In-Review')}
+                                                    {report.status === 'Completed' ? (lang === 'km' ? 'បានបញ្ចប់' : 'Completed') :
+                                                        report.status === 'In-Review' ? (lang === 'km' ? 'កំពុងពិនិត្យ' : 'In-Review') :
+                                                            report.status === 'Generating' ? (lang === 'km' ? 'កំពុងបង្កើត' : 'Generating') :
+                                                                report.status === 'Pending' ? (lang === 'km' ? 'រង់ចាំ' : 'Pending') :
+                                                                    (lang === 'km' ? 'បានទុក' : 'Archived')}
                                                 </span>
                                             </td>
                                             <td className="px-8 py-6">

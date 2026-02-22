@@ -10,5 +10,5 @@ export interface Report {
     generatedAt: string;
     startDate?: string;
     endDate?: string;
-    status: "Completed" | "In-Review";
+    status: "Pending" | "Generating" | "In-Review" | "Completed" | "Archived";
 }

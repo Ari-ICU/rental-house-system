@@ -74,7 +74,7 @@ model Report {
   id          Int      @id @default(autoincrement())
   name        String
   type        String
-  status      String   // "Completed" | "In-Review"
+  status      String   @default("Pending") // "Pending", "Generating", "In-Review", "Completed", "Archived"
   startDate   DateTime?
   endDate     DateTime?
   generatedAt DateTime @default(now())

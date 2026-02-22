@@ -54,7 +54,7 @@ const CreateReportPage: React.FC = () => {
                 </button>
 
                 {/* Form Card */}
-                <div className="bg-white dark:bg-slate-900 rounded-[2rem] shadow-2xl shadow-blue-900/5 dark:shadow-none border border-white dark:border-slate-800 overflow-hidden">
+                <div className="bg-white dark:bg-slate-900 rounded-[2rem] shadow-2xl shadow-blue-900/5 dark:shadow-none border border-white dark:border-slate-800 relative">
                     <div className="p-8 sm:p-12">
                         <div className="flex flex-col gap-2 mb-10">
                             <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight">
@@ -176,8 +176,11 @@ const CreateReportPage: React.FC = () => {
                                 </label>
                                 <CustomDropdown
                                     options={[
+                                        { value: "Pending", label: lang === 'km' ? 'រង់ចាំ' : 'Pending' },
+                                        { value: "Generating", label: lang === 'km' ? 'កំពុងបង្កើត' : 'Generating' },
+                                        { value: "In-Review", label: lang === 'km' ? 'កំពុងពិនិត្យ' : 'In-Review' },
                                         { value: "Completed", label: lang === 'km' ? 'បានបញ្ចប់' : 'Completed' },
-                                        { value: "In-Review", label: lang === 'km' ? 'កំពុងពិនិត្យ' : 'In-Review' }
+                                        { value: "Archived", label: lang === 'km' ? 'បានទុក' : 'Archived' }
                                     ]}
                                     value={status}
                                     onChange={(val) => setStatus(val)}

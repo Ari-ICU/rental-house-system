@@ -103,11 +103,18 @@ const ReportViewPage: React.FC = () => {
                                 </h1>
                             </div>
                             <div className="flex items-center gap-4 bg-white/5 backdrop-blur-xl p-4 rounded-2xl border border-white/10 shrink-0">
-                                <div className={`w-3 h-3 rounded-full ${report.status === 'Completed' ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`}></div>
+                                <div className={`w-3 h-3 rounded-full ${report.status === 'Completed' ? 'bg-emerald-400 animate-pulse' :
+                                        report.status === 'In-Review' ? 'bg-amber-400' :
+                                            report.status === 'Generating' ? 'bg-blue-400 animate-pulse' :
+                                                report.status === 'Pending' ? 'bg-slate-400' :
+                                                    'bg-gray-400'
+                                    }`}></div>
                                 <span className="text-lg font-black uppercase tracking-tighter">
-                                    {report.status === 'Completed'
-                                        ? (lang === 'km' ? 'បានបញ្ចប់' : 'Completed')
-                                        : (lang === 'km' ? 'កំពុងពិនិត្យ' : 'In-Review')}
+                                    {report.status === 'Completed' ? (lang === 'km' ? 'បានបញ្ចប់' : 'Completed') :
+                                        report.status === 'In-Review' ? (lang === 'km' ? 'កំពុងពិនិត្យ' : 'In-Review') :
+                                            report.status === 'Generating' ? (lang === 'km' ? 'កំពុងបង្កើត' : 'Generating') :
+                                                report.status === 'Pending' ? (lang === 'km' ? 'រង់ចាំ' : 'Pending') :
+                                                    (lang === 'km' ? 'បានទុក' : 'Archived')}
                                 </span>
                             </div>
                         </div>
@@ -169,7 +176,12 @@ const ReportViewPage: React.FC = () => {
                                 </p>
                                 <p>
                                     {lang === 'km'
-                                        ? <>ទិន្នន័យទាំងអស់ត្រូវបានផ្ទៀងផ្ទាត់ជាមួយនឹងឃ្លាំងជួលមេ ហើយបច្ចុប្បន្នត្រូវបានសម្គាល់ថា <strong className="text-gray-900 dark:text-white underline decoration-blue-500 decoration-4 underline-offset-4">{report.status === 'Completed' ? 'បានបញ្ចប់' : 'កំពុងពិនិត្យ'}</strong> ។ សម្រាប់ការវិភាគលម្អិតនៃអនុរង្វាស់ សូមយោងទៅលើសន្លឹកកិច្ចការលម្អិតដែលបានភ្ជាប់មកជាមួយ ឬតារាងព័ត៌មានអន្តរកម្មឌីជីថល។</>
+                                        ? <>ទិន្នន័យទាំងអស់ត្រូវបានផ្ទៀងផ្ទាត់ជាមួយនឹងឃ្លាំងជួលមេ ហើយបច្ចុប្បន្នត្រូវបានសម្គាល់ថា <strong className="text-gray-900 dark:text-white underline decoration-blue-500 decoration-4 underline-offset-4">{
+                                            report.status === 'Completed' ? 'បានបញ្ចប់' :
+                                                report.status === 'In-Review' ? 'កំពុងពិនិត្យ' :
+                                                    report.status === 'Generating' ? 'កំពុងបង្កើត' :
+                                                        report.status === 'Pending' ? 'រង់ចាំ' : 'បានទុក'
+                                        }</strong> ។ សម្រាប់ការវិភាគលម្អិតនៃអនុរង្វាស់ សូមយោងទៅលើសន្លឹកកិច្ចការលម្អិតដែលបានភ្ជាប់មកជាមួយ ឬតារាងព័ត៌មានអន្តរកម្មឌីជីថល។</>
                                         : <>All data points have been verified against the master rental repository and are currently marked as <strong className="text-gray-900 dark:text-white underline decoration-blue-500 decoration-4 underline-offset-4">{report.status}</strong>. For detailed breakdown of sub-metrics, please refer to the attached detailed spreadsheet or the digital interactive dashboard.</>}
                                 </p>
                             </div>
@@ -189,7 +201,7 @@ const ReportViewPage: React.FC = () => {
                                 </h4>
                                 <p className="text-blue-800/70 dark:text-blue-400/80 font-medium leading-normal">
                                     {lang === 'km'
-                                        ? `ផ្អែកលើស្ថានភាព ${report.status === 'Completed' ? 'បានបញ្ចប់' : 'កំពុងពិនិត្យ'} បច្ចុប្បន្ន យើងសូមណែនាំឱ្យបន្តការត្រួតពិនិត្យប្រចាំត្រីមាស។ គ្មានភាពមិនប្រក្រតីសំខាន់ៗត្រូវបានរកឃើញនៅក្នុងចរន្ត ${report.type} សម្រាប់រយៈពេលរាយការណ៍នេះទេ។`
+                                        ? `ផ្អែកលើស្ថានភាពបច្ចុប្បន្ន យើងសូមណែនាំឱ្យបន្តការត្រួតពិនិត្យប្រចាំត្រីមាស។ គ្មានភាពមិនប្រក្រតីសំខាន់ៗត្រូវបានរកឃើញនៅក្នុងចរន្ត ${report.type} សម្រាប់រយៈពេលរាយការណ៍នេះទេ។`
                                         : `Based on the current ${report.status} state, we recommend proceeding with the quarterly review. No significant anomalies were detected in the ${report.type} stream for this reporting period.`}
                                 </p>
                             </div>
