@@ -9,6 +9,7 @@ import { Camera } from '@/types/camera';
 import { useLang } from '@/context/LangContext';
 import CustomDropdown from '@/common/CustomDropdown';
 import { toast } from 'react-hot-toast';
+import { api } from '@/lib/api';
 
 interface CameraControllerProps {
     cameras?: Camera[];
@@ -53,36 +54,96 @@ const CameraController: React.FC<CameraControllerProps> = ({
         }
     };
 
-    const handleDeviceSelect = (id: number, deviceId: string) => {
-        setCameras(prev => prev.map(cam =>
-            cam.id === id ? { ...cam, deviceId: deviceId || undefined, streamUrl: undefined } : cam
-        ));
-        toast.dismiss();
-        toast.success(lang === 'km' ? 'បានជ្រើសរើសឧបករណ៍ដោយជោគជ័យ' : 'Device selected successfully');
+    const handleDeviceSelect = async (id: number, deviceId: string) => {
+        try {
+            const cam = cameras.find(c => c.id === id);
+            if (!cam) return;
+
+            const updatedCam = { ...cam, deviceId: deviceId || null, streamUrl: null };
+            await api.put(`/api/cameras/${id}`, updatedCam);
+
+            setCameras(prev => prev.map(c =>
+                c.id === id ? { ...c, deviceId: deviceId || undefined, streamUrl: undefined } : c
+            ));
+            toast.dismiss();
+            toast.success(lang === 'km' ? 'បានជ្រើសរើសឧបករណ៍ដោយជោគជ័យ' : 'Device selected successfully');
+        } catch (err) {
+            console.error('Failed to update camera device:', err);
+            toast.error('Failed to update camera device');
+        }
     };
 
-    const handleUpdateStreamUrl = (id: number, url: string) => {
-        setCameras(prev => prev.map(cam =>
-            cam.id === id ? { ...cam, streamUrl: url || undefined, deviceId: undefined } : cam
-        ));
-        toast.dismiss();
-        toast.success(lang === 'km' ? 'បានធ្វើបច្ចុប្បន្នភាពតំណភ្ជាប់ស្ទ្រីម' : 'Stream URL updated');
+    const handleUpdateStreamUrl = async (id: number, url: string) => {
+        try {
+            const cam = cameras.find(c => c.id === id);
+            if (!cam) return;
+
+            const updatedCam = { ...cam, streamUrl: url || null, deviceId: null };
+            await api.put(`/api/cameras/${id}`, updatedCam);
+
+            setCameras(prev => prev.map(c =>
+                c.id === id ? { ...c, streamUrl: url || undefined, deviceId: undefined } : c
+            ));
+            toast.dismiss();
+            toast.success(lang === 'km' ? 'បានធ្វើបច្ចុប្បន្នភាពតំណភ្ជាប់ស្ទ្រីម' : 'Stream URL updated');
+        } catch (err) {
+            console.error('Failed to update stream URL:', err);
+            toast.error('Failed to update stream URL');
+        }
     };
 
-    const handleToggleActive = (id: number) => {
-        setCameras(prev => prev.map(cam =>
-            cam.id === id ? { ...cam, isActive: !cam.isActive } : cam
-        ));
-        const newActive = !cameras.find(c => c.id === id)?.isActive;
-        toast.dismiss();
-        toast.success(lang === 'km'
-            ? `កាមេរ៉ា ${newActive ? 'ត្រូវបានបើក' : 'ត្រូវបានបិទ'}`
-            : `Camera ${newActive ? 'activated' : 'deactivated'}`);
-        // Optionally stop or start based on new state
-        if (newActive) {
-            handleStart(id);
-        } else {
+    const handleToggleActive = async (id: number) => {
+        const cam = cameras.find(c => c.id === id);
+        if (!cam) return;
+
+        const newActive = !cam.isActive;
+        try {
+            await api.put(`/api/cameras/${id}`, { ...cam, isActive: newActive });
+
+            setCameras(prev => prev.map(c =>
+                c.id === id ? { ...c, isActive: newActive } : c
+            ));
+
+            toast.dismiss();
+            toast.success(lang === 'km'
+                ? `កាមេរ៉ា ${newActive ? 'ត្រូវបានបើក' : 'ត្រូវបានបិទ'}`
+                : `Camera ${newActive ? 'activated' : 'deactivated'}`);
+
+            if (newActive) {
+                handleStart(id);
+            } else {
+                handleStop(id);
+            }
+        } catch (err) {
+            console.error('Failed to toggle camera status:', err);
+            toast.error('Failed to update camera status');
+        }
+    };
+
+    const handleAddCamera = async (newCamera: Omit<Camera, 'id'>) => {
+        try {
+            const response = await api.post<Camera>('/api/cameras', newCamera);
+            if (response.data) {
+                setCameras(prev => [...prev, response.data!]);
+                toast.success(lang === 'km' ? 'បានបន្ថែមលកាមេរ៉ាដោយជោគជ័យ' : 'Camera added successfully');
+            }
+        } catch (err) {
+            console.error('Failed to add camera:', err);
+            toast.error('Failed to add camera');
+        }
+    };
+
+    const handleDeleteCamera = async (id: number) => {
+        if (!confirm(lang === 'km' ? 'តើអ្នកប្រាកដជាចង់លុបកាមេរ៉ានេះមែនទេ?' : 'Are you sure you want to delete this camera?')) return;
+
+        try {
+            await api.delete(`/api/cameras/${id}`);
             handleStop(id);
+            setCameras(prev => prev.filter(c => c.id !== id));
+            toast.success(lang === 'km' ? 'បានលុបកាមេរ៉ាដោយជោគជ័យ' : 'Camera deleted successfully');
+        } catch (err) {
+            console.error('Failed to delete camera:', err);
+            toast.error('Failed to delete camera');
         }
     };
 
@@ -337,7 +398,6 @@ const CameraController: React.FC<CameraControllerProps> = ({
     return (
         <div className="max-w-7xl mx-auto space-y-10">
             {/* Header */}
-            {/* Header */}
             <div className="relative z-20 flex flex-col md:flex-row md:items-end justify-between gap-8 bg-white/40 dark:bg-slate-900/40 backdrop-blur-md p-8 sm:p-10 rounded-[2.5rem] border border-white dark:border-slate-800 shadow-xl shadow-blue-900/5 dark:shadow-none">
                 <div className="space-y-4">
                     <div className="inline-flex items-center gap-2 bg-blue-500/10 dark:bg-blue-500/20 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 dark:text-blue-400 border border-blue-200/50 dark:border-blue-500/30">
@@ -574,6 +634,9 @@ const CameraController: React.FC<CameraControllerProps> = ({
                 onDeviceSelect={handleDeviceSelect}
                 onUpdateStreamUrl={handleUpdateStreamUrl}
                 onToggleActive={handleToggleActive}
+                onAddCamera={handleAddCamera}
+                onDeleteCamera={handleDeleteCamera}
+                floors={floors}
             />
         </div>
     );
