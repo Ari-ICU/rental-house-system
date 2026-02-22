@@ -16,7 +16,7 @@ export interface Rental {
     roomNumber: string;
     status: RentalStatus;
     rentAmount: number;
-    depositAmount: number;
+    depositAmount?: number;
     startDate?: string;
     endDate?: string;
     notes?: string;
