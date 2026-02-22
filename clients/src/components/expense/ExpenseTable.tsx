@@ -25,6 +25,11 @@ const ExpenseTable: React.FC<ExpenseTableProps> = ({ expenses, onEdit, onDelete 
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage] = useState(10);
 
+    // Reset to first page when data changes (e.g., after filter or add)
+    React.useEffect(() => {
+        setCurrentPage(1);
+    }, [expenses]);
+
     const totalPages = Math.ceil(expenses.length / itemsPerPage);
     const currentItems = expenses.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 

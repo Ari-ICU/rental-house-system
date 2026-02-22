@@ -8,6 +8,7 @@ import { formatKhmerDate } from "@/utils/dateFormatter";
 
 interface ExpenseHeaderProps {
     onSearch: (query: string) => void;
+    searchQuery: string;
     onMonthChange: (month: string) => void;
     selectedMonth: string;
     onAdd: () => void;
@@ -17,6 +18,7 @@ interface ExpenseHeaderProps {
 
 const ExpenseHeader: React.FC<ExpenseHeaderProps> = ({
     onSearch,
+    searchQuery,
     onMonthChange,
     selectedMonth,
     onAdd,
@@ -94,6 +96,7 @@ const ExpenseHeader: React.FC<ExpenseHeaderProps> = ({
                     </div>
                     <input
                         type="text"
+                        value={searchQuery}
                         onChange={(e) => onSearch(e.target.value)}
                         placeholder={lang === 'km' ? "ស្វែងរកតាមចំណងជើង ប្រភេទ ឬការពិពណ៌នា..." : "Search by title, category, or description..."}
                         className="block w-full pl-16 pr-6 py-5 bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 rounded-[2rem] text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-500/5 transition-all shadow-sm"

@@ -82,6 +82,9 @@ const ExpensesPage: React.FC = () => {
                 await expenseService.updateExpense(editingExpense.id, data);
             } else {
                 await expenseService.createExpense(data);
+                // Clear filters on new creation so the user sees the new entry
+                setSearchQuery("");
+                setSelectedMonth("");
             }
             setIsFormOpen(false);
             await fetchExpenses();
@@ -119,6 +122,7 @@ const ExpensesPage: React.FC = () => {
         <div className="min-h-screen space-y-8">
             <ExpenseHeader
                 onSearch={handleSearch}
+                searchQuery={searchQuery}
                 onMonthChange={handleMonthChange}
                 selectedMonth={selectedMonth}
                 onAdd={handleAdd}
