@@ -76,6 +76,7 @@ const ReportsTable: React.FC<ReportsTableProps> = ({
                                 setStatusFilter(val as Report["status"] | "All");
                                 setCurrentPage(1);
                             }}
+                            searchable={true}
                             className="w-full !rounded-xl !border-gray-100 !shadow-sm hover:!border-blue-400 transition-colors"
                         />
                     </div>
@@ -96,6 +97,7 @@ const ReportsTable: React.FC<ReportsTableProps> = ({
                                 setItemsPerPage(parseInt(val));
                                 setCurrentPage(1);
                             }}
+                            searchable={true}
                             className="w-full !rounded-xl !border-gray-100 !shadow-sm hover:!border-blue-400 transition-colors"
                         />
                     </div>

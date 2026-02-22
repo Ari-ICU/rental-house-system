@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { FaChevronDown, FaCheck } from 'react-icons/fa';
+import { FaChevronDown, FaCheck, FaSearch } from 'react-icons/fa';
 
 interface Option {
     value: string;
@@ -16,6 +16,7 @@ interface CustomDropdownProps {
     label?: string;
     placeholder?: string;
     className?: string;
+    searchable?: boolean;
 }
 
 const CustomDropdown: React.FC<CustomDropdownProps> = ({
@@ -25,8 +26,10 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
     label,
     placeholder = 'Select an option',
     className = '',
+    searchable = false,
 }) => {
     const [isOpen, setIsOpen] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
     const dropdownRef = useRef<HTMLDivElement>(null);
 
     const selectedOption = options.find(opt => opt.value === value);
@@ -40,6 +43,10 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
+
+    const filteredOptions = options.filter(opt =>
+        opt.label.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
     return (
         <div className={`relative ${className}`} ref={dropdownRef}>
@@ -62,23 +69,45 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
 
             {isOpen && (
                 <div className="absolute z-50 w-full mt-2 bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-700 rounded-xl shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-                    <div className="max-h-60 overflow-y-auto p-1">
-                        {options.map((opt) => (
-                            <div
-                                key={opt.value}
-                                onClick={() => {
-                                    onChange(opt.value);
-                                    setIsOpen(false);
-                                }}
-                                className={`px-4 py-2.5 rounded-lg cursor-pointer flex items-center justify-between text-sm transition-colors mb-0.5
-                                    ${value === opt.value
-                                        ? 'bg-violet-600 text-white font-semibold'
-                                        : 'text-gray-700 dark:text-gray-300 hover:bg-violet-50 dark:hover:bg-slate-800'}`}
-                            >
-                                <span>{opt.label}</span>
-                                {value === opt.value && <FaCheck className="text-[10px]" />}
+                    {searchable && (
+                        <div className="p-2 border-b border-gray-50 dark:border-slate-800">
+                            <div className="relative">
+                                <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs" />
+                                <input
+                                    type="text"
+                                    placeholder="Search..."
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    className="w-full pl-9 pr-3 py-2 bg-gray-50 dark:bg-slate-800 border border-gray-100 dark:border-slate-700 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 transition-all dark:text-gray-200"
+                                    autoFocus
+                                />
                             </div>
-                        ))}
+                        </div>
+                    )}
+                    <div className="max-h-60 overflow-y-auto p-1">
+                        {filteredOptions.length === 0 ? (
+                            <div className="px-4 py-3 text-center text-xs text-gray-400 font-medium italic">
+                                No results found
+                            </div>
+                        ) : (
+                            filteredOptions.map((opt) => (
+                                <div
+                                    key={opt.value}
+                                    onClick={() => {
+                                        onChange(opt.value);
+                                        setIsOpen(false);
+                                        setSearchQuery('');
+                                    }}
+                                    className={`px-4 py-2.5 rounded-lg cursor-pointer flex items-center justify-between text-sm transition-colors mb-0.5
+                                        ${value === opt.value
+                                            ? 'bg-violet-600 text-white font-semibold'
+                                            : 'text-gray-700 dark:text-gray-300 hover:bg-violet-50 dark:hover:bg-slate-800'}`}
+                                >
+                                    <span>{opt.label}</span>
+                                    {value === opt.value && <FaCheck className="text-[10px]" />}
+                                </div>
+                            ))
+                        )}
                     </div>
                 </div>
             )}

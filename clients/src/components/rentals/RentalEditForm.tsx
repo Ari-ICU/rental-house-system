@@ -316,6 +316,7 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
                             options={statusOptions}
                             value={formData.status}
                             onChange={(val: string) => setFormData(prev => ({ ...prev, status: val as RentalStatus }))}
+                            searchable={true}
                         />
 
                         {/* Rent Amount */}
@@ -459,6 +460,7 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
                             options={genderOptions}
                             value={formData.gender || ''}
                             onChange={(val: string) => setFormData(prev => ({ ...prev, gender: val }))}
+                            searchable={true}
                         />
 
                         {/* Occupation */}
@@ -540,6 +542,7 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
                                 options={idCardTypeOptions}
                                 value={formData.idCardType || ''}
                                 onChange={(val: string) => setFormData(prev => ({ ...prev, idCardType: val }))}
+                                searchable={true}
                             />
                             <div className="space-y-1.5 md:col-span-2">
                                 <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">

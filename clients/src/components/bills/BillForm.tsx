@@ -254,6 +254,7 @@ const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
                                     {lang === 'km' ? 'ជ្រើសរើសការជួល *' : 'Select Rental *'}
                                 </label>
                                 <div
+                                    onClick={() => setIsOpen(!isOpen)}
                                     className={`relative w-full px-5 py-4 border rounded-3xl cursor-pointer flex justify-between items-center transition-all ${isOpen ? 'border-violet-300 ring-4 ring-violet-50 dark:ring-violet-900/30 bg-white dark:bg-slate-800' : 'bg-gray-50/50 dark:bg-slate-800/50 border-gray-100 dark:border-slate-700 hover:border-violet-200 dark:hover:border-slate-600'}`}
                                 >
                                     <div className="flex items-center gap-4 overflow-hidden">
