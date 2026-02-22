@@ -48,6 +48,18 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
         opt.label.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
+    const defaultBg = isOpen
+        ? 'bg-white dark:bg-slate-900'
+        : 'bg-gray-50/50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-900';
+    const bgClass = selectedOption?.bg ? selectedOption.bg : defaultBg;
+
+    const defaultBorder = isOpen
+        ? 'ring-2 ring-violet-500/20 border-violet-400'
+        : 'border-gray-200 dark:border-slate-700 hover:border-gray-300 dark:hover:border-slate-600';
+    const borderClass = selectedOption?.border ? selectedOption.border : defaultBorder;
+
+    const colorClass = selectedOption?.color ? selectedOption.color : 'text-gray-800 dark:text-gray-200';
+
     return (
         <div className={`relative ${className}`} ref={dropdownRef}>
             {label && (
@@ -57,9 +69,7 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
             )}
             <div
                 onClick={() => setIsOpen(!isOpen)}
-                className={`group w-full px-4 py-3 border rounded-xl flex justify-between items-center cursor-pointer transition-all duration-200 outline-none
-                    ${isOpen ? 'ring-2 ring-violet-500/20 border-violet-400 bg-white dark:bg-slate-900' : 'border-gray-200 dark:border-slate-700 bg-gray-50/50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-900 hover:border-gray-300 dark:hover:border-slate-600'}
-                    ${selectedOption?.bg || ''} ${selectedOption?.color || 'text-gray-800 dark:text-gray-200'} ${selectedOption?.border || ''}`}
+                className={`group w-full px-4 py-3 border rounded-xl flex justify-between items-center cursor-pointer transition-all duration-200 outline-none ${bgClass} ${borderClass} ${colorClass}`}
             >
                 <span className="text-sm font-black translate-no notranslate" translate="no">
                     {selectedOption ? selectedOption.label : placeholder}
