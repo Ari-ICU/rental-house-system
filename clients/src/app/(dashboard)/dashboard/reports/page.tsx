@@ -87,15 +87,20 @@ const ReportsPage: React.FC = () => {
                     return true;
                 });
 
-                const headers = ["Bill ID", "Rental ID", "Month", "Electricity Amount", "Water Amount", "Electricity Status", "Water Status"];
+                const headers = ["Bill ID", "Rental ID", "Room Number", "Client Name", "Month", "Rent Amount", "Electricity Amount", "Water Amount", "Total Amount", "Electricity Status", "Water Status", "Notes"];
                 const rows = bills.map(b => [
                     b.id,
                     b.rental?.id,
+                    formatCsvStr(b.rental?.roomNumber),
+                    formatCsvStr(b.rental?.ClientName),
                     formatCsvStr(b.month),
+                    b.rentAmount || 0,
                     b.electricityAmount,
                     b.waterAmount,
+                    (Number(b.rentAmount) || 0) + Number(b.electricityAmount) + Number(b.waterAmount),
                     formatCsvStr(b.electricityStatus),
-                    formatCsvStr(b.waterStatus)
+                    formatCsvStr(b.waterStatus),
+                    formatCsvStr(b.notes)
                 ]);
 
                 // Prepend report metadata summary at top
@@ -126,7 +131,7 @@ const ReportsPage: React.FC = () => {
                     return true;
                 });
 
-                const headers = ["Rental ID", "Client Name", "Room Number", "Status", "Rent Amount", "Start Date", "End Date", "Phone"];
+                const headers = ["Rental ID", "Client Name", "Room Number", "Status", "Rent Amount", "Start Date", "End Date", "Phone", "Notes"];
                 const rows = rentals.map(r => [
                     r.id,
                     formatCsvStr(r.ClientName),
@@ -135,7 +140,8 @@ const ReportsPage: React.FC = () => {
                     r.rentAmount,
                     formatCsvStr(r.startDate),
                     formatCsvStr(r.endDate),
-                    formatCsvStr(r.clientPhone)
+                    formatCsvStr(r.clientPhone),
+                    formatCsvStr(r.notes)
                 ]);
 
                 csvContent += `Report Name:,${formatCsvStr(report.name)}\n`;
