@@ -1,15 +1,17 @@
 "use client";
 
 import React from "react";
-import { FaSearch, FaPlus, FaMoneyBillWave } from "react-icons/fa";
+import { FaSearch, FaPlus, FaMoneyBillWave, FaFileExport } from "react-icons/fa";
 import { useLang } from "@/context/LangContext";
 
 interface ExpenseHeaderProps {
     onSearch: (query: string) => void;
     onAdd: () => void;
+    onExport: () => void;
+    total: number;
 }
 
-const ExpenseHeader: React.FC<ExpenseHeaderProps> = ({ onSearch, onAdd }) => {
+const ExpenseHeader: React.FC<ExpenseHeaderProps> = ({ onSearch, onAdd, onExport, total }) => {
     const { lang } = useLang();
 
     return (
@@ -25,22 +27,43 @@ const ExpenseHeader: React.FC<ExpenseHeaderProps> = ({ onSearch, onAdd }) => {
                         {lang === 'km' ? "ការចំណាយ" : "Expenses"}
                         <span className="text-indigo-600">.</span>
                     </h1>
-                    <p className="text-slate-500 dark:text-slate-400 font-medium text-lg max-w-2xl">
-                        {lang === 'km'
-                            ? "តាមដានរាល់ការចំណាយលើការថែទាំ ពន្ធ ប្រាក់បៀវត្សរ៍ និងសេវាកម្មផ្សេងៗ។"
-                            : "Track all maintenance, taxes, salaries, and utility costs for your properties."}
-                    </p>
+                    <div className="flex items-center gap-4">
+                        <p className="text-slate-500 dark:text-slate-400 font-medium text-lg max-w-2xl text-balance">
+                            {lang === 'km'
+                                ? "តាមដានរាល់ការចំណាយលើការថែទាំ ពន្ធ ប្រាក់បៀវត្សរ៍ និងសេវាកម្មផ្សេងៗ។"
+                                : "Track all maintenance, taxes, salaries, and utility costs for your properties."}
+                        </p>
+                    </div>
                 </div>
 
-                <button
-                    onClick={onAdd}
-                    className="flex items-center justify-center gap-3 bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-2xl font-bold transition-all hover:scale-[1.02] active:scale-[0.98] shadow-xl shadow-indigo-500/25 shrink-0"
-                >
-                    <div className="bg-white/20 p-1.5 rounded-lg">
-                        <FaPlus size={14} />
+                <div className="flex flex-wrap items-center gap-4">
+                    <div className="bg-white dark:bg-slate-900 px-6 py-4 rounded-2xl border-2 border-slate-100 dark:border-slate-800 shadow-sm flex flex-col">
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                            {lang === 'km' ? "ចំណាយសរុបបច្ចុប្បន្ន" : "Current Total Expenses"}
+                        </span>
+                        <span className="text-2xl font-black text-indigo-600">
+                            ${total.toFixed(2)}
+                        </span>
                     </div>
-                    {lang === 'km' ? "បន្ថែមចំណាយថ្មី" : "Add New Expense"}
-                </button>
+
+                    <button
+                        onClick={onExport}
+                        className="flex items-center justify-center gap-2 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 px-6 py-4 rounded-2xl font-bold border-2 border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all shadow-sm active:scale-95"
+                    >
+                        <FaFileExport size={16} className="text-slate-400" />
+                        {lang === 'km' ? "ទាញយក" : "Export"}
+                    </button>
+
+                    <button
+                        onClick={onAdd}
+                        className="flex items-center justify-center gap-3 bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-2xl font-bold transition-all hover:scale-[1.02] active:scale-[0.98] shadow-xl shadow-indigo-500/25 shrink-0"
+                    >
+                        <div className="bg-white/20 p-1.5 rounded-lg">
+                            <FaPlus size={14} />
+                        </div>
+                        {lang === 'km' ? "បន្ថែមចំណាយ" : "Add Expense"}
+                    </button>
+                </div>
             </div>
 
             {/* Search Bar */}

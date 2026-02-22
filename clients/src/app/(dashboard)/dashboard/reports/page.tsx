@@ -114,15 +114,11 @@ const ReportsPage: React.FC = () => {
                 filePrefix = "revenue_report";
 
             } else if (report.type === "Occupancy" || report.type === "Rentals") {
-                // Fetch rentals for occupancy report
+                // ... (existing rentals logic) ...
                 const allRentals = await getAllRentals();
-
-                // Filter rentals by report start/end date
                 const rentals = allRentals.filter(r => {
-                    // if room has no startDate recorded, we'll use createdAt
                     const rentalDate = r.startDate ? new Date(r.startDate) : new Date(r.createdAt || new Date());
                     if (report.startDate && rentalDate < new Date(report.startDate)) return false;
-
                     if (report.endDate) {
                         const endBoundary = new Date(report.endDate);
                         endBoundary.setHours(23, 59, 59, 999);
@@ -153,6 +149,39 @@ const ReportsPage: React.FC = () => {
                 csvContent += [headers.join(","), ...rows.map(row => row.join(","))].join("\n");
                 filePrefix = "occupancy_report";
 
+            } else if (report.type === "Expenses") {
+                const { getAllExpenses } = await import("@/services/expenseService");
+                const allExpenses = await getAllExpenses();
+
+                const expenses = allExpenses.filter(e => {
+                    const expDate = new Date(e.date);
+                    if (report.startDate && expDate < new Date(report.startDate)) return false;
+                    if (report.endDate) {
+                        const endBoundary = new Date(report.endDate);
+                        endBoundary.setHours(23, 59, 59, 999);
+                        if (expDate > endBoundary) return false;
+                    }
+                    return true;
+                });
+
+                const headers = ["ID", "Title", "Category", "Amount", "Date", "Description"];
+                const rows = expenses.map(e => [
+                    e.id,
+                    formatCsvStr(e.title),
+                    formatCsvStr(e.category),
+                    e.amount,
+                    formatCsvStr(e.date.split('T')[0]),
+                    formatCsvStr(e.description)
+                ]);
+
+                csvContent += `Report Name:,${formatCsvStr(report.name)}\n`;
+                csvContent += `Type:,${formatCsvStr(report.type)}\n`;
+                csvContent += `Start Date:,${report.startDate ? formatKhmerDate(report.startDate as unknown as string, lang) : 'N/A'}\n`;
+                csvContent += `End Date:,${report.endDate ? formatKhmerDate(report.endDate as unknown as string, lang) : 'N/A'}\n`;
+                csvContent += `Generated At:,${formatKhmerDate(report.generatedAt as unknown as string, lang)}\n\n`;
+
+                csvContent += [headers.join(","), ...rows.map(row => row.join(","))].join("\n");
+                filePrefix = "expenses_report";
             } else {
                 // Default fallback to basic report details if type is unknown
                 const headers = ["ID", "Name", "Type", "Status", "Start Date", "End Date", "Generated At"];

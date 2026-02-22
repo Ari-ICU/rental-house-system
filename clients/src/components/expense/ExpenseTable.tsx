@@ -117,6 +117,19 @@ const ExpenseTable: React.FC<ExpenseTableProps> = ({ expenses, onEdit, onDelete 
                                 ))
                             )}
                         </tbody>
+                        {currentItems.length > 0 && (
+                            <tfoot className="bg-indigo-50/20 dark:bg-slate-800/30">
+                                <tr className="border-t border-gray-100 dark:border-slate-800">
+                                    <td colSpan={2} className="px-8 py-6 text-right text-xs font-black text-slate-400 uppercase tracking-widest">
+                                        {lang === 'km' ? "សរុបក្នុងទំព័រនេះ" : "Page Total"}
+                                    </td>
+                                    <td className="px-8 py-6 text-indigo-600 dark:text-indigo-400 font-black text-xl">
+                                        ${currentItems.reduce((sum, e) => sum + e.amount, 0).toFixed(2)}
+                                    </td>
+                                    <td colSpan={2}></td>
+                                </tr>
+                            </tfoot>
+                        )}
                     </table>
                 </div>
             </div>

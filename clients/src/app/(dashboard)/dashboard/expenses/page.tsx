@@ -79,9 +79,39 @@ const ExpensesPage: React.FC = () => {
         }
     };
 
+    const handleExport = () => {
+        const headers = ["ID", "Title", "Category", "Amount ($)", "Date", "Description"];
+        const rows = filteredExpenses.map(e => [
+            e.id,
+            `"${e.title.replace(/"/g, '""')}"`,
+            `"${e.category}"`,
+            e.amount.toFixed(2),
+            e.date.split('T')[0],
+            `"${(e.description || '').replace(/"/g, '""')}"`
+        ]);
+
+        const csvContent = [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
+        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", `expenses_report_${new Date().toISOString().split('T')[0]}.csv`);
+        link.style.visibility = "hidden";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
+    const currentTotal = filteredExpenses.reduce((sum, e) => sum + e.amount, 0);
+
     return (
         <div className="min-h-screen space-y-8">
-            <ExpenseHeader onSearch={handleSearch} onAdd={handleAdd} />
+            <ExpenseHeader
+                onSearch={handleSearch}
+                onAdd={handleAdd}
+                onExport={handleExport}
+                total={currentTotal}
+            />
 
             <main className="container mx-auto">
                 {loading ? (
