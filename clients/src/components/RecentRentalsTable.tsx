@@ -51,7 +51,7 @@ const RecentRentalsTable = ({ rentals }: RecentRentalsTableProps) => {
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50">
-                        {rentals.map((rental) => (
+                        {rentals.filter(rental => !rental.endDate).map((rental) => (
                             <tr
                                 key={rental.id}
                                 className="group hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors duration-150 cursor-pointer"

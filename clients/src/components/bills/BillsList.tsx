@@ -254,26 +254,34 @@ const BillsList: React.FC<BillsListProps> = ({
 
                                         {/* Electricity Status */}
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="flex flex-col gap-1.5 items-start">
-                                                <span className={`inline-flex px-2 py-0.5 rounded text-[11px] font-medium leading-tight ${statusColors[bill.electricityStatus] || "bg-slate-100 text-slate-700"}`}>
-                                                    {lang === "en" ? bill.electricityStatus : bill.electricityStatus === "Paid" ? "បានបង់" : "មិនបង់"}
-                                                </span>
-                                                <span className="text-xs text-slate-500 dark:text-slate-400">
-                                                    ${bill.electricityAmount?.toFixed(2) || '0.00'}
-                                                </span>
-                                            </div>
+                                            {bill.electricityAmount && bill.electricityAmount > 0 ? (
+                                                <div className="flex flex-col gap-1.5 items-start">
+                                                    <span className={`inline-flex px-2 py-0.5 rounded text-[11px] font-medium leading-tight ${statusColors[bill.electricityStatus] || "bg-slate-100 text-slate-700"}`}>
+                                                        {lang === "en" ? bill.electricityStatus : bill.electricityStatus === "Paid" ? "បានបង់" : "មិនបង់"}
+                                                    </span>
+                                                    <span className="text-xs text-slate-500 dark:text-slate-400">
+                                                        ${bill.electricityAmount.toFixed(2)}
+                                                    </span>
+                                                </div>
+                                            ) : (
+                                                <span className="text-slate-400 dark:text-slate-500">-</span>
+                                            )}
                                         </td>
 
                                         {/* Water Status */}
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="flex flex-col gap-1.5 items-start">
-                                                <span className={`inline-flex px-2 py-0.5 rounded text-[11px] font-medium leading-tight ${statusColors[bill.waterStatus] || "bg-slate-100 text-slate-700"}`}>
-                                                    {lang === "en" ? bill.waterStatus : bill.waterStatus === "Paid" ? "បានបង់" : "មិនបង់"}
-                                                </span>
-                                                <span className="text-xs text-slate-500 dark:text-slate-400">
-                                                    ${bill.waterAmount?.toFixed(2) || '0.00'}
-                                                </span>
-                                            </div>
+                                            {bill.waterAmount && bill.waterAmount > 0 ? (
+                                                <div className="flex flex-col gap-1.5 items-start">
+                                                    <span className={`inline-flex px-2 py-0.5 rounded text-[11px] font-medium leading-tight ${statusColors[bill.waterStatus] || "bg-slate-100 text-slate-700"}`}>
+                                                        {lang === "en" ? bill.waterStatus : bill.waterStatus === "Paid" ? "បានបង់" : "មិនបង់"}
+                                                    </span>
+                                                    <span className="text-xs text-slate-500 dark:text-slate-400">
+                                                        ${bill.waterAmount.toFixed(2)}
+                                                    </span>
+                                                </div>
+                                            ) : (
+                                                <span className="text-slate-400 dark:text-slate-500">-</span>
+                                            )}
                                         </td>
 
                                         {/* Total Due */}
