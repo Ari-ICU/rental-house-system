@@ -119,7 +119,7 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
                 try {
                     const { data: { text } } = await Tesseract.recognize(
                         file,
-                        'eng+khm', // English and Khmer
+                        'khm+eng', // English and Khmer
                         { logger: m => console.log(m) }
                     );
                     setOcrText(text);

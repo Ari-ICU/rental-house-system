@@ -120,7 +120,7 @@ const RentalForm: React.FC = () => {
                 try {
                     const { data: { text } } = await Tesseract.recognize(
                         file,
-                        'eng+khm', // English and Khmer
+                        'khm', // Strict Khmer for best results
                         { logger: m => console.log(m) }
                     );
                     setOcrText(text);
