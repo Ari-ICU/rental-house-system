@@ -19,7 +19,7 @@ const CameraPage = () => {
             const response = await api.get<Camera[]>('/api/cameras');
             setCameras(response.data || []);
             setError(null);
-        } catch (err: any) {
+        } catch (err) {
             console.error('Failed to fetch cameras:', err);
             setError('Failed to load cameras. Please try again later.');
             toast.error('Failed to load cameras');

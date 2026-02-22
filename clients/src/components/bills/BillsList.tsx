@@ -4,8 +4,6 @@ import React, { useState, useEffect } from "react";
 import {
     FaEdit,
     FaTrash,
-    FaChevronLeft,
-    FaChevronRight,
     FaEye,
     FaPrint,
     FaDownload
@@ -135,7 +133,7 @@ const BillsList: React.FC<BillsListProps> = ({
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
             toast.success(lang === 'en' ? 'PDF downloaded' : 'ការទាញយកជោគជ័យ', { id: toastId });
-        } catch (error) {
+        } catch {
             toast.error(lang === 'en' ? 'Failed to download PDF' : 'ការទាញយក PDF បរាជ័យ', { id: toastId });
         }
     };

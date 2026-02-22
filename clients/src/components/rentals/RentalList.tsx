@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from 'next/navigation';
-import { FaEdit, FaTrash, FaSave, FaTimes, FaChevronLeft, FaChevronRight, FaEye, FaCalendarAlt, FaHome, FaInbox } from "react-icons/fa";
+import { FaEdit, FaTrash, FaSave, FaTimes, FaEye, FaCalendarAlt, FaInbox } from "react-icons/fa";
 import CustomDropdown from "@/common/CustomDropdown";
 
 import { Rental, RentalStatus } from "@/types/rents";

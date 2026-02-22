@@ -28,7 +28,7 @@ export default function BillViewModal({ bill, onClose, exchangeRate = 4100 }: Bi
     const activeRentAmount = bill.rentAmount ?? bill.rental?.rentAmount ?? 0;
     const totalAmount = activeRentAmount + (bill.electricityAmount || 0) + (bill.waterAmount || 0);
 
-    const isFullyPaid = bill.electricityStatus === 'Paid' && bill.waterStatus === 'Paid';
+
 
 
 

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import InputField from "./InputField";
-import { FaEnvelope, FaLock, FaUser, FaArrowRight, FaHome } from "react-icons/fa";
+import { FaEnvelope, FaLock, FaArrowRight } from "react-icons/fa";
 import { motion } from "framer-motion";
 
 interface AuthFormProps {

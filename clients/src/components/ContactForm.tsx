@@ -54,7 +54,7 @@ const ContactForm = () => {
             } else {
                 throw new Error("Failed to send message");
             }
-        } catch (error) {
+        } catch {
             toast.error(
                 isKhmer
                     ? "បរាជ័យក្នុងការផ្ញើសារ។ សូមព្យាយាមម្តងទៀតនៅពេលក្រោយ។"

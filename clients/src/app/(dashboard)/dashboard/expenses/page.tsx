@@ -7,7 +7,7 @@ import { Expense } from "@/types/expense";
 import ExpenseHeader from "@/components/expense/ExpenseHeader";
 import ExpenseTable from "@/components/expense/ExpenseTable";
 import ExpenseForm from "@/components/expense/ExpenseForm";
-import { FaPlus } from "react-icons/fa";
+
 
 const ExpensesPage: React.FC = () => {
     const { lang } = useLang();
