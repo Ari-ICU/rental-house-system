@@ -1,5 +1,21 @@
 const Rental = require('../models/rental');
 
+const autoManageStatus = (rentalData) => {
+    if (rentalData.endDate && ['Active', 'Reserved'].includes(rentalData.status)) {
+        const endDate = new Date(rentalData.endDate);
+        if (!isNaN(endDate.getTime())) {
+            endDate.setHours(0, 0, 0, 0);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            if (endDate < today) {
+                rentalData.status = 'Completed';
+            }
+        }
+    }
+    return rentalData;
+};
+
 const getAllRentals = async (options = {}) => {
     return await Rental.findAll(options);
 };
@@ -13,12 +29,14 @@ const getRentalById = async (id) => {
 };
 
 const createRental = async (rentalData) => {
-    return await Rental.create(rentalData);
+    const processedData = autoManageStatus({ ...rentalData });
+    return await Rental.create(processedData);
 };
 
 const updateRental = async (id, rentalData) => {
     try {
-        const rental = await Rental.update(id, rentalData);
+        const processedData = autoManageStatus({ ...rentalData });
+        const rental = await Rental.update(id, processedData);
         if (rental === null) {
             throw new Error('No valid fields to update');
         }

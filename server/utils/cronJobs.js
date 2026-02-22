@@ -70,9 +70,55 @@ const runMonthlyBillingCycle = async () => {
     }
 };
 
+const checkRentalEndDates = async () => {
+    try {
+        const activeRentals = await prisma.rental.findMany({
+            where: {
+                status: { in: ['Active', 'Reserved'] },
+                endDate: { not: null, not: '' }
+            }
+        });
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        let updatedCount = 0;
+
+        for (const rental of activeRentals) {
+            const endDate = new Date(rental.endDate);
+
+            // Validate the parsed date to avoid NaN errors
+            if (isNaN(endDate.getTime())) continue;
+
+            endDate.setHours(0, 0, 0, 0);
+
+            if (endDate < today) {
+                await prisma.rental.update({
+                    where: { id: rental.id },
+                    data: { status: 'Completed' }
+                });
+                updatedCount++;
+                logger.info(`Auto-updated rental ID ${rental.id} (Room ${rental.roomNumber}) to 'Completed' because end date (${rental.endDate}) has passed.`);
+            }
+        }
+
+        if (updatedCount > 0) {
+            logger.info(`Automatically marked ${updatedCount} rentals as Completed due to end date passing.`);
+        }
+    } catch (error) {
+        logger.error('Error in checkRentalEndDates cron check:', error.message);
+    }
+};
+
 const initializeCronJobs = () => {
-    // Run immediately on boot to catch up (in case server was sleeping on the 1st of the month)
+    // Run immediately on boot
+    checkRentalEndDates();
     runMonthlyBillingCycle();
+
+    // Schedule to run exactly at 00:00 AM every day to check for expired rentals
+    cron.schedule('0 0 * * *', () => {
+        checkRentalEndDates();
+    });
 
     // Schedule to run exactly at 00:00 AM on the 1st day of EVERY month automatically
     cron.schedule('0 0 1 * *', () => {
@@ -82,4 +128,5 @@ const initializeCronJobs = () => {
 
 module.exports = {
     initializeCronJobs,
+    checkRentalEndDates,
 };
