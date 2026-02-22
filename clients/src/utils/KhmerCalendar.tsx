@@ -91,93 +91,101 @@ export default function KhmerCalendar({ selectedDate, onChange, lang = "km", onC
     const isToday = (day: number) => year === today.getFullYear() && month === today.getMonth() && day === today.getDate();
 
     const containerClasses = `
-        w-full max-w-md p-4 border border-gray-200 rounded-xl shadow-lg bg-white transition-all duration-200 ease-in-out
-        ${isPopup ? 'fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 ring-1 ring-black/5 shadow-2xl' : 'relative shadow-md'}
+        w-full max-w-md p-6 border border-gray-100 dark:border-slate-800 rounded-[2.5rem] shadow-2xl bg-white dark:bg-slate-900 transition-all duration-300 ease-in-out
+        ${isPopup ? 'fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 ring-1 ring-black/5 dark:ring-white/5 shadow-[0_32px_64px_-12px_rgba(0,0,0,0.2)]' : 'relative shadow-xl shadow-indigo-500/5'}
     `;
-    const overlayClasses = isPopup ? "fixed inset-0 bg-black/60 backdrop-blur-sm z-40" : "";
+    const overlayClasses = isPopup ? "fixed inset-0 bg-slate-900/60 backdrop-blur-md z-40 transition-opacity animate-in fade-in duration-300" : "";
 
-    const dropdownItemClasses = "px-3 py-2 cursor-pointer hover:bg-blue-50 transition-colors duration-150 text-gray-700 hover:text-blue-600 first:rounded-t last:rounded-b";
+    const dropdownItemClasses = "w-full text-left px-4 py-3 cursor-pointer hover:bg-indigo-50 dark:hover:bg-indigo-500/10 transition-colors duration-150 text-gray-700 dark:text-gray-200 hover:text-indigo-600 dark:hover:text-indigo-400 font-bold text-sm first:rounded-t-2xl last:rounded-b-2xl";
 
     return (
         <>
             {isPopup && <div className={overlayClasses} onClick={onClose} />}
             <div className={containerClasses} ref={containerRef}>
                 {/* Header with Month & Year */}
-                <div className="flex justify-between items-center mb-4 mt-6 pb-3 border-b border-gray-100 relative">
-                    {/* Month selector */}
-                    <div className="relative" ref={monthRef}>
-                        <button
-                            onClick={() => setMonthDropdown(!monthDropdown)}
-                            className="flex items-center text-lg font-semibold px-3 py-2 hover:bg-gray-100 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                            aria-label={`Select month: ${months[month]}`}
-                        >
-                            {months[month]}
-                            <svg className={`w-4 h-4 ml-1 transition-transform duration-200 ${monthDropdown ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                            </svg>
-                        </button>
-                        {monthDropdown && (
-                            <div className="absolute top-full left-0 mt-1 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden max-h-60 overflow-y-auto">
-                                {months.map((mName, idx) => (
-                                    <button
-                                        key={idx}
-                                        onClick={() => handleMonthSelect(idx)}
-                                        className={dropdownItemClasses}
-                                        aria-label={`Select ${mName}`}
-                                    >
-                                        {mName}
-                                    </button>
-                                ))}
-                            </div>
-                        )}
-                    </div>
+                <div className="flex justify-between items-center mb-6 pt-2 pb-4 border-b border-gray-50 dark:border-slate-800 relative">
+                    <div className="flex gap-2">
+                        {/* Month selector */}
+                        <div className="relative" ref={monthRef}>
+                            <button
+                                onClick={() => setMonthDropdown(!monthDropdown)}
+                                className="flex items-center text-xl font-black text-slate-900 dark:text-white px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-2xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-indigo-500/10"
+                                aria-label={`Select month: ${months[month]}`}
+                            >
+                                {months[month]}
+                                <svg className={`w-4 h-4 ml-2 transition-transform duration-300 text-indigo-500 ${monthDropdown ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+                            {monthDropdown && (
+                                <div className="absolute top-full left-0 mt-3 w-56 bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 rounded-[2rem] shadow-2xl z-50 overflow-hidden max-h-72 overflow-y-auto animate-in zoom-in-95 fade-in duration-200">
+                                    <div className="py-2">
+                                        {months.map((mName, idx) => (
+                                            <button
+                                                key={idx}
+                                                onClick={() => handleMonthSelect(idx)}
+                                                className={dropdownItemClasses}
+                                                aria-label={`Select ${mName}`}
+                                            >
+                                                {mName}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
 
-                    {/* Year selector */}
-                    <div className="relative" ref={yearRef}>
-                        <button
-                            onClick={() => setYearDropdown(!yearDropdown)}
-                            className="flex items-center text-lg font-semibold px-3 py-2 hover:bg-gray-100 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                            aria-label={`Select year: ${year}`}
-                        >
-                            {lang === "km" ? toKhmerDigits(year) : year}
-                            <svg className={`w-4 h-4 ml-1 transition-transform duration-200 ${yearDropdown ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                            </svg>
-                        </button>
-                        {yearDropdown && (
-                            <div className="absolute top-full right-0 mt-1 w-24 bg-white border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden max-h-60 overflow-y-auto">
-                                {Array.from({ length: 21 }, (_, i) => year - 10 + i).map(y => (
-                                    <button
-                                        key={y}
-                                        onClick={() => handleYearSelect(y)}
-                                        className={dropdownItemClasses}
-                                        aria-label={`Select year ${y}`}
-                                    >
-                                        {lang === "km" ? toKhmerDigits(y) : y}
-                                    </button>
-                                ))}
-                            </div>
-                        )}
+                        {/* Year selector */}
+                        <div className="relative" ref={yearRef}>
+                            <button
+                                onClick={() => setYearDropdown(!yearDropdown)}
+                                className="flex items-center text-xl font-black text-slate-900 dark:text-white px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-2xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-indigo-500/10"
+                                aria-label={`Select year: ${year}`}
+                            >
+                                {lang === "km" ? toKhmerDigits(year) : year}
+                                <svg className={`w-4 h-4 ml-2 transition-transform duration-300 text-indigo-500 ${yearDropdown ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+                            {yearDropdown && (
+                                <div className="absolute top-full left-0 mt-3 w-32 bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 rounded-[2rem] shadow-2xl z-50 overflow-hidden max-h-72 overflow-y-auto animate-in zoom-in-95 fade-in duration-200">
+                                    <div className="py-2">
+                                        {Array.from({ length: 21 }, (_, i) => year - 10 + i).map(y => (
+                                            <button
+                                                key={y}
+                                                onClick={() => handleYearSelect(y)}
+                                                className={dropdownItemClasses}
+                                                aria-label={`Select year ${y}`}
+                                            >
+                                                {lang === "km" ? toKhmerDigits(y) : y}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
                     </div>
 
                     {/* Close button */}
                     {onClose && (
                         <button
                             onClick={onClose}
-                            className="absolute -top-8 -right-3 w-8 h-8 bg-white border-2 border-gray-200 rounded-full flex items-center justify-center text-gray-500 hover:text-red-600 hover:bg-red-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 shadow-md z-10"
+                            className="bg-slate-100 dark:bg-slate-800 w-10 h-10 rounded-full flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-rose-500/10"
                             aria-label={lang === "en" ? "Close calendar" : "បិទកាលបរិច្ឆេទ"}
                         >
-                            ✕
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
                         </button>
                     )}
                 </div>
 
                 {/* Calendar Table */}
-                <table className="w-full border-collapse">
+                <table className="w-full border-separate border-spacing-1">
                     <thead>
-                        <tr className="text-gray-500">
+                        <tr>
                             {weekdays.map((d, i) => (
-                                <th key={i} className="py-3 px-2 text-center border-b border-gray-200 text-xs font-semibold uppercase tracking-wide">
+                                <th key={i} className="py-3 text-center text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">
                                     {d}
                                 </th>
                             ))}
@@ -185,28 +193,35 @@ export default function KhmerCalendar({ selectedDate, onChange, lang = "km", onC
                     </thead>
                     <tbody>
                         {calendarGrid.map((week, i) => (
-                            <tr key={i} className="transition-colors duration-150">
+                            <tr key={i}>
                                 {week.map((day, j) => {
                                     const isSelected = day === currentDate.getDate() && month === currentDate.getMonth() && year === currentDate.getFullYear();
                                     const isTodayFlag = day !== null && isToday(day);
                                     return (
                                         <td
                                             key={j}
-                                            className={`py-3 px-2 text-center border border-gray-100 cursor-pointer hover:bg-blue-50 transition-all duration-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${day === null
-                                                    ? 'invisible'
-                                                    : isSelected
-                                                        ? 'bg-blue-600 text-white font-bold shadow-md scale-[1.02]'
-                                                        : isTodayFlag
-                                                            ? 'border-2 border-blue-300 bg-blue-50 text-blue-600 font-semibold'
-                                                            : 'text-gray-700 hover:text-blue-700'
-                                                }`}
-                                            onClick={() => day && handleDayClick(day)}
-                                            tabIndex={day ? 0 : -1}
-                                            role={day ? "button" : undefined}
-                                            aria-label={day ? `${months[month]} ${day}, ${year}` : undefined}
-                                            aria-selected={isSelected}
+                                            className="p-0"
                                         >
-                                            {day !== null ? (lang === "km" ? toKhmerDigits(day) : day) : ""}
+                                            {day !== null ? (
+                                                <button
+                                                    onClick={() => handleDayClick(day)}
+                                                    className={`
+                                                        w-full aspect-square flex items-center justify-center text-sm font-bold rounded-2xl transition-all duration-200
+                                                        ${isSelected
+                                                            ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/40 ring-4 ring-indigo-500/20 scale-105 z-10'
+                                                            : isTodayFlag
+                                                                ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 ring-2 ring-indigo-500/20'
+                                                                : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
+                                                        }
+                                                    `}
+                                                    aria-label={day ? `${months[month]} ${day}, ${year}` : undefined}
+                                                    aria-selected={isSelected}
+                                                >
+                                                    {lang === "km" ? toKhmerDigits(day) : day}
+                                                </button>
+                                            ) : (
+                                                <div className="w-full aspect-square" />
+                                            )}
                                         </td>
                                     );
                                 })}

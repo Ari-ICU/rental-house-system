@@ -44,7 +44,8 @@ const ExpensesPage: React.FC = () => {
                 e.category.toLowerCase().includes(query) ||
                 (e.description && e.description.toLowerCase().includes(query));
 
-            const matchesMonth = !selectedMonth || e.date.startsWith(selectedMonth);
+            const monthPart = selectedMonth ? selectedMonth.slice(0, 7) : "";
+            const matchesMonth = !monthPart || e.date.startsWith(monthPart);
 
             return matchesSearch && matchesMonth;
         });

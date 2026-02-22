@@ -3,6 +3,8 @@
 import React from "react";
 import { FaSearch, FaPlus, FaMoneyBillWave, FaFileExport, FaCalendarAlt } from "react-icons/fa";
 import { useLang } from "@/context/LangContext";
+import KhmerCalendar from "@/utils/KhmerCalendar";
+import { formatKhmerDate } from "@/utils/dateFormatter";
 
 interface ExpenseHeaderProps {
     onSearch: (query: string) => void;
@@ -13,8 +15,23 @@ interface ExpenseHeaderProps {
     total: number;
 }
 
-const ExpenseHeader: React.FC<ExpenseHeaderProps> = ({ onSearch, onMonthChange, selectedMonth, onAdd, onExport, total }) => {
+const ExpenseHeader: React.FC<ExpenseHeaderProps> = ({
+    onSearch,
+    onMonthChange,
+    selectedMonth,
+    onAdd,
+    onExport,
+    total
+}) => {
     const { lang } = useLang();
+    const [showCalendar, setShowCalendar] = React.useState(false);
+
+    const handleDateSelect = (dateStr: string) => {
+        // We get YYYY-MM-DD, we'll use this full string but ExpensesPage can slice it if needed.
+        // For "Total in Month", we usually want the month part.
+        onMonthChange(dateStr);
+        setShowCalendar(false);
+    };
 
     return (
         <div className="flex flex-col gap-8 mb-4">
@@ -39,7 +56,7 @@ const ExpenseHeader: React.FC<ExpenseHeaderProps> = ({ onSearch, onMonthChange, 
                 </div>
 
                 <div className="flex flex-wrap items-center gap-4">
-                    <div className="bg-white dark:bg-slate-900 px-6 py-4 rounded-2xl border-2 border-slate-100 dark:border-slate-800 shadow-sm flex flex-col">
+                    <div className="bg-white dark:bg-slate-900 px-6 py-4 rounded-2xl border-2 border-slate-100 dark:border-slate-800 shadow-sm flex flex-col min-w-[180px]">
                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                             {lang === 'km' ? "ចំណាយសរុបបច្ចុប្បន្ន" : "Current Total Expenses"}
                         </span>
@@ -69,7 +86,7 @@ const ExpenseHeader: React.FC<ExpenseHeaderProps> = ({ onSearch, onMonthChange, 
             </div>
 
             {/* Filter Section */}
-            <div className="flex flex-col md:flex-row gap-4 items-center max-w-4xl">
+            <div className="flex flex-col md:flex-row gap-4 items-center max-w-5xl">
                 {/* Search Bar */}
                 <div className="relative group flex-1 w-full">
                     <div className="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none text-slate-400 group-focus-within:text-indigo-500 transition-colors">
@@ -83,28 +100,48 @@ const ExpenseHeader: React.FC<ExpenseHeaderProps> = ({ onSearch, onMonthChange, 
                     />
                 </div>
 
-                {/* Month Picker */}
-                <div className="relative group w-full md:w-64">
-                    <div className="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none text-slate-400 group-focus-within:text-indigo-500 transition-colors">
+                {/* Month Picker - Custom Khmer Calendar */}
+                <div className="relative group w-full md:w-[320px]">
+                    <div className="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none text-slate-400 group-focus-within:text-indigo-500 transition-colors z-10">
                         <FaCalendarAlt size={18} />
                     </div>
-                    <input
-                        type="month"
-                        value={selectedMonth}
-                        onChange={(e) => onMonthChange(e.target.value)}
-                        className="block w-full pl-16 pr-6 py-5 bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 rounded-[2rem] text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-500/5 transition-all shadow-sm font-bold uppercase text-xs"
-                    />
+                    <button
+                        onClick={() => setShowCalendar(true)}
+                        className="flex items-center w-full pl-16 pr-12 py-5 bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 rounded-[2rem] text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-500/5 transition-all shadow-sm font-bold text-xs text-left overflow-hidden h-[62px]"
+                    >
+                        <span className="truncate">
+                            {selectedMonth
+                                ? formatKhmerDate(selectedMonth, lang)
+                                : (lang === 'km' ? "ជ្រើសរើសខែ/កាលបរិច្ឆេទ" : "Select Month/Date")
+                            }
+                        </span>
+                    </button>
                     {selectedMonth && (
                         <button
-                            onClick={() => onMonthChange("")}
-                            className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-rose-500 transition-colors text-xs font-bold"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onMonthChange("");
+                            }}
+                            className="absolute right-6 top-1/2 -translate-y-1/2 text-slate-400 hover:text-rose-500 transition-colors text-xs font-bold z-10 p-2"
                         >
                             {lang === 'km' ? "ជម្រះ" : "Clear"}
                         </button>
                     )}
                 </div>
             </div>
+
+            {/* Khmer Calendar Popup */}
+            {showCalendar && (
+                <KhmerCalendar
+                    selectedDate={selectedMonth}
+                    onChange={handleDateSelect}
+                    lang={lang as "en" | "km"}
+                    onClose={() => setShowCalendar(false)}
+                    isPopup={true}
+                />
+            )}
         </div>
     );
 };
+
 export default ExpenseHeader;
