@@ -17,12 +17,14 @@ const ExpensesPage: React.FC = () => {
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [editingExpense, setEditingExpense] = useState<Expense | undefined>(undefined);
 
+    const [searchQuery, setSearchQuery] = useState("");
+    const [selectedMonth, setSelectedMonth] = useState("");
+
     const fetchExpenses = useCallback(async () => {
         try {
             setLoading(true);
             const data = await expenseService.getAllExpenses();
             setExpenses(data);
-            setFilteredExpenses(data);
         } catch (error) {
             console.error("Failed to fetch expenses:", error);
         } finally {
@@ -34,15 +36,23 @@ const ExpensesPage: React.FC = () => {
         fetchExpenses();
     }, [fetchExpenses]);
 
-    const handleSearch = (query: string) => {
-        const filtered = expenses.filter(
-            (e) =>
-                e.title.toLowerCase().includes(query.toLowerCase()) ||
-                e.category.toLowerCase().includes(query.toLowerCase()) ||
-                (e.description && e.description.toLowerCase().includes(query.toLowerCase()))
-        );
+    useEffect(() => {
+        const query = searchQuery.toLowerCase();
+        const filtered = expenses.filter((e) => {
+            const matchesSearch =
+                e.title.toLowerCase().includes(query) ||
+                e.category.toLowerCase().includes(query) ||
+                (e.description && e.description.toLowerCase().includes(query));
+
+            const matchesMonth = !selectedMonth || e.date.startsWith(selectedMonth);
+
+            return matchesSearch && matchesMonth;
+        });
         setFilteredExpenses(filtered);
-    };
+    }, [expenses, searchQuery, selectedMonth]);
+
+    const handleSearch = (query: string) => setSearchQuery(query);
+    const handleMonthChange = (month: string) => setSelectedMonth(month);
 
     const handleAdd = () => {
         setEditingExpense(undefined);
@@ -95,7 +105,7 @@ const ExpensesPage: React.FC = () => {
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.setAttribute("href", url);
-        link.setAttribute("download", `expenses_report_${new Date().toISOString().split('T')[0]}.csv`);
+        link.setAttribute("download", `expenses_report_${selectedMonth || 'all'}_${new Date().toISOString().split('T')[0]}.csv`);
         link.style.visibility = "hidden";
         document.body.appendChild(link);
         link.click();
@@ -108,6 +118,8 @@ const ExpensesPage: React.FC = () => {
         <div className="min-h-screen space-y-8">
             <ExpenseHeader
                 onSearch={handleSearch}
+                onMonthChange={handleMonthChange}
+                selectedMonth={selectedMonth}
                 onAdd={handleAdd}
                 onExport={handleExport}
                 total={currentTotal}

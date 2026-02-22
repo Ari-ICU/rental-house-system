@@ -1,17 +1,19 @@
 "use client";
 
 import React from "react";
-import { FaSearch, FaPlus, FaMoneyBillWave, FaFileExport } from "react-icons/fa";
+import { FaSearch, FaPlus, FaMoneyBillWave, FaFileExport, FaCalendarAlt } from "react-icons/fa";
 import { useLang } from "@/context/LangContext";
 
 interface ExpenseHeaderProps {
     onSearch: (query: string) => void;
+    onMonthChange: (month: string) => void;
+    selectedMonth: string;
     onAdd: () => void;
     onExport: () => void;
     total: number;
 }
 
-const ExpenseHeader: React.FC<ExpenseHeaderProps> = ({ onSearch, onAdd, onExport, total }) => {
+const ExpenseHeader: React.FC<ExpenseHeaderProps> = ({ onSearch, onMonthChange, selectedMonth, onAdd, onExport, total }) => {
     const { lang } = useLang();
 
     return (
@@ -66,20 +68,43 @@ const ExpenseHeader: React.FC<ExpenseHeaderProps> = ({ onSearch, onAdd, onExport
                 </div>
             </div>
 
-            {/* Search Bar */}
-            <div className="relative group max-w-xl">
-                <div className="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none text-slate-400 group-focus-within:text-indigo-500 transition-colors">
-                    <FaSearch size={18} />
+            {/* Filter Section */}
+            <div className="flex flex-col md:flex-row gap-4 items-center max-w-4xl">
+                {/* Search Bar */}
+                <div className="relative group flex-1 w-full">
+                    <div className="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none text-slate-400 group-focus-within:text-indigo-500 transition-colors">
+                        <FaSearch size={18} />
+                    </div>
+                    <input
+                        type="text"
+                        onChange={(e) => onSearch(e.target.value)}
+                        placeholder={lang === 'km' ? "ស្វែងរកតាមចំណងជើង ប្រភេទ ឬការពិពណ៌នា..." : "Search by title, category, or description..."}
+                        className="block w-full pl-16 pr-6 py-5 bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 rounded-[2rem] text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-500/5 transition-all shadow-sm"
+                    />
                 </div>
-                <input
-                    type="text"
-                    onChange={(e) => onSearch(e.target.value)}
-                    placeholder={lang === 'km' ? "ស្វែងរកតាមចំណងជើង ប្រភេទ ឬការពិពណ៌នា..." : "Search by title, category, or description..."}
-                    className="block w-full pl-16 pr-6 py-5 bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 rounded-[2rem] text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-500/5 transition-all shadow-sm"
-                />
+
+                {/* Month Picker */}
+                <div className="relative group w-full md:w-64">
+                    <div className="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none text-slate-400 group-focus-within:text-indigo-500 transition-colors">
+                        <FaCalendarAlt size={18} />
+                    </div>
+                    <input
+                        type="month"
+                        value={selectedMonth}
+                        onChange={(e) => onMonthChange(e.target.value)}
+                        className="block w-full pl-16 pr-6 py-5 bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-800 rounded-[2rem] text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-500/5 transition-all shadow-sm font-bold uppercase text-xs"
+                    />
+                    {selectedMonth && (
+                        <button
+                            onClick={() => onMonthChange("")}
+                            className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-rose-500 transition-colors text-xs font-bold"
+                        >
+                            {lang === 'km' ? "ជម្រះ" : "Clear"}
+                        </button>
+                    )}
+                </div>
             </div>
         </div>
     );
 };
-
 export default ExpenseHeader;
