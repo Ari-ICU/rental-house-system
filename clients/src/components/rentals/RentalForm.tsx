@@ -219,8 +219,8 @@ const RentalForm: React.FC = () => {
             <form onSubmit={handleSubmit} className="space-y-6">
 
                 {/* Section: Client Photo */}
-                <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800 overflow-hidden">
-                    <div className="px-6 py-4 border-b border-gray-50 dark:border-slate-800 bg-gradient-to-r from-gray-50 to-white dark:from-slate-800 dark:to-slate-900">
+                <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800">
+                    <div className="px-6 py-4 border-b border-gray-50 dark:border-slate-800 bg-gradient-to-r from-gray-50 to-white dark:from-slate-800 dark:to-slate-900 rounded-t-2xl">
                         <div className="flex items-center gap-2.5">
                             <div className="w-8 h-8 rounded-lg bg-violet-100 flex items-center justify-center">
                                 <FaUser className="text-violet-600 text-xs" />
@@ -241,8 +241,8 @@ const RentalForm: React.FC = () => {
                 </div>
 
                 {/* Section: Rental Details */}
-                <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800 overflow-hidden">
-                    <div className="px-6 py-4 border-b border-gray-50 dark:border-slate-800 bg-gradient-to-r from-gray-50 to-white dark:from-slate-800 dark:to-slate-900">
+                <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800">
+                    <div className="px-6 py-4 border-b border-gray-50 dark:border-slate-800 bg-gradient-to-r from-gray-50 to-white dark:from-slate-800 dark:to-slate-900 rounded-t-2xl">
                         <div className="flex items-center gap-2.5">
                             <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
                                 <FaDoorOpen className="text-blue-600 text-xs" />
@@ -406,8 +406,8 @@ const RentalForm: React.FC = () => {
                 </div>
 
                 {/* Section: Contact Information */}
-                <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800 overflow-hidden">
-                    <div className="px-6 py-4 border-b border-gray-50 dark:border-slate-800 bg-gradient-to-r from-gray-50 to-white dark:from-slate-800 dark:to-slate-900">
+                <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800">
+                    <div className="px-6 py-4 border-b border-gray-50 dark:border-slate-800 bg-gradient-to-r from-gray-50 to-white dark:from-slate-800 dark:to-slate-900 rounded-t-2xl">
                         <div className="flex items-center gap-2.5">
                             <div className="w-8 h-8 rounded-lg bg-sky-100 flex items-center justify-center">
                                 <FaPhone className="text-sky-600 text-xs" />
@@ -535,8 +535,8 @@ const RentalForm: React.FC = () => {
                 </div>
 
                 {/* Section: ID Card */}
-                <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800 overflow-hidden">
-                    <div className="px-6 py-4 border-b border-gray-50 dark:border-slate-800 bg-gradient-to-r from-gray-50 to-white dark:from-slate-800 dark:to-slate-900">
+                <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800">
+                    <div className="px-6 py-4 border-b border-gray-50 dark:border-slate-800 bg-gradient-to-r from-gray-50 to-white dark:from-slate-800 dark:to-slate-900 rounded-t-2xl">
                         <div className="flex items-center gap-2.5">
                             <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center">
                                 <FaIdCard className="text-amber-600 text-xs" />
@@ -604,8 +604,8 @@ const RentalForm: React.FC = () => {
                 </div>
 
                 {/* Section: Emergency Contact */}
-                <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800 overflow-hidden">
-                    <div className="px-6 py-4 border-b border-gray-50 dark:border-slate-800 bg-gradient-to-r from-gray-50 to-white dark:from-slate-800 dark:to-slate-900">
+                <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800">
+                    <div className="px-6 py-4 border-b border-gray-50 dark:border-slate-800 bg-gradient-to-r from-gray-50 to-white dark:from-slate-800 dark:to-slate-900 rounded-t-2xl">
                         <div className="flex items-center gap-2.5">
                             <div className="w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center">
                                 <FaExclamationTriangle className="text-red-500 text-xs" />
@@ -656,8 +656,8 @@ const RentalForm: React.FC = () => {
                 </div>
 
                 {/* Section: Notes */}
-                <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800 overflow-hidden">
-                    <div className="px-6 py-4 border-b border-gray-50 dark:border-slate-800 bg-gradient-to-r from-gray-50 to-white dark:from-slate-800 dark:to-slate-900">
+                <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800">
+                    <div className="px-6 py-4 border-b border-gray-50 dark:border-slate-800 bg-gradient-to-r from-gray-50 to-white dark:from-slate-800 dark:to-slate-900 rounded-t-2xl">
                         <div className="flex items-center gap-2.5">
                             <div className="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center">
                                 <FaStickyNote className="text-green-600 text-xs" />

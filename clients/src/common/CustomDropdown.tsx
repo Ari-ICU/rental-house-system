@@ -48,20 +48,18 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
         opt.label.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    const defaultBg = isOpen
-        ? 'bg-white dark:bg-slate-900'
-        : 'bg-gray-50/50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-900';
-    const bgClass = selectedOption?.bg ? selectedOption.bg : defaultBg;
+    const baseBg = selectedOption?.bg ? selectedOption.bg : 'bg-gray-50/50 dark:bg-slate-800/50';
+    const activeBg = selectedOption?.bg ? selectedOption.bg : 'bg-white dark:bg-slate-800';
+    const bgClass = isOpen ? activeBg : `${baseBg} hover:bg-white dark:hover:bg-slate-800`;
 
-    const defaultBorder = isOpen
-        ? 'ring-2 ring-violet-500/20 border-violet-400'
-        : 'border-gray-200 dark:border-slate-700 hover:border-gray-300 dark:hover:border-slate-600';
-    const borderClass = selectedOption?.border ? selectedOption.border : defaultBorder;
+    const baseBorder = selectedOption?.border || 'border-gray-200 dark:border-slate-700 hover:border-gray-300 dark:hover:border-slate-600';
+    const activeBorder = 'ring-2 ring-violet-500/20 border-violet-400';
+    const borderClass = isOpen ? activeBorder : baseBorder;
 
-    const colorClass = selectedOption?.color ? selectedOption.color : 'text-gray-800 dark:text-gray-200';
+    const colorClass = selectedOption?.color || 'text-gray-800 dark:text-gray-200';
 
     return (
-        <div className={`relative ${className}`} ref={dropdownRef}>
+        <div className={`relative ${isOpen ? 'z-50' : ''} ${className}`} ref={dropdownRef}>
             {label && (
                 <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1.5 ml-1">
                     {label}
@@ -78,9 +76,9 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
             </div>
 
             {isOpen && (
-                <div className="absolute z-50 w-full mt-2 bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-700 rounded-xl shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                <div className="absolute z-50 w-full mt-2 bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700 rounded-xl shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
                     {searchable && (
-                        <div className="p-2 border-b border-gray-50 dark:border-slate-800">
+                        <div className="p-2 border-b border-gray-50 dark:border-slate-700">
                             <div className="relative">
                                 <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs" />
                                 <input
@@ -88,7 +86,7 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
                                     placeholder="Search..."
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="w-full pl-9 pr-3 py-2 bg-gray-50 dark:bg-slate-800 border border-gray-100 dark:border-slate-700 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 transition-all dark:text-gray-200"
+                                    className="w-full pl-9 pr-3 py-2 bg-gray-50 dark:bg-slate-700 border border-gray-100 dark:border-slate-600 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 transition-all dark:text-gray-200"
                                     autoFocus
                                 />
                             </div>
@@ -111,7 +109,7 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
                                     className={`px-4 py-2.5 rounded-lg cursor-pointer flex items-center justify-between text-sm transition-colors mb-0.5
                                         ${value === opt.value
                                             ? 'bg-violet-600 text-white font-semibold'
-                                            : 'text-gray-700 dark:text-gray-300 hover:bg-violet-50 dark:hover:bg-slate-800'}`}
+                                            : 'text-gray-700 dark:text-gray-300 hover:bg-violet-50 dark:hover:bg-slate-700'}`}
                                 >
                                     <span>{opt.label}</span>
                                     {value === opt.value && <FaCheck className="text-[10px]" />}
