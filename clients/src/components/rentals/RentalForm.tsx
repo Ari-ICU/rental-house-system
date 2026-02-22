@@ -21,12 +21,18 @@ const RentalForm: React.FC = () => {
         roomNumber: '',
         status: 'Active',
         rentAmount: 0,
+        depositAmount: 0,
         startDate: '',
         endDate: '',
         notes: '',
         clientPhone: '',
         clientEmail: '',
         clientAddress: '',
+        nationality: '',
+        gender: '',
+        occupation: '',
+        idCardType: '',
+        memberCount: 1,
         clientIDCard: '',
         emergencyContactName: '',
         emergencyContactPhone: '',
@@ -50,9 +56,10 @@ const RentalForm: React.FC = () => {
         e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
     ) => {
         const { name, value } = e.target;
+        const numericFields = ['rentAmount', 'depositAmount', 'memberCount'];
         setFormData((prev) => ({
             ...prev,
-            [name]: name === 'rentAmount' ? Number(value) : value,
+            [name]: numericFields.includes(name) ? Number(value) : value,
         }));
     };
 
@@ -142,6 +149,19 @@ const RentalForm: React.FC = () => {
         { value: 'Reserved', label: lang === 'km' ? 'កក់ទុក' : 'Reserved', color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-300' },
         { value: 'Completed', label: lang === 'km' ? 'បានបញ្ចប់' : 'Completed', color: 'text-gray-500', bg: 'bg-gray-50', border: 'border-gray-300' },
         { value: 'Maintenance', label: lang === 'km' ? 'កំពុងជួសជុល' : 'Maintenance', color: 'text-rose-600', bg: 'bg-rose-50', border: 'border-rose-300' },
+    ];
+
+    const genderOptions = [
+        { value: 'Male', label: lang === 'km' ? 'ប្រុស' : 'Male' },
+        { value: 'Female', label: lang === 'km' ? 'ស្រី' : 'Female' },
+        { value: 'Other', label: lang === 'km' ? 'ផ្សេងៗ' : 'Other' },
+    ];
+
+    const idCardTypeOptions = [
+        { value: 'National ID', label: lang === 'km' ? 'អត្តសញ្ញាណប័ណ្ណសញ្ជាតិខ្មែរ' : 'National ID' },
+        { value: 'Passport', label: lang === 'km' ? 'លិខិតឆ្លងដែន' : 'Passport' },
+        { value: 'Family Book', label: lang === 'km' ? 'សៀវភៅគ្រួសារ' : 'Family Book' },
+        { value: 'Driver License', label: lang === 'km' ? 'ប័ណ្ណបើកបរ' : 'Driver License' },
     ];
 
 
@@ -255,7 +275,6 @@ const RentalForm: React.FC = () => {
                             </div>
                         </div>
 
-                        {/* Room Number */}
                         <div className="space-y-1.5">
                             <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                 {lang === 'km' ? 'លេខបន្ទប់' : 'Room Number'} <span className="text-red-400">*</span>
@@ -272,6 +291,27 @@ const RentalForm: React.FC = () => {
                                     placeholder={lang === 'km' ? 'បញ្ចូលលេខបន្ទប់...' : 'e.g. A-101'}
                                     className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 outline-none transition-all text-sm text-gray-800 dark:text-gray-200 placeholder-gray-300 dark:placeholder-gray-600 bg-gray-50/50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 hover:border-gray-300 dark:hover:border-slate-600"
                                     required
+                                />
+                            </div>
+                        </div>
+
+                        {/* Member Count */}
+                        <div className="space-y-1.5">
+                            <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                {lang === 'km' ? 'ចំនួនសមាជិក' : 'Member Count'}
+                            </label>
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                                    <FaUser className="text-gray-300 text-xs" />
+                                </div>
+                                <input
+                                    type="number"
+                                    name="memberCount"
+                                    value={formData.memberCount || 1}
+                                    onChange={handleChange}
+                                    min={1}
+                                    placeholder="1"
+                                    className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 outline-none transition-all text-sm text-gray-800 dark:text-gray-200 placeholder-gray-300 dark:placeholder-gray-600 bg-gray-50/50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 hover:border-gray-300 dark:hover:border-slate-600"
                                 />
                             </div>
                         </div>
@@ -302,6 +342,27 @@ const RentalForm: React.FC = () => {
                                     placeholder="0.00"
                                     className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 outline-none transition-all text-sm text-gray-800 dark:text-gray-200 placeholder-gray-300 dark:placeholder-gray-600 bg-gray-50/50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 hover:border-gray-300 dark:hover:border-slate-600"
                                     required
+                                />
+                            </div>
+                        </div>
+
+                        {/* Deposit Amount */}
+                        <div className="space-y-1.5">
+                            <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                {lang === 'km' ? 'ប្រាក់កក់' : 'Deposit Amount'}
+                            </label>
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                                    <FaDollarSign className="text-gray-300 text-sm" />
+                                </div>
+                                <input
+                                    type="number"
+                                    name="depositAmount"
+                                    value={formData.depositAmount || ''}
+                                    onChange={handleChange}
+                                    min={0}
+                                    placeholder="0.00"
+                                    className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 outline-none transition-all text-sm text-gray-800 dark:text-gray-200 placeholder-gray-300 dark:placeholder-gray-600 bg-gray-50/50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 hover:border-gray-300 dark:hover:border-slate-600"
                                 />
                             </div>
                         </div>
@@ -396,6 +457,33 @@ const RentalForm: React.FC = () => {
                                 />
                             </div>
                         </div>
+                        {/* Gender */}
+                        <CustomDropdown
+                            label={lang === 'km' ? 'ភេទ' : 'Gender'}
+                            options={genderOptions}
+                            value={formData.gender || ''}
+                            onChange={(val: string) => setFormData(prev => ({ ...prev, gender: val }))}
+                        />
+
+                        {/* Occupation */}
+                        <div className="space-y-1.5">
+                            <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                {lang === 'km' ? 'មុខរបរ' : 'Occupation'}
+                            </label>
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                                    <FaUser className="text-gray-300 text-sm" />
+                                </div>
+                                <input
+                                    type="text"
+                                    name="occupation"
+                                    value={formData.occupation}
+                                    onChange={handleChange}
+                                    placeholder={lang === 'km' ? 'បញ្ចូលមុខរបរ...' : 'Enter occupation...'}
+                                    className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 outline-none transition-all text-sm text-gray-800 dark:text-gray-200 placeholder-gray-300 dark:placeholder-gray-600 bg-gray-50/50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 hover:border-gray-300 dark:hover:border-slate-600"
+                                />
+                            </div>
+                        </div>
 
                         {/* Address */}
                         <div className="space-y-1.5 md:col-span-2">
@@ -456,22 +544,45 @@ const RentalForm: React.FC = () => {
                             </h2>
                         </div>
                     </div>
-                    <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-5">
-                        <div>
-                            <FileUploader
-                                label={lang === 'km' ? 'អត្តសញ្ញាណប័ណ្ណ (មុខ)' : 'ID Card — Front Side'}
-                                accept="image/*"
-                                onFileSelect={(file) => handleCardImageChange('front', file)}
-                                preview={frontPreview}
+                    <div className="p-6">
+                        <div className="mb-6 grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div className="space-y-1.5">
+                                <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                    {lang === 'km' ? 'សញ្ជាតិ' : 'Nationality'}
+                                </label>
+                                <input
+                                    type="text"
+                                    name="nationality"
+                                    value={formData.nationality}
+                                    onChange={handleChange}
+                                    placeholder={lang === 'km' ? 'បញ្ចូលសញ្ជាតិ...' : 'Enter nationality...'}
+                                    className="w-full px-4 py-3 border border-gray-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 outline-none transition-all text-sm text-gray-800 dark:text-gray-200 placeholder-gray-300 dark:placeholder-gray-600 bg-gray-50/50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 hover:border-gray-300 dark:hover:border-slate-600"
+                                />
+                            </div>
+                            <CustomDropdown
+                                label={lang === 'km' ? 'ប្រភេទអត្តសញ្ញាណប័ណ្ណ' : 'ID Card Type'}
+                                options={idCardTypeOptions}
+                                value={formData.idCardType || ''}
+                                onChange={(val: string) => setFormData(prev => ({ ...prev, idCardType: val }))}
                             />
                         </div>
-                        <div>
-                            <FileUploader
-                                label={lang === 'km' ? 'អត្តសញ្ញាណប័ណ្ណ (ខាងក្រោយ)' : 'ID Card — Back Side'}
-                                accept="image/*"
-                                onFileSelect={(file) => handleCardImageChange('back', file)}
-                                preview={backPreview}
-                            />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div>
+                                <FileUploader
+                                    label={lang === 'km' ? 'អត្តសញ្ញាណប័ណ្ណ (មុខ)' : 'ID Card — Front Side'}
+                                    accept="image/*"
+                                    onFileSelect={(file) => handleCardImageChange('front', file)}
+                                    preview={frontPreview}
+                                />
+                            </div>
+                            <div>
+                                <FileUploader
+                                    label={lang === 'km' ? 'អត្តសញ្ញាណប័ណ្ណ (ខាងក្រោយ)' : 'ID Card — Back Side'}
+                                    accept="image/*"
+                                    onFileSelect={(file) => handleCardImageChange('back', file)}
+                                    preview={backPreview}
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>

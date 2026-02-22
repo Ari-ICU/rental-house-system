@@ -14,12 +14,18 @@ model Rental {
   roomNumber            String
   status                String
   rentAmount            Decimal
+  depositAmount         Decimal  @default(0)
   startDate             String?
   endDate               String?
   notes                 String?
   clientPhone           String?
   clientEmail           String?
   clientAddress         String?
+  nationality           String?
+  gender                String?
+  occupation            String?
+  idCardType            String?
+  memberCount           Int      @default(1)
   clientIDCard          String?
   clientImageCardFront  String?
   clientImageCardBack   String?

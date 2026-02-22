@@ -6,6 +6,8 @@ const convertDecimalToNumber = (rental) => {
         ...rental,
         rentAmount: Number(rental.rentAmount),
         // Add mapping for nested image object expected by frontend
+        depositAmount: Number(rental.depositAmount || 0),
+        memberCount: Number(rental.memberCount || 1),
         clientImageCard: {
             front: rental.clientImageCardFront || '',
             back: rental.clientImageCardBack || ''
@@ -71,16 +73,18 @@ const Rental = {
     create: async (rentalData) => {
         // Only pick the fields defined in schema to avoid Prisma errors on unknown fields
         const {
-            ClientName, roomNumber, status, rentAmount, startDate, endDate, notes,
-            clientPhone, clientEmail, clientAddress, clientIDCard,
-            clientImageCardFront, clientImageCardBack, emergencyContactName, emergencyContactPhone, image
+            ClientName, roomNumber, status, rentAmount, depositAmount, startDate, endDate, notes,
+            clientPhone, clientEmail, clientAddress, nationality, gender, occupation, idCardType,
+            memberCount, clientIDCard, clientImageCardFront, clientImageCardBack,
+            emergencyContactName, emergencyContactPhone, image
         } = rentalData;
 
         const newRental = await prisma.rental.create({
             data: {
-                ClientName, roomNumber, status, rentAmount, startDate, endDate, notes,
-                clientPhone, clientEmail, clientAddress, clientIDCard,
-                clientImageCardFront, clientImageCardBack, emergencyContactName, emergencyContactPhone, image
+                ClientName, roomNumber, status, rentAmount, depositAmount, startDate, endDate, notes,
+                clientPhone, clientEmail, clientAddress, nationality, gender, occupation, idCardType,
+                memberCount, clientIDCard, clientImageCardFront, clientImageCardBack,
+                emergencyContactName, emergencyContactPhone, image
             },
         });
         return convertDecimalToNumber(newRental);
@@ -98,9 +102,10 @@ const Rental = {
 
         // Whitelist allowed fields
         const allowedFields = [
-            'ClientName', 'roomNumber', 'status', 'rentAmount', 'startDate', 'endDate', 'notes',
-            'clientPhone', 'clientEmail', 'clientAddress', 'clientIDCard',
-            'clientImageCardFront', 'clientImageCardBack', 'emergencyContactName', 'emergencyContactPhone', 'image'
+            'ClientName', 'roomNumber', 'status', 'rentAmount', 'depositAmount', 'startDate', 'endDate', 'notes',
+            'clientPhone', 'clientEmail', 'clientAddress', 'nationality', 'gender', 'occupation', 'idCardType',
+            'memberCount', 'clientIDCard', 'clientImageCardFront', 'clientImageCardBack',
+            'emergencyContactName', 'emergencyContactPhone', 'image'
         ];
 
         const dataToUpdate = {};

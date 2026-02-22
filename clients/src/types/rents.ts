@@ -16,6 +16,7 @@ export interface Rental {
     roomNumber: string;
     status: RentalStatus;
     rentAmount: number;
+    depositAmount: number;
     startDate?: string;
     endDate?: string;
     notes?: string;
@@ -23,6 +24,11 @@ export interface Rental {
     clientPhone?: string;
     clientEmail?: string;
     clientAddress?: string;
+    nationality?: string;
+    gender?: string;
+    occupation?: string;
+    idCardType?: string;
+    memberCount?: number;
     clientIDCard?: string;
     clientImageCard?: ClientImageCard;
     emergencyContactName?: string;

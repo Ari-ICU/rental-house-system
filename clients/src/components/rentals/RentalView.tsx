@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import {
     FaArrowLeft, FaPhoneAlt, FaEnvelope, FaMapMarkerAlt, FaEdit,
     FaDoorOpen, FaDollarSign, FaCalendarAlt, FaIdCard,
-    FaExclamationTriangle, FaStickyNote, FaUser, FaMoneyBillWave,
+    FaExclamationTriangle, FaStickyNote, FaUser, FaMoneyBillWave, FaBriefcase,
 } from 'react-icons/fa';
 import { Rental, RentalStatus } from '@/types/rents';
 import { useLang } from '@/context/LangContext';
@@ -124,6 +124,10 @@ const RentalView: React.FC<RentalViewProps> = ({ rental }) => {
                                 {label('Room', 'បន្ទប់')}: <strong className="text-white">{rental.roomNumber}</strong>
                             </span>
                             <span className="flex items-center gap-1.5">
+                                <FaUser className="text-xs" />
+                                {label('Members', 'សមាជិក')}: <strong className="text-white">{rental.memberCount || 1}</strong>
+                            </span>
+                            <span className="flex items-center gap-1.5">
                                 <FaDollarSign className="text-xs" />
                                 <strong className="text-white">${rental.rentAmount.toLocaleString()}</strong>/mo
                             </span>
@@ -145,7 +149,7 @@ const RentalView: React.FC<RentalViewProps> = ({ rental }) => {
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {[
                     { icon: <FaDollarSign />, label: label('Monthly Rent', 'ថ្លៃជួល/ខែ'), value: `$${rental.rentAmount.toLocaleString()}`, color: 'text-violet-600 dark:text-violet-400', bg: 'bg-violet-50 dark:bg-violet-900/20' },
-                    { icon: <FaDoorOpen />, label: label('Room', 'បន្ទប់'), value: rental.roomNumber, color: 'text-blue-600 dark:text-blue-400', bg: 'bg-blue-50 dark:bg-blue-900/20' },
+                    { icon: <FaDollarSign />, label: label('Deposit', 'ប្រាក់កក់'), value: `$${(rental.depositAmount || 0).toLocaleString()}`, color: 'text-blue-600 dark:text-blue-400', bg: 'bg-blue-50 dark:bg-blue-900/20' },
                     { icon: <FaCalendarAlt />, label: label('Start Date', 'ចាប់ផ្តើម'), value: formatKhmerDate(rental.startDate ?? '', lang) || '—', color: 'text-emerald-600 dark:text-emerald-400', bg: 'bg-emerald-50 dark:bg-emerald-900/20' },
                     { icon: <FaCalendarAlt />, label: label('End Date', 'ថ្ងៃបញ្ចប់'), value: formatKhmerDate(rental.endDate ?? '', lang) || '—', color: 'text-amber-600 dark:text-amber-400', bg: 'bg-amber-50 dark:bg-amber-900/20' },
                 ].map(chip => (
@@ -166,6 +170,20 @@ const RentalView: React.FC<RentalViewProps> = ({ rental }) => {
                     <InfoRow icon={<FaPhoneAlt size={13} />} value={rental.clientPhone} />
                     <InfoRow icon={<FaEnvelope size={13} />} value={rental.clientEmail} />
                     <InfoRow icon={<FaMapMarkerAlt size={13} />} value={rental.clientAddress} />
+                    <div className="flex flex-wrap gap-x-8 gap-y-3 pt-1">
+                        <div className="flex items-center gap-3 text-sm text-gray-700 dark:text-gray-300">
+                            <span className="text-gray-400 dark:text-gray-500 flex-shrink-0"><FaUser size={13} /></span>
+                            <span>{label('Gender', 'ភេទ')}: <strong className="text-gray-900 dark:text-white">{label(rental.gender || '—', rental.gender === 'Male' ? 'ប្រុស' : rental.gender === 'Female' ? 'ស្រី' : '—')}</strong></span>
+                        </div>
+                        <div className="flex items-center gap-3 text-sm text-gray-700 dark:text-gray-300">
+                            <span className="text-gray-400 dark:text-gray-500 flex-shrink-0"><FaBriefcase size={13} /></span>
+                            <span>{label('Occupation', 'មុខរបរ')}: <strong className="text-gray-900 dark:text-white">{rental.occupation || '—'}</strong></span>
+                        </div>
+                        <div className="flex items-center gap-3 text-sm text-gray-700 dark:text-gray-300">
+                            <span className="text-gray-400 dark:text-gray-500 flex-shrink-0"><FaIdCard size={13} /></span>
+                            <span>{label('Nationality', 'សញ្ជាតិ')}: <strong className="text-gray-900 dark:text-white">{rental.nationality || '—'}</strong></span>
+                        </div>
+                    </div>
                     {!rental.clientPhone && !rental.clientEmail && !rental.clientAddress && (
                         <p className="text-sm text-gray-400 dark:text-gray-500 italic">{label('No contact details provided.', 'មិនមានព័ត៌មានទំនាក់ទំនង។')}</p>
                     )}
@@ -178,6 +196,10 @@ const RentalView: React.FC<RentalViewProps> = ({ rental }) => {
                 iconBg="bg-amber-100"
                 title={label('ID Card Documents', 'អត្តសញ្ញាណប័ណ្ណ')}
             >
+                <div className="mb-6 flex items-center gap-3 text-sm text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-slate-800/50 p-3 rounded-xl border border-gray-100 dark:border-slate-800">
+                    <span className="text-gray-400 dark:text-gray-500 flex-shrink-0"><FaIdCard size={14} /></span>
+                    <span>{label('Card Type', 'ប្រភេទអត្តសញ្ញាណប័ណ្ណ')}: <strong className="text-gray-900 dark:text-white">{rental.idCardType || '—'}</strong></span>
+                </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     {/* Front */}
                     <div className="space-y-2">
