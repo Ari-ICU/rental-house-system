@@ -298,7 +298,7 @@ const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
                                             </div>
                                         </div>
 
-                                        <div className="max-h-64 overflow-y-auto p-2">
+                                        <div className="max-h-[260px] overflow-y-auto p-2 custom-scrollbar">
                                             {(() => {
                                                 const combinedRentals = [...activeRentals];
                                                 if (bill && bill.rental && !activeRentals.find(r => r.id === bill.rental.id)) {

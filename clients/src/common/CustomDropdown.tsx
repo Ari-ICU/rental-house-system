@@ -92,7 +92,7 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
                             </div>
                         </div>
                     )}
-                    <div className="max-h-60 overflow-y-auto p-1">
+                    <div className="max-h-[220px] overflow-y-auto p-1 custom-scrollbar">
                         {filteredOptions.length === 0 ? (
                             <div className="px-4 py-3 text-center text-xs text-gray-400 font-medium italic">
                                 No results found
