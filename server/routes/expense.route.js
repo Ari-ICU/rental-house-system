@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const expenseController = require('../controllers/expenseController');
-const { authenticateToken } = require('../middleware/auth.middleware');
+const { protect } = require('../middleware/auth.middleware');
 
 // All expense routes require authentication
-router.use(authenticateToken);
+router.use(protect);
 
 router.get('/', expenseController.getExpenses);
 router.get('/:id', expenseController.getExpenseById);
