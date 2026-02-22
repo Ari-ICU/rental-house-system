@@ -3,6 +3,7 @@ const prisma = require('../config/prisma');
 const logger = require('./logger');
 const telegramSender = require('./telegramSender');
 const SystemSetting = require('../models/systemSetting');
+const { generateBillPdfBuffer } = require('./pdfGenerator');
 
 const runMonthlyBillingCycle = async () => {
     try {
@@ -62,6 +63,29 @@ const runMonthlyBillingCycle = async () => {
                     message = `✅ <b>New Billing Cycle Generated</b>\n\n<b>${newBillsCreated}</b> new bills were automatically generated for <b>${currentMonthString}</b>.\nStatus is defaulted to "Unpaid".\n\nPlease update the water and electricity meter readings for these active rooms.`;
                 }
                 telegramSender.sendMessage(settings.telegramBotToken, settings.telegramChatId, message).catch(console.error);
+
+                // Auto-send the newly created unpaid bills to tenants
+                const newlyGeneratedBills = await prisma.bill.findMany({
+                    where: { month: currentMonthString },
+                    include: { rental: true }
+                });
+                for (const bill of newlyGeneratedBills) {
+                    if (bill.rental && bill.rental.telegramChatId) {
+                        try {
+                            const pdfBuffer = await generateBillPdfBuffer(bill, settings);
+                            const fileName = `Invoice_Room_${bill.rental.roomNumber}_${bill.month}.pdf`;
+                            let caption = '';
+                            if (lang === 'km') {
+                                caption = `📄 <b>វិក្កយបត្រប្រចាំខែថ្មី: ${bill.month}</b>\nបន្ទប់: ${bill.rental.roomNumber}\n\nសូមមើលឯកសារភ្ជាប់សម្រាប់ព័ត៌មានលម្អិត។`;
+                            } else {
+                                caption = `📄 <b>New Monthly Invoice: ${bill.month}</b>\nRoom: ${bill.rental.roomNumber}\n\nPlease find the attached PDF invoice for your details.`;
+                            }
+                            await telegramSender.sendDocument(settings.telegramBotToken, bill.rental.telegramChatId, pdfBuffer, fileName, caption);
+                        } catch (err) {
+                            logger.error(`Failed to send new cycle bill PDF to room ${bill.rental.roomNumber}:`, err.message);
+                        }
+                    }
+                }
             }
         }
 
@@ -110,6 +134,56 @@ const checkRentalEndDates = async () => {
     }
 };
 
+const sendPaymentReminders = async () => {
+    try {
+        logger.info('Running automated payment reminders check...');
+        const settings = await SystemSetting.getSettings();
+        if (!settings || !settings.telegramBotToken) return;
+
+        const lang = settings.telegramLanguage === 'km' ? 'km' : 'en';
+
+        // Find all bills where electricityStatus == 'Unpaid' or waterStatus == 'Unpaid'
+        const unpaidBills = await prisma.bill.findMany({
+            where: {
+                OR: [
+                    { electricityStatus: 'Unpaid' },
+                    { waterStatus: 'Unpaid' }
+                ]
+            },
+            include: {
+                rental: true
+            }
+        });
+
+        let reminderCount = 0;
+        for (const bill of unpaidBills) {
+            if (bill.rental && bill.rental.telegramChatId) {
+                const rentAmount = parseFloat(bill.rentAmount) || (parseFloat(bill.rental.rentAmount) || 0);
+                const elecAmount = bill.electricityStatus === 'Unpaid' ? parseFloat(bill.electricityAmount) || 0 : 0;
+                const waterAmount = bill.waterStatus === 'Unpaid' ? parseFloat(bill.waterAmount) || 0 : 0;
+                const amountToPay = rentAmount + elecAmount + waterAmount;
+
+                if (amountToPay > 0) {
+                    let message = '';
+                    if (lang === 'km') {
+                        message = `🔔 <b>ការរំលឹកការទូទាត់ប្រាក់ឈ្នួលផ្ទះ</b>\n\nសួស្តី ${bill.rental.ClientName} (បន្ទប់ ${bill.rental.roomNumber}),\nនេះគឺជាការរំលឹកប្រកបដោយភាពរាក់ទាក់ថា អ្នកមានការទូទាត់ដែលមិនទាន់បានបង់សម្រាប់ខែ <b>${bill.month}</b>។\n\nចំនួនទឹកប្រាក់សរុបដែលត្រូវបង់: <b>$${amountToPay.toFixed(2)}</b>\n\nសូមធ្វើការទូទាត់ឱ្យបានឆាប់តាមដែលអាចធ្វើទៅបាន។ សូមអរគុណ!`;
+                    } else {
+                        message = `🔔 <b>Rent Payment Reminder</b>\n\nHello ${bill.rental.ClientName} (Room ${bill.rental.roomNumber}),\nThis is a friendly reminder that you have an outstanding balance for the month of <b>${bill.month}</b>.\n\nTotal Amount Due: <b>$${amountToPay.toFixed(2)}</b>\n\nPlease proceed with the payment at your earliest convenience. Thank you!`;
+                    }
+
+                    await telegramSender.sendMessage(settings.telegramBotToken, bill.rental.telegramChatId, message);
+                    reminderCount++;
+                }
+            }
+        }
+        if (reminderCount > 0) {
+            logger.info(`Sent payment reminders to ${reminderCount} tenants with unpaid bills.`);
+        }
+    } catch (error) {
+        logger.error('Error in sendPaymentReminders cron check:', error.message);
+    }
+};
+
 const initializeCronJobs = () => {
     // Run immediately on boot
     checkRentalEndDates();
@@ -124,9 +198,15 @@ const initializeCronJobs = () => {
     cron.schedule('0 0 1 * *', () => {
         runMonthlyBillingCycle();
     });
+
+    // Schedule to run at 10:00 AM every 3 days for payment reminders
+    cron.schedule('0 10 */3 * *', () => {
+        sendPaymentReminders();
+    });
 };
 
 module.exports = {
     initializeCronJobs,
     checkRentalEndDates,
+    sendPaymentReminders,
 };
