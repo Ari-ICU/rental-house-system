@@ -15,6 +15,7 @@ import {
     FaPlug,
     FaCog,
     FaChevronLeft,
+    FaMoneyBillWave,
     FaSignOutAlt
 } from "react-icons/fa";
 import { useLang } from "@/context/LangContext";
@@ -53,6 +54,7 @@ const Sidebar: React.FC<{ isMobileOpen: boolean; onClose: () => void }> = ({ isM
             titleKh: "ប្រតិបត្តិការ",
             links: [
                 { name: "Rentals", nameKh: "ការជួល", href: "/dashboard/rentals", icon: <FaFileContract className="w-4 h-4" /> },
+                { name: "Expenses", nameKh: "ចំណាយ", href: "/dashboard/expenses", icon: <FaMoneyBillWave className="w-4 h-4" /> },
                 { name: "Utilities & Bills", nameKh: "សេវាអគ្គិសនី និងទឹក", href: "/dashboard/bills", icon: <FaPlug className="w-4 h-4" /> },
             ],
         },

@@ -97,6 +97,7 @@ const settingRoutes = require('./routes/settingRoutes');
 const paymentRoutes = require('./routes/paymentRoutes');
 const authRoutes = require('./routes/auth.route');
 const supportRoutes = require('./routes/support.route');
+const expenseRoutes = require('./routes/expense.route');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/rentals', rentalRoutes);
@@ -105,6 +106,7 @@ app.use('/api/reports', reportRoutes);
 app.use('/api/settings', settingRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/support', supportRoutes);
+app.use('/api/expenses', expenseRoutes);
 
 
 // ── Health check ──────────────────────────────────────────────────────────────
