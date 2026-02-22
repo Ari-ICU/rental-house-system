@@ -159,34 +159,38 @@ export const printMultipleBills = (bills: Bill[], lang: "en" | "km" = "en", sign
       <title>${title}</title>
       <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:400,600&family=Noto+Sans+Khmer:wght@400;600&family=Noto+Sans:wght@400;600&display=swap" rel="stylesheet">
       <style>
-        @page {
-          size: 80mm 135mm;
-          margin: 2mm;
-        }
+        @page { margin: 0; }
         body {
-          width: 90mm;
-          margin: 0 auto;
-          padding: 6mm 5mm;
+          margin: 0;
+          padding: 4mm 2mm;
+          width: 76mm;
           font-family: ${lang === "km" ? "'Noto Sans Khmer', 'Khmer OS', sans-serif" : "'Noto Sans', Arial, sans-serif"};
-          font-size: 10pt;
-          line-height: 1.5;
+          font-size: 8.5pt;
+          line-height: 1.4;
           color: #000;
           background: #fff;
         }
         .center { text-align: center; }
         .bold { font-weight: 600; }
-        .divider { border-bottom: 1px dotted #999; margin: 8px 0; }
-        .line { display: flex; justify-content: space-between; margin: 4px 0; }
-        .label { flex: 1; ${lang === "km" ? "padding-right: 6px;" : "padding-left: 6px;"} }
+        .company { font-size: 11pt; margin-bottom: 2px; text-transform: uppercase; text-align: center; font-weight: 600; }
+        .address, .contact { font-size: 8pt; color: #333; margin: 1px 0; text-align: center; }
+        .divider { border-bottom: 1px dashed #666; margin: 6px 0; }
+        .line { display: flex; justify-content: space-between; margin: 3px 0; }
+        .label { flex: 1; ${lang === "km" ? "padding-right: 4px;" : "padding-left: 4px;"} }
         .amount { font-family: 'IBM Plex Mono', monospace; font-weight: 600; white-space: nowrap; }
-        .total-line { margin-top: 8px; padding-top: 6px; border-top: 1px dashed #666; }
-        .total-label { font-size: 10pt; text-transform: uppercase; }
-        .total-amount { font-size: 11pt; }
-        .note-section { margin-top: 10px; padding: 6px; background: #f5f5f5; border-radius: 6px; font-size: 8.5pt; color: #444; }
-        .signature-section { margin-top: 20px; text-align: right; font-size: 9pt; }
-        .signature-line { border-bottom: 1px dotted #999; width: 80px; margin-left: auto; margin-bottom: 4px; }
-        .footer { margin-top: 25px; font-size: 8.5pt; color: #666; }
-        @media print { body { width: 70mm; } img { max-width: 100%; height: auto; } }
+        .total-line { margin-top: 6px; padding-top: 4px; border-top: 1px dashed #333; }
+        .total-label { font-size: 9pt; text-transform: uppercase; }
+        .total-amount { font-size: 10pt; }
+        .note-section { margin-top: 8px; padding: 4px; background: #f9f9f9; border-radius: 4px; font-size: 8pt; color: #333; }
+        .signature-section { margin-top: 15px; margin-bottom: 5px; text-align: right; font-size: 8pt; page-break-inside: avoid; }
+        .signature-line { border-bottom: 1px dotted #666; width: 70px; margin-left: auto; margin-bottom: 4px; }
+        .footer { margin-top: 12px; font-size: 8pt; color: #444; text-align: center; page-break-inside: avoid; }
+        .bill { page-break-inside: avoid; margin-bottom: 5mm; }
+        @media print {
+          @page { margin: 0; }
+          body { margin: 0; padding: 4mm 2mm; width: 76mm; }
+          img { max-width: 100%; height: auto; }
+        }
       </style>
     </head>
     <body>
