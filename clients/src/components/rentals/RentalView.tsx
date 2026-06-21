@@ -17,10 +17,10 @@ interface RentalViewProps {
 }
 
 const statusConfig: { [key in RentalStatus]: { label: string; labelKm: string; dot: string; badge: string } } = {
-    'Active': { label: 'Active', labelKm: 'កំពុងជួល', dot: 'bg-emerald-400', badge: 'bg-emerald-50 text-emerald-700 border border-emerald-200' },
-    'Reserved': { label: 'Reserved', labelKm: 'កក់ទុក', dot: 'bg-blue-400', badge: 'bg-blue-50 text-blue-700 border border-blue-200' },
-    'Completed': { label: 'Completed', labelKm: 'បានបញ្ចប់', dot: 'bg-gray-400', badge: 'bg-gray-100 text-gray-600 border border-gray-200' },
-    'Maintenance': { label: 'Maintenance', labelKm: 'កំពុងជួសជុល', dot: 'bg-rose-400', badge: 'bg-rose-50 text-rose-700 border border-rose-200' },
+    'Active': { label: 'Active', labelKm: 'កំពុងជួល', dot: 'bg-emerald-400', badge: 'bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/20 dark:text-emerald-400 dark:border-emerald-800/50' },
+    'Reserved': { label: 'Reserved', labelKm: 'កក់ទុក', dot: 'bg-blue-400', badge: 'bg-blue-50 text-blue-700 border border-blue-200 dark:bg-blue-950/20 dark:text-blue-400 dark:border-blue-800/50' },
+    'Completed': { label: 'Completed', labelKm: 'បានបញ្ចប់', dot: 'bg-gray-400', badge: 'bg-gray-100 text-gray-600 border border-gray-200 dark:bg-slate-800/50 dark:text-gray-400 dark:border-slate-700' },
+    'Maintenance': { label: 'Maintenance', labelKm: 'កំពុងជួសជុល', dot: 'bg-rose-400', badge: 'bg-rose-50 text-rose-700 border border-rose-200 dark:bg-rose-950/20 dark:text-rose-400 dark:border-rose-800/50' },
 };
 
 const avatarGradients = [
@@ -74,7 +74,7 @@ const RentalView: React.FC<RentalViewProps> = ({ rental }) => {
         <div className="max-w-5xl mx-auto space-y-6 pb-10">
 
             {/* Hero Banner */}
-            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-700 p-8 shadow-xl shadow-purple-200">
+            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-700 p-8 shadow-xl shadow-purple-200 dark:shadow-none">
                 <div className="absolute -top-8 -right-8 w-48 h-48 bg-white/10 rounded-full blur-2xl pointer-events-none" />
                 <div className="absolute -bottom-10 -left-10 w-56 h-56 bg-white/5 rounded-full blur-3xl pointer-events-none" />
 
@@ -137,7 +137,7 @@ const RentalView: React.FC<RentalViewProps> = ({ rental }) => {
                     {/* Edit Button */}
                     <button
                         onClick={() => router.push(`/dashboard/rentals/edit/${rental.id}`)}
-                        className="flex items-center gap-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white px-4 py-2.5 rounded-xl text-sm font-semibold transition-all border border-white/20 hover:border-white/40 flex-shrink-0"
+                        className="flex items-center gap-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white px-4 py-2.5 rounded-xl text-sm font-semibold transition-all border border-white/20 hover:border-white/40 flex-shrink-0 cursor-pointer"
                     >
                         <FaEdit className="text-xs" />
                         {label('Edit', 'កែប្រែ')}
@@ -148,22 +148,27 @@ const RentalView: React.FC<RentalViewProps> = ({ rental }) => {
             {/* Stat chips row */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {[
-                    { icon: <FaDollarSign />, label: label('Monthly Rent', 'ថ្លៃជួល/ខែ'), value: `$${rental.rentAmount.toLocaleString()}`, color: 'text-violet-600 dark:text-violet-400', bg: 'bg-violet-50 dark:bg-violet-900/20' },
-                    { icon: <FaDollarSign />, label: label('Deposit', 'ប្រាក់កក់'), value: `$${(rental.depositAmount || 0).toLocaleString()}`, color: 'text-blue-600 dark:text-blue-400', bg: 'bg-blue-50 dark:bg-blue-900/20' },
-                    { icon: <FaCalendarAlt />, label: label('Start Date', 'ចាប់ផ្តើម'), value: formatKhmerDate(rental.startDate ?? '', lang) || '—', color: 'text-emerald-600 dark:text-emerald-400', bg: 'bg-emerald-50 dark:bg-emerald-900/20' },
-                    { icon: <FaCalendarAlt />, label: label('End Date', 'ថ្ងៃបញ្ចប់'), value: formatKhmerDate(rental.endDate ?? '', lang) || '—', color: 'text-amber-600 dark:text-amber-400', bg: 'bg-amber-50 dark:bg-amber-900/20' },
+                    { icon: <FaDollarSign size={13} />, label: label('Monthly Rent', 'ថ្លៃជួល/ខែ'), value: `$${rental.rentAmount.toLocaleString()}`, color: 'text-violet-600 dark:text-violet-400', bg: 'bg-violet-50 dark:bg-violet-950/20', border: 'border-violet-100 dark:border-violet-900/30' },
+                    { icon: <FaDollarSign size={13} />, label: label('Deposit', 'ប្រាក់កក់'), value: `$${(rental.depositAmount || 0).toLocaleString()}`, color: 'text-blue-600 dark:text-blue-400', bg: 'bg-blue-50 dark:bg-blue-950/20', border: 'border-blue-100 dark:border-blue-900/30' },
+                    { icon: <FaCalendarAlt size={13} />, label: label('Start Date', 'ចាប់ផ្តើម'), value: formatKhmerDate(rental.startDate ?? '', lang) || '—', color: 'text-emerald-600 dark:text-emerald-400', bg: 'bg-emerald-50 dark:bg-emerald-950/20', border: 'border-emerald-100 dark:border-emerald-900/30' },
+                    { icon: <FaCalendarAlt size={13} />, label: label('End Date', 'ថ្ងៃបញ្ចប់'), value: formatKhmerDate(rental.endDate ?? '', lang) || '—', color: 'text-amber-600 dark:text-amber-400', bg: 'bg-amber-50 dark:bg-amber-950/20', border: 'border-amber-100 dark:border-amber-900/30' },
                 ].map(chip => (
-                    <div key={chip.label} className={`${chip.bg} rounded-2xl p-4 border border-gray-100 dark:border-slate-700/50`}>
-                        <p className={`text-xs font-semibold uppercase tracking-wider mb-1 ${chip.color} opacity-70`}>{chip.label}</p>
-                        <p className={`text-sm font-bold ${chip.color}`}>{chip.value}</p>
+                    <div key={chip.label} className={`${chip.bg} ${chip.border} rounded-2xl p-4 border flex items-center justify-between transition-all hover:scale-[1.02] duration-200 shadow-sm`}>
+                        <div className="space-y-1">
+                            <p className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">{chip.label}</p>
+                            <p className={`text-base font-extrabold ${chip.color}`}>{chip.value}</p>
+                        </div>
+                        <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${chip.color} bg-white dark:bg-slate-900/60 shadow-sm border border-gray-100/50 dark:border-slate-800/80`}>
+                            {chip.icon}
+                        </div>
                     </div>
                 ))}
             </div>
 
             {/* Client Info */}
             <DetailCard
-                icon={<FaUser className="text-violet-600 text-xs" />}
-                iconBg="bg-violet-100"
+                icon={<FaUser className="text-violet-600 dark:text-violet-400 text-xs" />}
+                iconBg="bg-violet-100 dark:bg-violet-950/40"
                 title={label('Client Information', 'ព័ត៌មានអតិថិជន')}
             >
                 <div className="space-y-3">
@@ -192,8 +197,8 @@ const RentalView: React.FC<RentalViewProps> = ({ rental }) => {
 
             {/* ID Cards */}
             <DetailCard
-                icon={<FaIdCard className="text-amber-600 text-xs" />}
-                iconBg="bg-amber-100"
+                icon={<FaIdCard className="text-amber-600 dark:text-amber-400 text-xs" />}
+                iconBg="bg-amber-100 dark:bg-amber-950/40"
                 title={label('ID Card Documents', 'អត្តសញ្ញាណប័ណ្ណ')}
             >
                 <div className="mb-6 flex flex-wrap gap-4 items-center text-sm text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-slate-800/50 p-4 rounded-xl border border-gray-100 dark:border-slate-800">
@@ -255,8 +260,8 @@ const RentalView: React.FC<RentalViewProps> = ({ rental }) => {
             {/* Emergency Contact */}
             {(rental.emergencyContactName || rental.emergencyContactPhone) && (
                 <DetailCard
-                    icon={<FaExclamationTriangle className="text-red-500 text-xs" />}
-                    iconBg="bg-red-100"
+                    icon={<FaExclamationTriangle className="text-red-600 dark:text-red-400 text-xs" />}
+                    iconBg="bg-red-100 dark:bg-red-950/40"
                     title={label('Emergency Contact', 'ទំនាក់ទំនងបន្ទាន់')}
                 >
                     <div className="flex flex-col sm:flex-row gap-6">
@@ -288,8 +293,8 @@ const RentalView: React.FC<RentalViewProps> = ({ rental }) => {
 
             {/* Billing History */}
             <DetailCard
-                icon={<FaMoneyBillWave className="text-emerald-600 text-xs" />}
-                iconBg="bg-emerald-100"
+                icon={<FaMoneyBillWave className="text-emerald-600 dark:text-emerald-400 text-xs" />}
+                iconBg="bg-emerald-100 dark:bg-emerald-950/40"
                 title={label('Billing History', 'ប្រវត្តិនៃការបង់ប្រាក់')}
             >
                 {rental.bills && rental.bills.length > 0 ? (
@@ -312,11 +317,11 @@ const RentalView: React.FC<RentalViewProps> = ({ rental }) => {
                                         <td className="px-4 py-3 text-gray-600 dark:text-gray-400">${bill.electricityAmount}</td>
                                         <td className="px-4 py-3 text-gray-600 dark:text-gray-400">${bill.waterAmount}</td>
                                         <td className="px-4 py-3">
-                                            <div className="flex gap-1">
-                                                <span className={`px-1.5 py-0.5 rounded-md ${bill.electricityStatus === 'Paid' ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-800/50' : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800/50'}`}>
+                                            <div className="flex gap-1.5">
+                                                <span className={`px-2 py-0.5 rounded-md text-[10px] font-semibold border ${bill.electricityStatus === 'Paid' ? 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800/50' : 'bg-rose-50 dark:bg-rose-950/20 text-rose-700 dark:text-rose-400 border-rose-200 dark:border-rose-800/50'}`}>
                                                     E: {label(bill.electricityStatus, bill.electricityStatus === 'Paid' ? 'បង់ហើយ' : 'នៅ')}
                                                 </span>
-                                                <span className={`px-1.5 py-0.5 rounded-md ${bill.waterStatus === 'Paid' ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-800/50' : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800/50'}`}>
+                                                <span className={`px-2 py-0.5 rounded-md text-[10px] font-semibold border ${bill.waterStatus === 'Paid' ? 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800/50' : 'bg-rose-50 dark:bg-rose-950/20 text-rose-700 dark:text-rose-400 border-rose-200 dark:border-rose-800/50'}`}>
                                                     W: {label(bill.waterStatus, bill.waterStatus === 'Paid' ? 'បង់ហើយ' : 'នៅ')}
                                                 </span>
                                             </div>
@@ -336,8 +341,8 @@ const RentalView: React.FC<RentalViewProps> = ({ rental }) => {
             {/* Notes */}
             {rental.notes && (
                 <DetailCard
-                    icon={<FaStickyNote className="text-green-600 text-xs" />}
-                    iconBg="bg-green-100"
+                    icon={<FaStickyNote className="text-green-600 dark:text-green-400 text-xs" />}
+                    iconBg="bg-green-100 dark:bg-green-950/40"
                     title={label('Notes', 'កំណត់សម្គាល់')}
                 >
                     <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-line leading-relaxed">{rental.notes}</p>
@@ -347,7 +352,7 @@ const RentalView: React.FC<RentalViewProps> = ({ rental }) => {
             {/* Bottom Edit CTA */}
             <button
                 onClick={() => router.push(`/dashboard/rentals/edit/${rental.id}`)}
-                className="w-full py-4 px-6 rounded-2xl font-bold text-white text-sm tracking-wide flex items-center justify-center gap-3 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 shadow-lg shadow-violet-200 hover:shadow-violet-300 hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300"
+                className="w-full py-4 px-6 rounded-2xl font-bold text-white text-sm tracking-wide flex items-center justify-center gap-3 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 shadow-lg shadow-violet-200 dark:shadow-none hover:shadow-violet-300 hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 cursor-pointer"
             >
                 <FaEdit className="text-white/80" />
                 {label('Edit This Rental', 'កែប្រែការជួលនេះ')}

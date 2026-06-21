@@ -69,7 +69,7 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
                 onClick={() => setIsOpen(!isOpen)}
                 className={`group w-full px-4 py-3 border rounded-xl flex justify-between items-center cursor-pointer transition-all duration-200 outline-none ${bgClass} ${borderClass} ${colorClass}`}
             >
-                <span className="text-sm font-black translate-no notranslate" translate="no">
+                <span className="text-sm font-medium translate-no notranslate" translate="no">
                     {selectedOption ? selectedOption.label : placeholder}
                 </span>
                 <FaChevronDown className={`text-xs transition-transform duration-300 ${isOpen ? 'rotate-180 text-violet-500' : 'text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300'}`} />
@@ -111,7 +111,12 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
                                             ? 'bg-violet-600 text-white font-semibold'
                                             : 'text-gray-700 dark:text-gray-300 hover:bg-violet-50 dark:hover:bg-slate-700'}`}
                                 >
-                                    <span>{opt.label}</span>
+                                    <div className="flex items-center gap-2.5">
+                                        {opt.color && (
+                                            <span className={`w-2 h-2 rounded-full flex-shrink-0 ${opt.color.replace(/text-/g, 'bg-')}`} />
+                                        )}
+                                        <span>{opt.label}</span>
+                                    </div>
                                     {value === opt.value && <FaCheck className="text-[10px]" />}
                                 </div>
                             ))
