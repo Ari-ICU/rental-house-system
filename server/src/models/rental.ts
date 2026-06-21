@@ -74,7 +74,7 @@ const Rental = {
             ClientName, roomNumber, status, rentAmount, depositAmount, startDate, endDate, notes,
             clientPhone, clientEmail, clientAddress, nationality, gender, occupation, idCardType,
             memberCount, clientIDCard, clientImageCardFront, clientImageCardBack,
-            emergencyContactName, emergencyContactPhone, image
+            emergencyContactName, emergencyContactPhone, image, telegramChatId
         } = rentalData;
 
         const newRental = await prisma.rental.create({
@@ -82,7 +82,7 @@ const Rental = {
                 ClientName, roomNumber, status, rentAmount, depositAmount, startDate, endDate, notes,
                 clientPhone, clientEmail, clientAddress, nationality, gender, occupation, idCardType,
                 memberCount, clientIDCard, clientImageCardFront, clientImageCardBack,
-                emergencyContactName, emergencyContactPhone, image
+                emergencyContactName, emergencyContactPhone, image, telegramChatId
             },
         });
         return convertDecimalToNumber(newRental);
@@ -98,7 +98,7 @@ const Rental = {
             'ClientName', 'roomNumber', 'status', 'rentAmount', 'depositAmount', 'startDate', 'endDate', 'notes',
             'clientPhone', 'clientEmail', 'clientAddress', 'nationality', 'gender', 'occupation', 'idCardType',
             'memberCount', 'clientIDCard', 'clientImageCardFront', 'clientImageCardBack',
-            'emergencyContactName', 'emergencyContactPhone', 'image'
+            'emergencyContactName', 'emergencyContactPhone', 'image', 'telegramChatId'
         ];
 
         const dataToUpdate: any = {};
