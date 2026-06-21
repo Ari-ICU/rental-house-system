@@ -369,7 +369,7 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
                                             </label>
                                             <div className="relative">
                                                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                                                    <FaUser className="text-gray-300 text-sm" />
+                                                    <FaUser className="text-gray-300 dark:text-slate-500 text-sm" />
                                                 </div>
                                                 <input
                                                     type="text" name="ClientName" value={formData.ClientName}
@@ -387,7 +387,7 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
                                             </label>
                                             <div className="relative">
                                                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                                                    <FaDoorOpen className="text-gray-300 text-sm" />
+                                                    <FaDoorOpen className="text-gray-300 dark:text-slate-500 text-sm" />
                                                 </div>
                                                 <input
                                                     type="text" name="roomNumber" value={formData.roomNumber}
@@ -405,7 +405,7 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
                                             </label>
                                             <div className="relative">
                                                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                                                    <FaUser className="text-gray-300 text-xs" />
+                                                    <FaUser className="text-gray-300 dark:text-slate-500 text-xs" />
                                                 </div>
                                                 <input
                                                     type="number"
@@ -426,6 +426,7 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
                                             value={formData.status}
                                             onChange={(val: string) => setFormData(prev => ({ ...prev, status: val as RentalStatus }))}
                                             searchable={true}
+                                            placeholder={lang === 'km' ? 'ជ្រើសរើសស្ថានភាព...' : 'Select status...'}
                                         />
 
                                         {/* Rent Amount */}
@@ -435,7 +436,7 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
                                             </label>
                                             <div className="relative">
                                                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                                                    <FaDollarSign className="text-gray-300 text-sm" />
+                                                    <FaDollarSign className="text-gray-300 dark:text-slate-500 text-sm" />
                                                 </div>
                                                 <input
                                                     type="number" name="rentAmount" value={formData.rentAmount || ''} min={0}
@@ -452,7 +453,7 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
                                             </label>
                                             <div className="relative">
                                                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                                                    <FaDollarSign className="text-gray-300 text-sm" />
+                                                    <FaDollarSign className="text-gray-300 dark:text-slate-500 text-sm" />
                                                 </div>
                                                 <input
                                                     type="number"
@@ -473,6 +474,7 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
                                             value={formData.depositStatus || 'Unpaid'}
                                             onChange={(val) => setFormData(prev => ({ ...prev, depositStatus: val }))}
                                             searchable={true}
+                                            placeholder={lang === 'km' ? 'ជ្រើសរើសស្ថានភាព...' : 'Select status...'}
                                         />
 
                                         {/* Payment Due Day */}
@@ -482,7 +484,7 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
                                             </label>
                                             <div className="relative">
                                                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                                                    <FaCalendarAlt className="text-gray-300 text-sm" />
+                                                    <FaCalendarAlt className="text-gray-300 dark:text-slate-500 text-sm" />
                                                 </div>
                                                 <input
                                                     type="number"
@@ -552,7 +554,7 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
                                             </label>
                                             <div className="relative">
                                                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                                                    <FaBolt className="text-gray-300 text-sm" />
+                                                    <FaBolt className="text-gray-300 dark:text-slate-500 text-sm" />
                                                 </div>
                                                 <input
                                                     type="number"
@@ -573,7 +575,7 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
                                             </label>
                                             <div className="relative">
                                                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                                                    <FaTint className="text-gray-300 text-sm" />
+                                                    <FaTint className="text-gray-300 dark:text-slate-500 text-sm" />
                                                 </div>
                                                 <input
                                                     type="number"
@@ -612,7 +614,7 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
                                             </label>
                                             <div className="relative">
                                                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                                                    <FaPhone className="text-gray-300 text-xs" />
+                                                    <FaPhone className="text-gray-300 dark:text-slate-500 text-xs" />
                                                 </div>
                                                 <input
                                                     type="tel" name="clientPhone" value={formData.clientPhone}
@@ -628,7 +630,7 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
                                             </label>
                                             <div className="relative">
                                                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                                                    <FaEnvelope className="text-gray-300 text-sm" />
+                                                    <FaEnvelope className="text-gray-300 dark:text-slate-500 text-sm" />
                                                 </div>
                                                 <input
                                                     type="email" name="clientEmail" value={formData.clientEmail}
@@ -644,7 +646,7 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
                                             </label>
                                             <div className="relative">
                                                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                                                    <FaMapMarkerAlt className="text-gray-300 text-sm" />
+                                                    <FaMapMarkerAlt className="text-gray-300 dark:text-slate-500 text-sm" />
                                                 </div>
                                                 <input
                                                     type="text" name="clientAddress" value={formData.clientAddress}
@@ -662,6 +664,7 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
                                             value={formData.gender || ''}
                                             onChange={(val: string) => setFormData(prev => ({ ...prev, gender: val }))}
                                             searchable={true}
+                                            placeholder={lang === 'km' ? 'ជ្រើសរើសភេទ...' : 'Select gender...'}
                                         />
 
                                         {/* Occupation */}
@@ -671,7 +674,7 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
                                             </label>
                                             <div className="relative">
                                                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                                                    <FaUser className="text-gray-300 text-sm" />
+                                                    <FaUser className="text-gray-300 dark:text-slate-500 text-sm" />
                                                 </div>
                                                 <input
                                                     type="text"
@@ -691,7 +694,7 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
                                             </label>
                                             <div className="relative">
                                                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                                                    <FaTelegramPlane className="text-gray-300 text-sm" />
+                                                    <FaTelegramPlane className="text-gray-300 dark:text-slate-500 text-sm" />
                                                 </div>
                                                 <input
                                                     type="text"
@@ -730,7 +733,7 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
                                             </label>
                                             <div className="relative">
                                                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                                                    <FaUser className="text-gray-300 text-sm" />
+                                                    <FaUser className="text-gray-300 dark:text-slate-500 text-sm" />
                                                 </div>
                                                 <input
                                                     type="text" name="emergencyContactName" value={formData.emergencyContactName}
@@ -746,7 +749,7 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
                                             </label>
                                             <div className="relative">
                                                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                                                    <FaPhone className="text-gray-300 text-xs" />
+                                                    <FaPhone className="text-gray-300 dark:text-slate-500 text-xs" />
                                                 </div>
                                                 <input
                                                     type="tel" name="emergencyContactPhone" value={formData.emergencyContactPhone}
@@ -817,6 +820,7 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
                                                 value={formData.idCardType || ''}
                                                 onChange={(val: string) => setFormData(prev => ({ ...prev, idCardType: val }))}
                                                 searchable={true}
+                                                placeholder={lang === 'km' ? 'ជ្រើសរើសប្រភេទ...' : 'Select card type...'}
                                             />
                                             <div className="space-y-1.5 md:col-span-2">
                                                 <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
