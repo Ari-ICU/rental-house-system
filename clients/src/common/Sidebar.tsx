@@ -37,7 +37,7 @@ interface LinkGroup {
 
 const Sidebar: React.FC<{ isMobileOpen: boolean; onClose: () => void }> = ({ isMobileOpen, onClose }) => {
     const { lang } = useLang();
-    const { logout } = useAuth();
+    const { logout, user } = useAuth();
     const pathname = usePathname();
     const [isCollapsed, setIsCollapsed] = useState(false);
 
@@ -105,26 +105,51 @@ const Sidebar: React.FC<{ isMobileOpen: boolean; onClose: () => void }> = ({ isM
                 href={link.href || "#"}
                 onClick={onLinkClick}
                 className={`
-                    group relative flex items-center gap-3 px-3 py-2 rounded-md transition-colors duration-200
+                    group relative flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all duration-200 font-medium
                     ${collapsed ? "justify-center" : "justify-start"}
                     ${active
-                        ? "bg-slate-100 dark:bg-indigo-500/10 text-slate-900 dark:text-indigo-400 font-medium"
-                        : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-200"
+                        ? "text-indigo-600 dark:text-indigo-400 font-bold"
+                        : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100"
                     }
                 `}
             >
-                <div className={`flex items-center justify-center ${active ? 'text-indigo-600' : 'text-slate-400 group-hover:text-slate-600'}`}>
+                {/* Active Indicator Background */}
+                {active && (
+                    <motion.div
+                        layoutId="activeNavBackground"
+                        className="absolute inset-0 bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800/80 rounded-xl z-0"
+                        transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                    />
+                )}
+
+                {/* Left Active border bar */}
+                {active && (
+                    <motion.div
+                        layoutId="activeNavIndicator"
+                        className="absolute left-0 top-3 bottom-3 w-1 bg-indigo-600 dark:bg-indigo-400 rounded-full z-10"
+                        transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                    />
+                )}
+
+                {/* Icon Container */}
+                <div className={`relative z-10 flex items-center justify-center transition-colors duration-200 ${
+                    active 
+                        ? 'text-indigo-600 dark:text-indigo-400 scale-105' 
+                        : 'text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300'
+                }`}>
                     {link.icon}
                 </div>
+
+                {/* Label */}
                 {!collapsed && (
-                    <span className="text-sm truncate">
+                    <span className="relative z-10 text-[13px] tracking-wide truncate">
                         {lang === 'en' ? link.name : link.nameKh}
                     </span>
                 )}
 
-                {/* Tooltip for collapsed state */}
+                {/* Collapsed Tooltip */}
                 {collapsed && (
-                    <div className="absolute left-full ml-3 px-2 py-1.5 bg-slate-800 text-white text-xs font-medium rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 shadow-sm border border-slate-700 whitespace-nowrap z-50">
+                    <div className="absolute left-full ml-4 px-3 py-2 bg-slate-900/95 dark:bg-slate-950/95 backdrop-blur-md text-white text-xs font-semibold rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 shadow-xl border border-slate-800 dark:border-slate-800 whitespace-nowrap z-50">
                         {lang === 'en' ? link.name : link.nameKh}
                     </div>
                 )}
@@ -137,49 +162,90 @@ const Sidebar: React.FC<{ isMobileOpen: boolean; onClose: () => void }> = ({ isM
             {linkGroups.map((group) => (
                 <div key={group.title} className="relative">
                     {!collapsed && (
-                        <h3 className="px-3 mb-2 text-xs font-semibold text-slate-500 dark:text-slate-400 tracking-wider">
+                        <h3 className="px-3.5 mb-2 text-[10px] font-bold text-slate-400 dark:text-slate-500 tracking-[0.15em] uppercase">
                             {lang === 'en' ? group.title : group.titleKh}
                         </h3>
                     )}
-                    <div className="space-y-1">
+                    <div className="space-y-1.5">
                         {group.links.map((link) => (
                             <NavItem key={link.name} link={link} collapsed={collapsed} onLinkClick={onLinkClick} />
                         ))}
                     </div>
                 </div>
             ))}
-
-            <div className="pt-6 pb-8 border-t border-slate-100 dark:border-slate-800 mt-6 mx-3">
-                <button
-                    onClick={() => {
-                        if (confirm(lang === 'en' ? 'Are you sure you want to logout?' : 'តើអ្នកប្រាកដជាចង់ចាកចេញមែនទេ?')) {
-                            logout();
-                            if (onLinkClick) onLinkClick();
-                        }
-                    }}
-                    className={`
-                        group relative flex items-center gap-3 px-3 py-2 rounded-md transition-colors duration-200 w-full
-                        ${collapsed ? "justify-center" : "justify-start"}
-                        text-slate-600 hover:text-red-600 hover:bg-red-50
-                    `}
-                >
-                    <div className="flex items-center justify-center text-slate-400 group-hover:text-red-500">
-                        <FaSignOutAlt className="w-4 h-4" />
-                    </div>
-                    {!collapsed && (
-                        <span className="text-sm font-medium truncate">
-                            {lang === 'en' ? 'Logout' : 'ចាកចេញ'}
-                        </span>
-                    )}
-                    {collapsed && (
-                        <div className="absolute left-full ml-3 px-2 py-1.5 bg-slate-800 text-white text-xs font-medium rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 shadow-sm border border-slate-700 whitespace-nowrap z-50">
-                            {lang === 'en' ? 'Logout' : 'ចាកចេញ'}
-                        </div>
-                    )}
-                </button>
-            </div>
         </nav>
     );
+
+    const renderFooter = (collapsed: boolean, onLinkClick?: () => void) => {
+        const initials = user?.name 
+            ? user.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()
+            : 'U';
+            
+        return (
+            <div className="p-4 border-t border-slate-100 dark:border-slate-900 bg-white dark:bg-slate-950 transition-all duration-300">
+                {collapsed ? (
+                    <div className="flex flex-col items-center gap-3">
+                        {/* Collapsed Profile Avatar */}
+                        <div className="group relative w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-sm font-black shadow-md cursor-pointer">
+                            {initials}
+                            <div className="absolute left-full ml-4 px-3 py-2 bg-slate-900/95 dark:bg-slate-950/95 backdrop-blur-md text-white text-xs font-semibold rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 shadow-xl border border-slate-800 dark:border-slate-800 whitespace-nowrap z-50">
+                                <p className="font-bold">{user?.name || 'User'}</p>
+                                <p className="text-[10px] text-slate-400 font-medium">{user?.email || ''}</p>
+                            </div>
+                        </div>
+
+                        {/* Collapsed Logout */}
+                        <button
+                            onClick={() => {
+                                if (confirm(lang === 'en' ? 'Are you sure you want to logout?' : 'តើអ្នកប្រាកដជាចង់ចាកចេញមែនទេ?')) {
+                                    logout();
+                                    if (onLinkClick) onLinkClick();
+                                }
+                            }}
+                            className="group relative w-10 h-10 rounded-xl text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 flex items-center justify-center transition-all duration-200"
+                            aria-label="Logout"
+                        >
+                            <FaSignOutAlt size={16} />
+                            <div className="absolute left-full ml-4 px-3 py-2 bg-slate-900/95 dark:bg-slate-950/95 backdrop-blur-md text-white text-xs font-semibold rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 shadow-xl border border-slate-800 dark:border-slate-800 whitespace-nowrap z-50">
+                                {lang === 'en' ? 'Logout' : 'ចាកចេញ'}
+                            </div>
+                        </button>
+                    </div>
+                ) : (
+                    <div className="flex items-center justify-between gap-3">
+                        {/* Profile Info */}
+                        <div className="flex items-center gap-3 min-w-0">
+                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-sm font-black shadow-md shrink-0">
+                                {initials}
+                            </div>
+                            <div className="flex flex-col min-w-0">
+                                <span className="text-sm font-bold text-slate-800 dark:text-slate-200 truncate leading-tight">
+                                    {user?.name || 'Administrator'}
+                                </span>
+                                <span className="text-[11px] text-slate-400 dark:text-slate-500 truncate mt-0.5 leading-none">
+                                    {user?.email || 'admin@rentflow.com'}
+                                </span>
+                            </div>
+                        </div>
+
+                        {/* Logout Button */}
+                        <button
+                            onClick={() => {
+                                if (confirm(lang === 'en' ? 'Are you sure you want to logout?' : 'តើអ្នកប្រាកដជាចង់ចាកចេញមែនទេ?')) {
+                                    logout();
+                                    if (onLinkClick) onLinkClick();
+                                }
+                            }}
+                            className="w-8 h-8 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 flex items-center justify-center transition-all duration-200 shrink-0"
+                            aria-label="Logout"
+                        >
+                            <FaSignOutAlt size={15} />
+                        </button>
+                    </div>
+                )}
+            </div>
+        );
+    };
 
     return (
         <>
@@ -195,15 +261,16 @@ const Sidebar: React.FC<{ isMobileOpen: boolean; onClose: () => void }> = ({ isM
                 {/* Header / Logo */}
                 <div className={`h-16 flex items-center border-b border-slate-100 dark:border-slate-800 ${isCollapsed ? 'justify-center' : 'justify-between px-6'} transition-all duration-300`}>
                     <div className="flex items-center gap-3 cursor-pointer">
-                        <div className="w-8 h-8 rounded bg-indigo-600 flex items-center justify-center shadow-sm">
+                        <div className="relative w-8 h-8 rounded bg-gradient-to-tr from-indigo-500 via-purple-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
                             <span className="text-white font-bold text-lg">R</span>
                         </div>
 
                         {!isCollapsed && (
                             <div className="flex flex-col">
-                                <span className="font-semibold text-slate-900 dark:text-slate-50 tracking-tight leading-none text-lg">
+                                <span className="font-bold text-slate-900 dark:text-white tracking-tight leading-none text-base bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">
                                     RentFlow
                                 </span>
+                                <span className="text-[10px] font-bold text-indigo-500 tracking-widest mt-1 uppercase">Manager</span>
                             </div>
                         )}
                     </div>
@@ -211,9 +278,10 @@ const Sidebar: React.FC<{ isMobileOpen: boolean; onClose: () => void }> = ({ isM
                     {!isCollapsed && (
                         <button
                             onClick={toggleCollapse}
-                            className="w-8 h-8 flex items-center justify-center rounded-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors shadow-sm"
+                            className="w-7 h-7 flex items-center justify-center rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-white dark:hover:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-700 transition-all duration-200 shadow-sm"
+                            aria-label="Collapse Sidebar"
                         >
-                            <FaChevronLeft size={12} />
+                            <FaChevronLeft size={10} />
                         </button>
                     )}
                 </div>
@@ -222,14 +290,16 @@ const Sidebar: React.FC<{ isMobileOpen: boolean; onClose: () => void }> = ({ isM
                     <div className="flex justify-center mt-4 mb-2">
                         <button
                             onClick={toggleCollapse}
-                            className="w-8 h-8 flex items-center justify-center rounded-md bg-white border border-slate-200 text-slate-500 hover:text-slate-700 hover:bg-slate-50 transition-colors shadow-sm"
+                            className="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-white dark:hover:bg-slate-800 transition-colors shadow-sm"
+                            aria-label="Expand Sidebar"
                         >
-                            <FaBars size={12} />
+                            <FaBars size={11} />
                         </button>
                     </div>
                 )}
 
                 {renderNav(isCollapsed)}
+                {renderFooter(isCollapsed)}
             </aside>
 
             {/* Mobile Sidebar */}
@@ -248,25 +318,26 @@ const Sidebar: React.FC<{ isMobileOpen: boolean; onClose: () => void }> = ({ isM
                             animate={{ x: 0 }}
                             exit={{ x: "-100%" }}
                             transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                            className="fixed inset-y-0 left-0 z-[70] w-[280px] bg-white flex flex-col shadow-xl border-r border-slate-200 lg:hidden"
+                            className="fixed inset-y-0 left-0 z-[70] w-[280px] bg-white dark:bg-slate-950 flex flex-col shadow-2xl border-r border-slate-200 dark:border-slate-800 lg:hidden"
                         >
-                            <div className="h-16 flex items-center justify-between px-6 border-b border-slate-100">
+                            <div className="h-16 flex items-center justify-between px-6 border-b border-slate-100 dark:border-slate-800">
                                 <div className="flex items-center gap-3">
                                     <div className="w-8 h-8 rounded bg-indigo-600 flex items-center justify-center shadow-sm">
                                         <span className="text-white font-bold text-lg">R</span>
                                     </div>
-                                    <span className="font-semibold text-slate-900 tracking-tight text-lg">
+                                    <span className="font-semibold text-slate-900 dark:text-white tracking-tight text-lg">
                                         RentFlow
                                     </span>
                                 </div>
                                 <button
                                     onClick={onClose}
-                                    className="w-8 h-8 flex items-center justify-center rounded-md text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors"
+                                    className="w-8 h-8 flex items-center justify-center rounded-md text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
                                 >
                                     <FaTimes size={16} />
                                 </button>
                             </div>
                             {renderNav(false, onClose)}
+                            {renderFooter(false, onClose)}
                         </motion.aside>
                     </>
                 )}
