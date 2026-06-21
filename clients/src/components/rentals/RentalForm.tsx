@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaCalendarAlt, FaArrowLeft, FaUser, FaDoorOpen, FaPhone, FaEnvelope, FaMapMarkerAlt, FaIdCard, FaExclamationTriangle, FaStickyNote, FaDollarSign, FaCheckCircle, FaTimesCircle, FaSpinner, FaHome, FaTelegramPlane } from 'react-icons/fa';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Rental, RentalStatus } from '@/types/rents';
 import { useLang } from '@/context/LangContext';
 import KhmerCalendar from '@/utils/KhmerCalendar';
@@ -15,6 +15,7 @@ import Tesseract from 'tesseract.js';
 const RentalForm: React.FC = () => {
     const { lang } = useLang();
     const router = useRouter();
+    const searchParams = useSearchParams();
 
     const [formData, setFormData] = useState<Omit<Rental, 'id'>>({
         ClientName: '',
@@ -48,6 +49,17 @@ const RentalForm: React.FC = () => {
     const [toast, setToast] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
     const [showDatePopup, setShowDatePopup] = useState(false);
     const [editingDateField, setEditingDateField] = useState<'startDate' | 'endDate' | null>(null);
+
+    useEffect(() => {
+        const queryRoomNumber = searchParams.get('roomNumber');
+        const queryStatus = searchParams.get('status');
+        if (queryRoomNumber) {
+            setFormData((prev) => ({ ...prev, roomNumber: queryRoomNumber }));
+        }
+        if (queryStatus && ['Active', 'Reserved', 'Completed', 'Maintenance'].includes(queryStatus)) {
+            setFormData((prev) => ({ ...prev, status: queryStatus as RentalStatus }));
+        }
+    }, [searchParams]);
 
     const [profilePreview, setProfilePreview] = useState<string | null>(null);
     const [frontPreview, setFrontPreview] = useState<string | null>(null);

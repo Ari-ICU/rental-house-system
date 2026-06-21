@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 import { motion, AnimatePresence } from "framer-motion";
+import NotificationCenter from "@/components/common/NotificationCenter";
 
 interface HeaderProps {
     onMobileMenuToggle: () => void;
@@ -205,6 +206,9 @@ const Header: React.FC<HeaderProps> = ({ onMobileMenuToggle }) => {
                         />
                     </div>
                 </button>
+
+                {/* Notifications */}
+                <NotificationCenter />
 
                 {/* Theme Switch */}
                 <button

@@ -6,6 +6,7 @@ import Header from "@/common/Header";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import CommandPalette from "@/components/common/CommandPalette";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
     const { user, loading } = useAuth();
@@ -42,6 +43,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     {children}
                 </main>
             </div>
+            <CommandPalette />
         </div>
     );
 }

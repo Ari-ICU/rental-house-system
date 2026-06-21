@@ -1,0 +1,97 @@
+import TelegramBot from 'node-telegram-bot-api';
+import SystemSetting from '../models/systemSetting';
+import logger from './logger';
+
+let botInstance: TelegramBot | null = null;
+let currentToken: string | null = null;
+
+export const initializeBot = async (): Promise<TelegramBot | undefined> => {
+    try {
+        const settings = await SystemSetting.getSettings();
+        const token = settings?.telegramBotToken;
+
+        if (!token) {
+            if (botInstance) {
+                logger.info('Removing Telegram bot as token was cleared.');
+                botInstance.stopPolling();
+                botInstance = null;
+                currentToken = null;
+            }
+            return;
+        }
+
+        // Check if token changed or bot not started
+        if (botInstance && currentToken === token) {
+            return botInstance;
+        }
+
+        // If something old exists with a different token, stop it
+        if (botInstance) {
+            logger.info('Restarting Telegram bot helper with new token...');
+            botInstance.stopPolling();
+        }
+
+        botInstance = new TelegramBot(token, { polling: true });
+        currentToken = token;
+
+        // Handle polling errors to prevent console spam and stop bot if token is invalid
+        botInstance.on('polling_error', (error: any) => {
+            logger.error(`Telegram Polling Error: ${error.message}`);
+            if (error.code === 'ETELEGRAM' && error.message.includes('404')) {
+                logger.error('Invalid Telegram Bot Token detected (404 Not Found). Stopping polling.');
+                if (botInstance) {
+                    botInstance.stopPolling();
+                    botInstance = null;
+                    currentToken = null;
+                }
+            }
+        });
+
+        botInstance.on('message', async (msg) => {
+            const chatId = msg.chat.id;
+            const text = msg.text;
+
+            if (text === '/start' || text === '/myid') {
+                // Fetch fresh settings for language preference
+                const currentSettings = await SystemSetting.getSettings();
+                const lang = currentSettings?.telegramLanguage === 'km' ? 'km' : 'en';
+
+                let reply = '';
+                if (lang === 'km') {
+                    reply = `👋 សួស្តី! នេះគឺជាលេខសម្គាល់ Telegram របស់អ្នក៖\n\n🆔 <code>${chatId}</code>\n\nសូមចម្លងលេខនេះ ហើយផ្ញើវាទៅកាន់ម្ចាស់ផ្ទះជួលរបស់អ្នក ដើម្បីទទួលបានវិក្កយបត្រតាមរយៈ Telegram។`;
+                } else {
+                    reply = `👋 Hello! Here is your Telegram Chat ID:\n\n🆔 <code>${chatId}</code>\n\nPlease copy this number and give it to your landlord to receive your bills directly via Telegram.`;
+                }
+
+                if (botInstance) {
+                    botInstance.sendMessage(chatId, reply, { parse_mode: 'HTML' });
+                }
+            }
+        });
+
+        logger.info('Telegram Bot Helper (polling) started successfully.');
+        return botInstance;
+    } catch (error: any) {
+        logger.error('Failed to initialize Telegram Bot Helper:', error.message);
+    }
+};
+
+export const sendMessage = async (message: string, chatId: string | null = null): Promise<boolean> => {
+    try {
+        const settings = await SystemSetting.getSettings();
+        const token = settings?.telegramBotToken;
+        const targetChatId = chatId || settings?.telegramChatId;
+
+        if (!token || !targetChatId) {
+            logger.warn('Telegram token or target chat ID not set. Cannot send message.');
+            return false;
+        }
+
+        const tempBot = new TelegramBot(token, { polling: false });
+        await tempBot.sendMessage(targetChatId, message, { parse_mode: 'Markdown' });
+        return true;
+    } catch (error: any) {
+        logger.error('Failed to send Telegram message:', error.message);
+        return false;
+    }
+};

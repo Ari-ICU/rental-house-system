@@ -1,0 +1,232 @@
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.initializeCronJobs = exports.sendPaymentReminders = exports.checkRentalEndDates = exports.runMonthlyBillingCycle = void 0;
+const node_cron_1 = __importDefault(require("node-cron"));
+const prisma_1 = __importDefault(require("../config/prisma"));
+const logger_1 = __importDefault(require("./logger"));
+const telegramSender = __importStar(require("./telegramSender"));
+const systemSetting_1 = __importDefault(require("../models/systemSetting"));
+const pdfGenerator_1 = require("./pdfGenerator");
+const runMonthlyBillingCycle = async () => {
+    try {
+        logger_1.default.info('Running automated monthly billing check...');
+        const now = new Date();
+        const currentYear = now.getFullYear();
+        const currentMonth = String(now.getMonth() + 1).padStart(2, '0');
+        const currentMonthString = `${currentYear}-${currentMonth}`;
+        // Find all active rentals
+        const activeRentals = await prisma_1.default.rental.findMany({
+            where: { status: 'Active' },
+        });
+        let newBillsCreated = 0;
+        for (const rental of activeRentals) {
+            // Check if a bill for THIS specific month already exists for THIS rental
+            const existingBill = await prisma_1.default.bill.findFirst({
+                where: {
+                    rentalId: rental.id,
+                    month: currentMonthString,
+                }
+            });
+            // If it doesn't exist, we auto-create a fresh "Unpaid" slate for the new month
+            if (!existingBill) {
+                await prisma_1.default.bill.create({
+                    data: {
+                        rentalId: rental.id,
+                        month: currentMonthString,
+                        rentAmount: Number(rental.rentAmount),
+                        electricityAmount: 0,
+                        waterAmount: 0,
+                        electricityStatus: 'Unpaid',
+                        waterStatus: 'Unpaid',
+                        notes: 'System Auto-Generated Bill for the new month.',
+                    }
+                });
+                newBillsCreated++;
+                logger_1.default.info(`Auto-generated new cycle bill for Room ${rental.roomNumber} - ${currentMonthString}`);
+            }
+        }
+        if (newBillsCreated > 0) {
+            logger_1.default.info(`Successfully generated ${newBillsCreated} new bills for the month of ${currentMonthString}.`);
+            // Optionally alert the admin/group chat that a new month's bills were generated
+            const settings = await systemSetting_1.default.getSettings();
+            if (settings && settings.telegramBotToken && settings.telegramChatId) {
+                const lang = settings.telegramLanguage === 'km' ? 'km' : 'en';
+                let message = '';
+                if (lang === 'km') {
+                    message = `✅ <b>វដ្តវិក្កយបត្រថ្មីត្រូវបានបង្កើត</b>\n\nវិក្កយបត្រចំនួន <b>${newBillsCreated}</b> ថ្មីត្រូវបានបង្កើតដោយស្វ័យប្រវត្តិសម្រាប់ខែ <b>${currentMonthString}</b> ជាមួយនឹងការកំណត់ដើម: អគ្គិសនី/ទឹក "មិនទាន់បង់"។\n\nសូមម្ចាស់ផ្ទះពិនិត្យ និងទៅបញ្ជូលបរិមាណម៉ែត្រទឹកភ្លើង។`;
+                }
+                else {
+                    message = `✅ <b>New Billing Cycle Generated</b>\n\n<b>${newBillsCreated}</b> new bills were automatically generated for <b>${currentMonthString}</b>.\nStatus is defaulted to "Unpaid".\n\nPlease update the water and electricity meter readings for these active rooms.`;
+                }
+                telegramSender.sendMessage(settings.telegramBotToken, settings.telegramChatId, message).catch(console.error);
+                // Auto-send the newly created unpaid bills to tenants
+                const newlyGeneratedBills = await prisma_1.default.bill.findMany({
+                    where: { month: currentMonthString },
+                    include: { rental: true }
+                });
+                for (const bill of newlyGeneratedBills) {
+                    if (bill.rental && bill.rental.telegramChatId) {
+                        try {
+                            const pdfBuffer = await (0, pdfGenerator_1.generateBillPdfBuffer)(bill, settings);
+                            const fileName = `Invoice_Room_${bill.rental.roomNumber}_${bill.month}.pdf`;
+                            let caption = '';
+                            if (lang === 'km') {
+                                caption = `📄 <b>វិក្កយបត្រប្រចាំខែថ្មី: ${bill.month}</b>\nបន្ទប់: ${bill.rental.roomNumber}\n\nសូមមើលឯកសារភ្ជាប់សម្រាប់ព័ត៌មានលម្អិត។`;
+                            }
+                            else {
+                                caption = `📄 <b>New Monthly Invoice: ${bill.month}</b>\nRoom: ${bill.rental.roomNumber}\n\nPlease find the attached PDF invoice for your details.`;
+                            }
+                            await telegramSender.sendDocument(settings.telegramBotToken, bill.rental.telegramChatId, pdfBuffer, fileName, caption);
+                        }
+                        catch (err) {
+                            logger_1.default.error(`Failed to send new cycle bill PDF to room ${bill.rental.roomNumber}:`, err.message);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    catch (error) {
+        logger_1.default.error('Error in automated billing cron check:', error.message);
+    }
+};
+exports.runMonthlyBillingCycle = runMonthlyBillingCycle;
+const checkRentalEndDates = async () => {
+    try {
+        const activeRentals = await prisma_1.default.rental.findMany({
+            where: {
+                status: { in: ['Active', 'Reserved'] },
+                endDate: { not: null }
+            }
+        });
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        let updatedCount = 0;
+        for (const rental of activeRentals) {
+            if (!rental.endDate)
+                continue;
+            const endDate = new Date(rental.endDate);
+            // Validate the parsed date to avoid NaN errors
+            if (isNaN(endDate.getTime()))
+                continue;
+            endDate.setHours(0, 0, 0, 0);
+            if (endDate < today) {
+                await prisma_1.default.rental.update({
+                    where: { id: rental.id },
+                    data: { status: 'Completed' }
+                });
+                updatedCount++;
+                logger_1.default.info(`Auto-updated rental ID ${rental.id} (Room ${rental.roomNumber}) to 'Completed' because end date (${rental.endDate}) has passed.`);
+            }
+        }
+        if (updatedCount > 0) {
+            logger_1.default.info(`Automatically marked ${updatedCount} rentals as Completed due to end date passing.`);
+        }
+    }
+    catch (error) {
+        logger_1.default.error('Error in checkRentalEndDates cron check:', error.message);
+    }
+};
+exports.checkRentalEndDates = checkRentalEndDates;
+const sendPaymentReminders = async () => {
+    try {
+        logger_1.default.info('Running automated payment reminders check...');
+        const settings = await systemSetting_1.default.getSettings();
+        if (!settings || !settings.telegramBotToken)
+            return;
+        const lang = settings.telegramLanguage === 'km' ? 'km' : 'en';
+        // Find all bills where electricityStatus == 'Unpaid' or waterStatus == 'Unpaid'
+        const unpaidBills = await prisma_1.default.bill.findMany({
+            where: {
+                OR: [
+                    { electricityStatus: 'Unpaid' },
+                    { waterStatus: 'Unpaid' }
+                ]
+            },
+            include: {
+                rental: true
+            }
+        });
+        let reminderCount = 0;
+        for (const bill of unpaidBills) {
+            if (bill.rental && bill.rental.telegramChatId) {
+                const rentAmount = parseFloat(bill.rentAmount) || (parseFloat(bill.rental.rentAmount) || 0);
+                const elecAmount = bill.electricityStatus === 'Unpaid' ? parseFloat(bill.electricityAmount) || 0 : 0;
+                const waterAmount = bill.waterStatus === 'Unpaid' ? parseFloat(bill.waterAmount) || 0 : 0;
+                const amountToPay = rentAmount + elecAmount + waterAmount;
+                if (amountToPay > 0) {
+                    let message = '';
+                    if (lang === 'km') {
+                        message = `🔔 <b>ការរំលឹកការទូទាត់ប្រាក់ឈ្នួលផ្ទះ</b>\n\nសួស្តី ${bill.rental.ClientName} (បន្ទប់ ${bill.rental.roomNumber}),\nនេះគឺជាការរំលឹកប្រកបដោយភាពរាក់ទាក់ថា អ្នកមានការទូទាត់ដែលមិនទាន់បានបង់សម្រាប់ខែ <b>${bill.month}</b>។\n\nចំនួនទឹកប្រាក់សរុបដែលត្រូវបង់: <b>$${amountToPay.toFixed(2)}</b>\n\nសូមធ្វើការទូទាត់ឱ្យបានឆាប់តាមដែលអាចធ្វើទៅបាន។ សូមអរគុណ!`;
+                    }
+                    else {
+                        message = `🔔 <b>Rent Payment Reminder</b>\n\nHello ${bill.rental.ClientName} (Room ${bill.rental.roomNumber}),\nThis is a friendly reminder that you have an outstanding balance for the month of <b>${bill.month}</b>.\n\nTotal Amount Due: <b>$${amountToPay.toFixed(2)}</b>\n\nPlease proceed with the payment at your earliest convenience. Thank you!`;
+                    }
+                    await telegramSender.sendMessage(settings.telegramBotToken, bill.rental.telegramChatId, message);
+                    reminderCount++;
+                }
+            }
+        }
+        if (reminderCount > 0) {
+            logger_1.default.info(`Sent payment reminders to ${reminderCount} tenants with unpaid bills.`);
+        }
+    }
+    catch (error) {
+        logger_1.default.error('Error in sendPaymentReminders cron check:', error.message);
+    }
+};
+exports.sendPaymentReminders = sendPaymentReminders;
+const initializeCronJobs = () => {
+    // Run immediately on boot
+    (0, exports.checkRentalEndDates)();
+    (0, exports.runMonthlyBillingCycle)();
+    // Schedule to run exactly at 00:00 AM every day to check for expired rentals
+    node_cron_1.default.schedule('0 0 * * *', () => {
+        (0, exports.checkRentalEndDates)();
+    });
+    // Schedule to run exactly at 00:00 AM on the 1st day of EVERY month automatically
+    node_cron_1.default.schedule('0 0 1 * *', () => {
+        (0, exports.runMonthlyBillingCycle)();
+    });
+    // Schedule to run at 10:00 AM every 3 days for payment reminders
+    node_cron_1.default.schedule('0 10 */3 * *', () => {
+        (0, exports.sendPaymentReminders)();
+    });
+};
+exports.initializeCronJobs = initializeCronJobs;

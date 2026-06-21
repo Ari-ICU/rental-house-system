@@ -5,26 +5,154 @@ interface MetricCardProps {
     value: string | number;
     icon?: React.ReactNode;
     bgColor?: string;
+    trend?: string;
+    trendType?: "up" | "down" | "neutral";
+    trendLabel?: string;
+    sparklinePoints?: number[];
+    color?: "indigo" | "emerald" | "rose" | "amber" | "blue" | "slate";
 }
 
-const MetricCard = ({ title, value, icon, bgColor = "bg-white dark:bg-slate-900" }: MetricCardProps) => {
+const colorMap = {
+    indigo: {
+        text: "text-indigo-650 dark:text-indigo-400",
+        bg: "bg-indigo-50 dark:bg-indigo-500/10",
+        hoverBg: "group-hover:bg-indigo-100 dark:group-hover:bg-indigo-500/20",
+        stroke: "stroke-indigo-500 dark:stroke-indigo-400",
+        fill: "fill-indigo-50 dark:fill-indigo-500/5",
+        trend: "text-indigo-600 dark:text-indigo-450",
+    },
+    emerald: {
+        text: "text-emerald-650 dark:text-emerald-400",
+        bg: "bg-emerald-50 dark:bg-emerald-500/10",
+        hoverBg: "group-hover:bg-emerald-100 dark:group-hover:bg-emerald-500/20",
+        stroke: "stroke-emerald-500 dark:stroke-emerald-400",
+        fill: "fill-emerald-50 dark:fill-emerald-500/5",
+        trend: "text-emerald-600 dark:text-emerald-450",
+    },
+    rose: {
+        text: "text-rose-650 dark:text-rose-400",
+        bg: "bg-rose-50 dark:bg-rose-500/10",
+        hoverBg: "group-hover:bg-rose-100 dark:group-hover:bg-rose-500/20",
+        stroke: "stroke-rose-500 dark:stroke-rose-400",
+        fill: "fill-rose-50 dark:fill-rose-500/5",
+        trend: "text-rose-600 dark:text-rose-450",
+    },
+    amber: {
+        text: "text-amber-650 dark:text-amber-450",
+        bg: "bg-amber-50 dark:bg-amber-500/10",
+        hoverBg: "group-hover:bg-amber-100 dark:group-hover:bg-amber-500/20",
+        stroke: "stroke-amber-500 dark:stroke-amber-400",
+        fill: "fill-amber-50 dark:fill-amber-500/5",
+        trend: "text-amber-600 dark:text-amber-500",
+    },
+    blue: {
+        text: "text-blue-650 dark:text-blue-400",
+        bg: "bg-blue-50 dark:bg-blue-500/10",
+        hoverBg: "group-hover:bg-blue-100 dark:group-hover:bg-blue-500/20",
+        stroke: "stroke-blue-500 dark:stroke-blue-400",
+        fill: "fill-blue-50 dark:fill-blue-500/5",
+        trend: "text-blue-600 dark:text-blue-450",
+    },
+    slate: {
+        text: "text-slate-650 dark:text-slate-400",
+        bg: "bg-slate-50 dark:bg-slate-500/10",
+        hoverBg: "group-hover:bg-slate-100 dark:group-hover:bg-slate-500/20",
+        stroke: "stroke-slate-500 dark:stroke-slate-400",
+        fill: "fill-slate-50 dark:fill-slate-500/5",
+        trend: "text-slate-600 dark:text-slate-450",
+    },
+};
+
+const MetricCard = ({
+    title,
+    value,
+    icon,
+    bgColor = "bg-white dark:bg-slate-900",
+    trend,
+    trendType = "up",
+    trendLabel = "vs last month",
+    sparklinePoints = [10, 15, 8, 22, 18, 30],
+    color = "indigo",
+}: MetricCardProps) => {
+    const activeColor = colorMap[color] || colorMap.indigo;
+
+    // Generate sparkline path
+    const generateSparklinePath = (points: number[]) => {
+        if (!points || points.length < 2) return { linePath: "", areaPath: "" };
+        const min = Math.min(...points);
+        const max = Math.max(...points);
+        const range = max - min === 0 ? 1 : max - min;
+        const width = 80;
+        const height = 24;
+
+        const coords = points.map((p, index) => {
+            const x = (index / (points.length - 1)) * width;
+            const y = height - ((p - min) / range) * (height - 4) - 2;
+            return { x, y };
+        });
+
+        const linePath = coords.map((c, i) => `${i === 0 ? "M" : "L"} ${c.x} ${c.y}`).join(" ");
+        const areaPath = `${linePath} L ${width} ${height} L 0 ${height} Z`;
+
+        return { linePath, areaPath };
+    };
+
+    const { linePath, areaPath } = generateSparklinePath(sparklinePoints);
+
     return (
-        <div className={`p-5 rounded-lg shadow-sm border border-slate-200 dark:border-slate-800 ${bgColor} group hover:shadow-md transition-shadow duration-200 flex flex-col justify-between`}>
-            <div className="flex items-start justify-between mb-4">
-                <div>
-                    <h3 className="text-slate-500 dark:text-slate-400 text-sm font-medium">{title}</h3>
-                    <p className="text-2xl font-semibold text-slate-900 dark:text-slate-100 mt-1">{value}</p>
+        <div className={`p-5 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 ${bgColor} group hover:shadow-md hover:border-slate-300 dark:hover:border-slate-700 transition-all duration-200 flex flex-col justify-between h-36`}>
+            {/* Top section */}
+            <div className="flex items-start justify-between">
+                <div className="min-w-0 flex-1">
+                    <h3 className="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider truncate">{title}</h3>
+                    <p className="text-xl font-bold text-slate-900 dark:text-slate-50 mt-1.5 tracking-tight tabular-nums truncate">{value}</p>
                 </div>
-                <div className="p-2.5 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 rounded-md group-hover:bg-indigo-100 dark:group-hover:bg-indigo-500/20 transition-colors">
+                <div className={`p-2 rounded-lg ${activeColor.bg} ${activeColor.text} ${activeColor.hoverBg} transition-colors flex-shrink-0 ml-3`}>
                     {icon}
                 </div>
             </div>
-            <div className="flex items-center text-xs font-medium text-emerald-600 dark:text-emerald-400">
-                <span className="flex items-center">
-                    <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
-                    2.5%
-                </span>
-                <span className="text-slate-500 dark:text-slate-400 font-normal ml-1.5">vs last month</span>
+
+            {/* Bottom section (Trend & Sparkline) */}
+            <div className="flex items-end justify-between mt-auto">
+                <div className="flex flex-col gap-0.5">
+                    {trend && (
+                        <span className={`flex items-center text-xs font-bold ${
+                            trendType === "up"
+                                ? "text-emerald-600 dark:text-emerald-450"
+                                : trendType === "down"
+                                ? "text-rose-600 dark:text-rose-450"
+                                : "text-slate-500"
+                        }`}>
+                            {trendType === "up" ? (
+                                <svg className="w-3.5 h-3.5 mr-1 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                            ) : trendType === "down" ? (
+                                <svg className="w-3.5 h-3.5 mr-1 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 17h8m0 0v-8m0 8l-8-8-4 4-6-6"></path></svg>
+                            ) : null}
+                            {trend}
+                        </span>
+                    )}
+                    <span className="text-[10px] text-slate-400 dark:text-slate-500 font-medium whitespace-nowrap">{trendLabel}</span>
+                </div>
+
+                {/* Sparkline Graph */}
+                {sparklinePoints.length > 1 && (
+                    <div className="w-20 h-6 overflow-hidden shrink-0">
+                        <svg width="80" height="24" viewBox="0 0 80 24" className="overflow-visible">
+                            <path
+                                d={areaPath}
+                                className={`${activeColor.fill} transition-all duration-300`}
+                            />
+                            <path
+                                d={linePath}
+                                fill="none"
+                                className={`${activeColor.stroke} transition-all duration-300`}
+                                strokeWidth="1.75"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                            />
+                        </svg>
+                    </div>
+                )}
             </div>
         </div>
     );
