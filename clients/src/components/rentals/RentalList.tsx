@@ -10,6 +10,7 @@ import { formatKhmerDate } from "@/utils/dateFormatter";
 import KhmerCalendar from "@/utils/KhmerCalendar";
 import { useLang } from "@/context/LangContext";
 import { deleteRental, updateRental } from "@/services/rentalService";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface RentalListProps {
     rentals: Rental[];
@@ -25,6 +26,14 @@ const statusConfig: { [key in RentalStatus]: { label: string; labelKm: string; d
 
 const allStatuses: RentalStatus[] = ["Active", "Reserved", "Completed", "Maintenance"];
 
+const avatarGradients = [
+    'from-violet-500 to-indigo-500',
+    'from-blue-500 to-cyan-500',
+    'from-rose-500 to-pink-500',
+    'from-amber-500 to-orange-500',
+    'from-emerald-500 to-teal-500',
+];
+
 function getInitials(name: string): string {
     return name
         .split(" ")
@@ -32,6 +41,88 @@ function getInitials(name: string): string {
         .map((w) => w[0]?.toUpperCase() || "")
         .join("");
 }
+
+const calculateLeaseProgress = (startStrStr?: string, endStrStr?: string) => {
+    if (!startStrStr || !endStrStr) return null;
+    try {
+        const start = new Date(startStrStr).getTime();
+        const end = new Date(endStrStr).getTime();
+        const now = new Date().getTime();
+        if (isNaN(start) || isNaN(end) || end <= start) return null;
+
+        const total = end - start;
+        const elapsed = now - start;
+        const percent = Math.min(100, Math.max(0, (elapsed / total) * 100));
+
+        const remainingMs = end - now;
+        const remainingDays = Math.ceil(remainingMs / (1000 * 60 * 60 * 24));
+
+        return { percent, remainingDays };
+    } catch (e) {
+        return null;
+    }
+};
+
+const StatusBadge: React.FC<{ status: RentalStatus; lang: string }> = ({ status, lang }) => {
+    const cfg = statusConfig[status] || statusConfig.Active;
+    
+    let pulseColor = "";
+    if (status === "Active") pulseColor = "bg-emerald-400";
+    else if (status === "Reserved") pulseColor = "bg-blue-400";
+    else if (status === "Maintenance") pulseColor = "bg-rose-400";
+
+    return (
+        <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold leading-tight ${cfg.badge} border border-transparent dark:border-slate-800/40`}>
+            {pulseColor ? (
+                <span className="relative flex h-1.5 w-1.5 mr-1.5">
+                    <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${pulseColor} opacity-75`}></span>
+                    <span className={`relative inline-flex rounded-full h-1.5 w-1.5 ${pulseColor}`}></span>
+                </span>
+            ) : (
+                <span className="w-1.5 h-1.5 rounded-full bg-slate-400 dark:bg-slate-500 mr-1.5" />
+            )}
+            {lang === "en" ? cfg.label : cfg.labelKm}
+        </span>
+    );
+};
+
+const LeaseProgressBar: React.FC<{ startDate?: string; endDate?: string; lang: string }> = ({ startDate, endDate, lang }) => {
+    const progress = calculateLeaseProgress(startDate, endDate);
+    if (!progress) return null;
+
+    const { percent, remainingDays } = progress;
+    
+    let barColor = "bg-indigo-600 dark:bg-indigo-500";
+    let textColor = "text-slate-500 dark:text-slate-400";
+    let labelText = "";
+    
+    if (remainingDays <= 0) {
+        barColor = "bg-rose-500";
+        textColor = "text-rose-600 dark:text-rose-400 font-semibold animate-pulse";
+        labelText = lang === "en" ? "Expired" : "ហួសកំណត់";
+    } else if (remainingDays <= 30) {
+        barColor = "bg-amber-500 animate-pulse";
+        textColor = "text-amber-600 dark:text-amber-400 font-semibold";
+        labelText = lang === "en" ? `${remainingDays}d left` : `នៅសល់ ${remainingDays}ថ្ងៃ`;
+    } else {
+        labelText = lang === "en" ? `${remainingDays}d left` : `នៅសល់ ${remainingDays}ថ្ងៃ`;
+    }
+
+    return (
+        <div className="w-full mt-1.5 space-y-1">
+            <div className="flex items-center justify-between text-[9px] font-semibold">
+                <span className={textColor}>{labelText}</span>
+                <span className="text-slate-400 dark:text-slate-500">{Math.round(percent)}%</span>
+            </div>
+            <div className="w-full h-1 bg-slate-105 dark:bg-slate-800/80 rounded-full overflow-hidden">
+                <div 
+                    className={`h-full ${barColor} transition-all duration-500`}
+                    style={{ width: `${percent}%` }}
+                />
+            </div>
+        </div>
+    );
+};
 
 const RentalList: React.FC<RentalListProps> = ({
     rentals = [],
@@ -319,7 +410,7 @@ const RentalList: React.FC<RentalListProps> = ({
     return (
         <div className="flex flex-col w-full space-y-4">
             {/* Filters Bar */}
-            <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 shadow-sm">
+            <div className="flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-4 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border border-slate-200/60 dark:border-slate-800/60 rounded-2xl p-4 shadow-sm">
                 
                 {/* Status Pills */}
                 <div className="flex items-center gap-1.5 flex-wrap">
@@ -330,9 +421,9 @@ const RentalList: React.FC<RentalListProps> = ({
                             <button
                                 key={s}
                                 onClick={() => { setStatusFilter(s); setCurrentPage(1); }}
-                                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${isActive
-                                    ? "bg-indigo-600 text-white shadow-sm"
-                                    : "bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
+                                className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer ${isActive
+                                    ? "bg-indigo-650 text-white shadow-md shadow-indigo-100 dark:shadow-none hover:bg-indigo-700"
+                                    : "bg-slate-50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-800/60 text-slate-655 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-slate-900 dark:hover:text-slate-100"
                                     }`}
                             >
                                 {s === "All"
@@ -345,28 +436,34 @@ const RentalList: React.FC<RentalListProps> = ({
 
                 {/* Price/Rent filters & CSV export button */}
                 <div className="flex flex-wrap items-center gap-3">
-                    <input
-                        type="number"
-                        placeholder={t.minRentPlaceholder}
-                        value={minPrice}
-                        onChange={(e) => { setMinPrice(e.target.value); setCurrentPage(1); }}
-                        className="px-3 py-1.5 border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950 rounded-lg outline-none text-xs w-24 text-slate-800 dark:text-slate-200"
-                        min="0"
-                    />
-                    <span className="text-slate-400 text-xs font-bold">-</span>
-                    <input
-                        type="number"
-                        placeholder={t.maxRentPlaceholder}
-                        value={maxPrice}
-                        onChange={(e) => { setMaxPrice(e.target.value); setCurrentPage(1); }}
-                        className="px-3 py-1.5 border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950 rounded-lg outline-none text-xs w-24 text-slate-800 dark:text-slate-200"
-                        min="0"
-                    />
+                    <div className="relative">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 font-bold text-[10px]">$</span>
+                        <input
+                            type="number"
+                            placeholder={t.minRentPlaceholder}
+                            value={minPrice}
+                            onChange={(e) => { setMinPrice(e.target.value); setCurrentPage(1); }}
+                            className="pl-6 pr-3 py-2 border border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50 rounded-xl outline-none text-xs w-28 text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-550 transition-all placeholder-slate-400 dark:placeholder-slate-500"
+                            min="0"
+                        />
+                    </div>
+                    <span className="text-slate-350 dark:text-slate-700 text-xs font-bold">—</span>
+                    <div className="relative">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 font-bold text-[10px]">$</span>
+                        <input
+                            type="number"
+                            placeholder={t.maxRentPlaceholder}
+                            value={maxPrice}
+                            onChange={(e) => { setMaxPrice(e.target.value); setCurrentPage(1); }}
+                            className="pl-6 pr-3 py-2 border border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50 rounded-xl outline-none text-xs w-28 text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-550 transition-all placeholder-slate-400 dark:placeholder-slate-500"
+                            min="0"
+                        />
+                    </div>
 
                     {/* CSV Report Export Button */}
                     <button
                         onClick={handleExportCSV}
-                        className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold shadow-sm transition-colors cursor-pointer"
+                        className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-md shadow-emerald-100 dark:shadow-none transition-colors cursor-pointer active:scale-98"
                         title={lang === "en" ? "Export to CSV" : "ទាញយកជា CSV"}
                     >
                         <FaFileCsv className="text-sm" />
@@ -374,132 +471,283 @@ const RentalList: React.FC<RentalListProps> = ({
                     </button>
 
                     {/* Items Per Page */}
-                    <div className="flex items-center gap-2 text-xs font-medium text-slate-500 dark:text-slate-400 ml-2">
+                    <div className="flex items-center gap-2 text-xs font-bold text-slate-450 dark:text-slate-550 ml-2">
                         <span>{lang === "en" ? "Show:" : "បង្ហាញ:"}</span>
                         <CustomDropdown
                             options={itemsPerPageOptions.map(opt => ({ value: String(opt), label: String(opt) }))}
                             value={String(itemsPerPage)}
                             onChange={(val) => { setItemsPerPage(parseInt(val)); setCurrentPage(1); }}
-                            className="w-16 text-xs"
+                            className="w-20 text-xs"
                         />
                     </div>
                 </div>
             </div>
 
             {/* Bulk Actions Panel Overlay */}
-            {selectedIds.length > 0 && (
-                <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3 bg-indigo-50/50 dark:bg-indigo-500/10 border border-indigo-100 dark:border-indigo-900/60 rounded-xl shadow-sm animate-fadeIn">
-                    <span className="text-xs font-semibold text-indigo-800 dark:text-indigo-400">
-                        {lang === "en"
-                            ? `${selectedIds.length} rental(s) selected`
-                            : `បានជ្រើសរើសកិច្ចសន្យាចំនួន ${selectedIds.length}`}
-                    </span>
-                    <div className="flex items-center gap-3 w-full sm:w-auto shrink-0">
-                        <CustomDropdown
-                            options={allStatuses.map((s) => ({
-                                value: s,
-                                label: lang === "en" ? statusConfig[s].label : statusConfig[s].labelKm,
-                            }))}
-                            value={bulkStatus}
-                            onChange={(val) => {
-                                setBulkStatus(val);
-                                handleBulkStatusChange(val as RentalStatus);
-                            }}
-                            placeholder={t.bulkStatusPlaceholder}
-                            className="w-40 text-xs"
-                        />
-                        <button
-                            onClick={handleBulkDelete}
-                            className="flex items-center gap-1.5 px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-semibold shadow-sm transition-colors"
-                        >
-                            <FaTrashAlt className="text-xs" />
-                            {t.bulkDeleteBtn}
-                        </button>
+            <AnimatePresence>
+                {selectedIds.length > 0 && (
+                    <motion.div 
+                        initial={{ opacity: 0, y: 15 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 15 }}
+                        transition={{ type: "spring", stiffness: 120, damping: 15 }}
+                        className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 bg-indigo-50/50 dark:bg-indigo-955/20 border border-indigo-100 dark:border-indigo-900/30 rounded-2xl shadow-md backdrop-blur-md"
+                    >
+                        <span className="text-xs font-bold text-indigo-700 dark:text-indigo-400">
+                            {lang === "en"
+                                ? `${selectedIds.length} rental(s) selected`
+                                : `បានជ្រើសរើសកិច្ចសន្យាចំនួន ${selectedIds.length}`}
+                        </span>
+                        <div className="flex items-center gap-3 w-full sm:w-auto shrink-0">
+                            <CustomDropdown
+                                options={allStatuses.map((s) => ({
+                                    value: s,
+                                    label: lang === "en" ? statusConfig[s].label : statusConfig[s].labelKm,
+                                }))}
+                                value={bulkStatus}
+                                onChange={(val) => {
+                                    setBulkStatus(val);
+                                    handleBulkStatusChange(val as RentalStatus);
+                                }}
+                                placeholder={t.bulkStatusPlaceholder}
+                                className="w-44 text-xs"
+                            />
+                            <button
+                                onClick={handleBulkDelete}
+                                className="flex items-center justify-center gap-2 px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold shadow-md shadow-rose-100 dark:shadow-none transition-colors cursor-pointer active:scale-98"
+                            >
+                                <FaTrashAlt className="text-xs" />
+                                <span>{t.bulkDeleteBtn}</span>
+                            </button>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* Mobile Cards Grid view */}
+            {currentRentals.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-20 text-slate-500 dark:text-slate-400 gap-4 bg-white/80 dark:bg-slate-900/80 border border-slate-200/60 dark:border-slate-800/60 rounded-2xl shadow-sm md:hidden">
+                    <div className="w-16 h-16 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800/50 flex items-center justify-center shadow-inner">
+                        <FaInbox className="text-2xl text-slate-300 dark:text-slate-600" />
                     </div>
+                    <div className="text-center space-y-1.5 max-w-sm px-4">
+                        <p className="text-sm font-bold text-slate-800 dark:text-slate-200">{t.noRentals}</p>
+                        <p className="text-xs text-slate-400 dark:text-slate-500">
+                            {lang === "en" 
+                                ? "Try adjusting your search queries or active filters to find matching rental agreements."
+                                : "សូមព្យាយាមផ្លាស់ប្តូរការស្វែងរក ឬលក្ខខណ្ឌចម្រោះ ដើម្បីស្វែងរកកិច្ចសន្យាជួល។"}
+                        </p>
+                    </div>
+                    {(statusFilter !== "All" || minPrice !== "" || maxPrice !== "") && (
+                        <button
+                            onClick={() => {
+                                setStatusFilter("All");
+                                setMinPrice("");
+                                setMaxPrice("");
+                                setCurrentPage(1);
+                            }}
+                            className="px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-850 dark:hover:bg-slate-750 text-slate-700 dark:text-slate-300 text-xs font-bold rounded-xl transition-all shadow-sm border border-slate-200 dark:border-slate-750 cursor-pointer"
+                        >
+                            {lang === "en" ? "Clear Filters" : "សម្អាតលក្ខខណ្ឌចម្រោះ"}
+                        </button>
+                    )}
+                </div>
+            ) : (
+                <div className="grid grid-cols-1 gap-4 md:hidden">
+                    {currentRentals.map((rental, idx) => {
+                        const isSelected = selectedIds.includes(rental.id);
+                        const gradient = avatarGradients[rental.id % avatarGradients.length];
+                        const initials = getInitials(rental.ClientName || "?");
+                        
+                        return (
+                            <div 
+                                key={rental.id}
+                                className={`bg-white dark:bg-slate-900 rounded-2xl border ${
+                                    isSelected 
+                                        ? "border-indigo-500 shadow-md ring-1 ring-indigo-500/25 bg-indigo-50/5 dark:bg-indigo-950/5" 
+                                        : "border-slate-200/80 dark:border-slate-800/80 shadow-sm"
+                                } p-4 space-y-4 hover:shadow-md transition-all duration-200`}
+                            >
+                                <div className="flex items-start justify-between">
+                                    <div className="flex items-center gap-3">
+                                        <input
+                                            type="checkbox"
+                                            checked={isSelected}
+                                            onChange={() => handleSelectRow(rental.id)}
+                                            className="w-4 h-4 text-indigo-650 rounded border-slate-300 focus:ring-indigo-500 cursor-pointer"
+                                        />
+                                        <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${gradient} text-white flex items-center justify-center flex-shrink-0 text-xs font-bold shadow-sm`}>
+                                            {initials}
+                                        </div>
+                                        <div>
+                                            <h4 className="font-bold text-slate-905 dark:text-slate-100 text-xs leading-tight hover:text-indigo-600 transition-colors cursor-pointer" onClick={() => handleViewDetails(rental)}>
+                                                {rental.ClientName || "N/A"}
+                                            </h4>
+                                            {(rental.clientPhone || rental.clientEmail) && (
+                                                <p className="text-[10px] text-slate-400 dark:text-slate-500 font-semibold mt-1">
+                                                    {rental.clientPhone || rental.clientEmail}
+                                                </p>
+                                            )}
+                                        </div>
+                                    </div>
+                                    
+                                    <span className="inline-flex px-2 py-0.5 rounded bg-indigo-50 dark:bg-indigo-950/40 text-indigo-650 dark:text-indigo-400 border border-indigo-150/10 font-bold text-[10px]">
+                                        {lang === "en" ? `Room ${rental.roomNumber}` : `បន្ទប់ ${rental.roomNumber}`}
+                                    </span>
+                                </div>
+                                
+                                <div className="flex items-center justify-between border-y border-slate-100 dark:border-slate-800/50 py-2.5">
+                                    <div className="flex flex-col">
+                                        <span className="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">{t.status}</span>
+                                        <div className="mt-1">
+                                            <StatusBadge status={rental.status} lang={lang} />
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="text-right">
+                                        <span className="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">{t.rentAmount}</span>
+                                        <p className="text-sm font-extrabold text-slate-900 dark:text-slate-50 mt-0.5">${rental.rentAmount.toLocaleString()}</p>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <div className="flex justify-between text-[10px] text-slate-450 dark:text-slate-500 font-semibold">
+                                        <span>{formatKhmerDate(rental.startDate, lang)}</span>
+                                        <span>{formatKhmerDate(rental.endDate, lang)}</span>
+                                    </div>
+                                    <LeaseProgressBar startDate={rental.startDate} endDate={rental.endDate} lang={lang} />
+                                </div>
+                                
+                                <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100 dark:border-slate-800/50">
+                                    <button
+                                        onClick={() => handleViewDetails(rental)}
+                                        className="p-2 text-slate-450 hover:text-indigo-655 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl transition-colors shadow-sm border border-slate-100 dark:border-slate-800 cursor-pointer"
+                                        title={lang === "en" ? "View" : "មើល"}
+                                    >
+                                        <FaEye size={12} />
+                                    </button>
+                                    <button
+                                        onClick={() => handleEditStart(rental)}
+                                        className="p-2 text-slate-450 hover:text-indigo-655 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl transition-colors shadow-sm border border-slate-100 dark:border-slate-800 cursor-pointer"
+                                        title={lang === "en" ? "Edit" : "កែប្រែ"}
+                                    >
+                                        <FaEdit size={12} />
+                                    </button>
+                                    <button
+                                        onClick={() => handleDelete(rental.id)}
+                                        className="p-2 text-slate-455 hover:text-rose-500 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl transition-colors shadow-sm border border-slate-100 dark:border-slate-800 cursor-pointer"
+                                        title={lang === "en" ? "Delete" : "លុប"}
+                                    >
+                                        <FaTrash size={12} />
+                                    </button>
+                                </div>
+                            </div>
+                        );
+                    })}
                 </div>
             )}
 
-            {/* Main Rentals Table */}
-            <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden w-full">
+            {/* Desktop View Table */}
+            <div className="hidden md:block bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/60 dark:border-slate-800/60 shadow-sm overflow-hidden w-full">
                 <div className="overflow-x-auto w-full">
                     <table className="w-full text-sm text-left border-collapse">
-                        <thead className="bg-slate-50 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 font-semibold text-[13px]">
+                        <thead className="bg-slate-50/50 dark:bg-slate-950/50 border-b border-slate-200/60 dark:border-slate-800/60 text-slate-450 dark:text-slate-400 font-extrabold text-[11px] uppercase tracking-wider">
                             <tr>
                                 {/* Bulk Selection Checkbox */}
-                                <th className="px-5 py-3.5 w-10">
+                                <th className="px-5 py-4 w-10">
                                     <input
                                         type="checkbox"
                                         checked={allOnCurrentPageSelected}
                                         onChange={handleSelectAll}
-                                        className="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500 cursor-pointer"
+                                        className="w-4 h-4 text-indigo-650 rounded border-slate-300 focus:ring-indigo-500 cursor-pointer"
                                     />
                                 </th>
-                                <th className="px-4 py-3.5 w-12 text-center">#</th>
+                                <th className="px-4 py-4 w-12 text-center">#</th>
                                 <th
-                                    className="px-6 py-3.5 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors select-none"
+                                    className="px-6 py-4 cursor-pointer hover:bg-slate-100/50 dark:hover:bg-slate-900/50 transition-colors select-none"
                                     onClick={() => handleSort("ClientName")}
                                 >
-                                    <div className="flex items-center gap-1">
+                                    <div className="flex items-center gap-1.5">
                                         {t.client}
                                         {renderSortIcon("ClientName")}
                                     </div>
                                 </th>
                                 <th
-                                    className="px-6 py-3.5 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors select-none"
+                                    className="px-6 py-4 cursor-pointer hover:bg-slate-100/50 dark:hover:bg-slate-900/50 transition-colors select-none"
                                     onClick={() => handleSort("roomNumber")}
                                 >
-                                    <div className="flex items-center gap-1">
+                                    <div className="flex items-center gap-1.5">
                                         {t.room}
                                         {renderSortIcon("roomNumber")}
                                     </div>
                                 </th>
                                 <th
-                                    className="px-6 py-3.5 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors select-none"
+                                    className="px-6 py-4 cursor-pointer hover:bg-slate-100/50 dark:hover:bg-slate-900/50 transition-colors select-none"
                                     onClick={() => handleSort("status")}
                                 >
-                                    <div className="flex items-center gap-1">
+                                    <div className="flex items-center gap-1.5">
                                         {t.status}
                                         {renderSortIcon("status")}
                                     </div>
                                 </th>
                                 <th
-                                    className="px-6 py-3.5 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors select-none"
+                                    className="px-6 py-4 cursor-pointer hover:bg-slate-100/50 dark:hover:bg-slate-900/50 transition-colors select-none"
                                     onClick={() => handleSort("rentAmount")}
                                 >
-                                    <div className="flex items-center gap-1">
+                                    <div className="flex items-center gap-1.5">
                                         {t.rentAmount}
                                         {renderSortIcon("rentAmount")}
                                     </div>
                                 </th>
                                 <th
-                                    className="px-6 py-3.5 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors select-none"
+                                    className="px-6 py-4 cursor-pointer hover:bg-slate-100/50 dark:hover:bg-slate-900/50 transition-colors select-none"
                                     onClick={() => handleSort("startDate")}
                                 >
-                                    <div className="flex items-center gap-1">
+                                    <div className="flex items-center gap-1.5">
                                         {t.startDate}
                                         {renderSortIcon("startDate")}
                                     </div>
                                 </th>
-                                <th className="px-6 py-3.5">{t.endDate}</th>
-                                <th className="px-6 py-3.5">{t.actions}</th>
+                                <th className="px-6 py-4">{t.endDate}</th>
+                                <th className="px-6 py-4">{t.actions}</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50">
                             {currentRentals.length === 0 ? (
                                 <tr>
                                     <td colSpan={9}>
-                                        <div className="flex flex-col items-center justify-center py-20 text-slate-500 dark:text-slate-400 gap-3">
-                                            <div className="w-12 h-12 rounded bg-slate-50 dark:bg-slate-800/50 flex items-center justify-center">
-                                                <FaInbox className="text-xl text-slate-300 dark:text-slate-650" />
+                                        <div className="flex flex-col items-center justify-center py-20 text-slate-500 dark:text-slate-400 gap-4">
+                                            <div className="w-16 h-16 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800/50 flex items-center justify-center shadow-inner">
+                                                <FaInbox className="text-2xl text-slate-300 dark:text-slate-655" />
                                             </div>
-                                            <p className="text-sm font-medium">{t.noRentals}</p>
+                                            <div className="text-center space-y-1.5 max-w-sm">
+                                                <p className="text-sm font-bold text-slate-800 dark:text-slate-200">{t.noRentals}</p>
+                                                <p className="text-xs text-slate-400 dark:text-slate-500">
+                                                    {lang === "en" 
+                                                        ? "Try adjusting your search queries or active filters to find matching rental agreements."
+                                                        : "សូមព្យាយាមផ្លាស់ប្តូរការស្វែងរក ឬលក្ខខណ្ឌចម្រោះ ដើម្បីស្វែងរកកិច្ចសន្យាជួល។"}
+                                                </p>
+                                            </div>
+                                            {(statusFilter !== "All" || minPrice !== "" || maxPrice !== "") && (
+                                                <button
+                                                    onClick={() => {
+                                                        setStatusFilter("All");
+                                                        setMinPrice("");
+                                                        setMaxPrice("");
+                                                        setCurrentPage(1);
+                                                    }}
+                                                    className="px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold rounded-xl transition-all shadow-sm border border-slate-200 dark:border-slate-750 cursor-pointer"
+                                                >
+                                                    {lang === "en" ? "Clear Filters" : "សម្អាតលក្ខខណ្ឌចម្រោះ"}
+                                                </button>
+                                            )}
                                         </div>
                                     </td>
                                 </tr>
                             ) : currentRentals.map((rental, idx) => {
                                 const isEditing = editingId === rental.id;
                                 const isSelected = selectedIds.includes(rental.id);
-                                const cfg = statusConfig[rental.status] || statusConfig.Active;
+                                const gradient = avatarGradients[rental.id % avatarGradients.length];
                                 const initials = getInitials(rental.ClientName || "?");
 
                                 return (
@@ -515,12 +763,12 @@ const RentalList: React.FC<RentalListProps> = ({
                                                 type="checkbox"
                                                 checked={isSelected}
                                                 onChange={() => handleSelectRow(rental.id)}
-                                                className="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500 cursor-pointer"
+                                                className="w-4 h-4 text-indigo-650 rounded border-slate-300 focus:ring-indigo-500 cursor-pointer"
                                             />
                                         </td>
 
                                         {/* Index ID */}
-                                        <td className="px-4 py-4 text-slate-500 dark:text-slate-400 tabular-nums whitespace-nowrap text-center text-xs">
+                                        <td className="px-4 py-4 text-slate-400 dark:text-slate-500 tabular-nums whitespace-nowrap text-center text-xs font-semibold">
                                             {String(idx + 1 + (currentPage - 1) * itemsPerPage).padStart(2, "0")}
                                         </td>
 
@@ -535,16 +783,23 @@ const RentalList: React.FC<RentalListProps> = ({
                                                 />
                                             ) : (
                                                 <div className="flex items-center gap-3">
-                                                    <div className="w-8 h-8 rounded bg-slate-100 dark:bg-slate-800 text-slate-650 dark:text-slate-300 flex items-center justify-center flex-shrink-0 text-xs font-semibold">
+                                                    <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${gradient} text-white flex items-center justify-center flex-shrink-0 text-xs font-bold shadow-sm`}>
                                                         {initials}
                                                     </div>
-                                                    <span className="font-semibold text-slate-900 dark:text-slate-100 text-xs">{rental.ClientName || "N/A"}</span>
+                                                    <div>
+                                                        <span className="font-bold text-slate-900 dark:text-slate-100 text-xs hover:text-indigo-600 transition-colors cursor-pointer" onClick={() => handleViewDetails(rental)}>{rental.ClientName || "N/A"}</span>
+                                                        {(rental.clientPhone || rental.clientEmail) && (
+                                                            <p className="text-[10px] text-slate-400 dark:text-slate-500 font-semibold mt-0.5">
+                                                                {rental.clientPhone || rental.clientEmail}
+                                                            </p>
+                                                        )}
+                                                    </div>
                                                 </div>
                                             )}
                                         </td>
 
                                         {/* Room */}
-                                        <td className="px-6 py-4 whitespace-nowrap text-slate-650 dark:text-slate-300 font-semibold text-xs">
+                                        <td className="px-6 py-4 whitespace-nowrap text-xs">
                                             {isEditing ? (
                                                 <input
                                                     type="text"
@@ -553,7 +808,9 @@ const RentalList: React.FC<RentalListProps> = ({
                                                     className="border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 rounded-md px-2 py-1.5 w-full text-xs focus:outline-none focus:ring-1 focus:ring-indigo-500"
                                                 />
                                             ) : (
-                                                rental.roomNumber || "N/A"
+                                                <span className="inline-flex px-2 py-0.5 rounded bg-indigo-50 dark:bg-indigo-950/40 text-indigo-650 dark:text-indigo-400 border border-indigo-150/10 font-bold text-[10px]">
+                                                    {rental.roomNumber || "N/A"}
+                                                </span>
                                             )}
                                         </td>
 
@@ -570,14 +827,12 @@ const RentalList: React.FC<RentalListProps> = ({
                                                     className="w-full text-xs"
                                                 />
                                             ) : (
-                                                <span className={`inline-flex px-2 py-0.5 rounded text-[10px] font-bold leading-tight ${cfg.badge}`}>
-                                                    {lang === "en" ? cfg.label : cfg.labelKm}
-                                                </span>
+                                                <StatusBadge status={rental.status} lang={lang} />
                                             )}
                                         </td>
 
                                         {/* Rent Amount */}
-                                        <td className="px-6 py-4 whitespace-nowrap font-bold text-slate-850 dark:text-slate-100 text-xs">
+                                        <td className="px-6 py-4 whitespace-nowrap font-extrabold text-slate-900 dark:text-slate-50 text-xs">
                                             {isEditing ? (
                                                 <input
                                                     type="number"
@@ -592,7 +847,7 @@ const RentalList: React.FC<RentalListProps> = ({
                                         </td>
 
                                         {/* Start Date */}
-                                        <td className="px-6 py-4 whitespace-nowrap text-slate-500 dark:text-slate-400 text-xs">
+                                        <td className="px-6 py-4 whitespace-nowrap text-slate-550 dark:text-slate-400 text-xs font-medium">
                                             {isEditing ? (
                                                 <button
                                                     type="button"
@@ -603,12 +858,19 @@ const RentalList: React.FC<RentalListProps> = ({
                                                     <span>{formatKhmerDate(editForm.startDate as string, lang) || "—"}</span>
                                                 </button>
                                             ) : (
-                                                formatKhmerDate(rental.startDate, lang) || "—"
+                                                <div className="space-y-1">
+                                                    <span>{formatKhmerDate(rental.startDate, lang) || "—"}</span>
+                                                    {!isEditing && (
+                                                        <div className="w-28">
+                                                            <LeaseProgressBar startDate={rental.startDate} endDate={rental.endDate} lang={lang} />
+                                                        </div>
+                                                    )}
+                                                </div>
                                             )}
                                         </td>
 
                                         {/* End Date */}
-                                        <td className="px-6 py-4 whitespace-nowrap text-slate-500 dark:text-slate-400 text-xs">
+                                        <td className="px-6 py-4 whitespace-nowrap text-slate-550 dark:text-slate-400 text-xs font-medium">
                                             {isEditing ? (
                                                 <button
                                                     type="button"
@@ -625,19 +887,19 @@ const RentalList: React.FC<RentalListProps> = ({
 
                                         {/* Actions */}
                                         <td className="px-6 py-4 whitespace-nowrap text-xs">
-                                            <div className="flex items-center gap-1.5">
+                                            <div className="flex items-center gap-2">
                                                 {isEditing ? (
                                                     <>
                                                         <button
                                                             onClick={() => handleSaveEdit(rental.id)}
-                                                            className="p-1.5 bg-emerald-650 text-white rounded hover:bg-emerald-705 transition-colors cursor-pointer"
+                                                            className="p-2 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition-colors cursor-pointer shadow-sm"
                                                             title={lang === "en" ? "Save" : "រក្សាទុក"}
                                                         >
                                                             <FaSave size={12} />
                                                         </button>
                                                         <button
                                                             onClick={handleCancelEdit}
-                                                            className="p-1.5 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors"
+                                                            className="p-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
                                                             title={lang === "en" ? "Cancel" : "បោះបង់"}
                                                         >
                                                             <FaTimes size={12} />
@@ -647,21 +909,21 @@ const RentalList: React.FC<RentalListProps> = ({
                                                     <>
                                                         <button
                                                             onClick={() => handleViewDetails(rental)}
-                                                            className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-slate-50 dark:hover:bg-slate-800 rounded transition-colors"
+                                                            className="p-2 text-slate-450 hover:text-indigo-650 hover:bg-slate-100/50 dark:hover:bg-slate-800/50 rounded-xl transition-all shadow-sm border border-slate-100 dark:border-slate-800/80 cursor-pointer"
                                                             title={lang === "en" ? "View" : "មើល"}
                                                         >
                                                             <FaEye size={12} />
                                                         </button>
                                                         <button
                                                             onClick={() => handleEditStart(rental)}
-                                                            className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-slate-50 dark:hover:bg-slate-800 rounded transition-colors"
+                                                            className="p-2 text-slate-450 hover:text-indigo-655 hover:bg-slate-100/50 dark:hover:bg-slate-800/50 rounded-xl transition-all shadow-sm border border-slate-100 dark:border-slate-800/80 cursor-pointer"
                                                             title={lang === "en" ? "Edit" : "កែប្រែ"}
                                                         >
                                                             <FaEdit size={12} />
                                                         </button>
                                                         <button
                                                             onClick={() => handleDelete(rental.id)}
-                                                            className="p-1.5 text-slate-400 hover:text-rose-500 hover:bg-slate-50 dark:hover:bg-slate-800 rounded transition-colors"
+                                                            className="p-2 text-slate-450 hover:text-rose-500 hover:bg-slate-100/50 dark:hover:bg-slate-800/50 rounded-xl transition-all shadow-sm border border-slate-100 dark:border-slate-800/80 cursor-pointer"
                                                             title={lang === "en" ? "Delete" : "លុប"}
                                                         >
                                                             <FaTrash size={12} />
@@ -679,13 +941,13 @@ const RentalList: React.FC<RentalListProps> = ({
 
                 {/* Pagination */}
                 {totalPages > 1 && (
-                    <div className="flex items-center justify-between px-6 py-4 border-t border-slate-200 dark:border-slate-850 bg-slate-50/50 dark:bg-slate-900/50">
+                    <div className="flex items-center justify-between px-6 py-4 border-t border-slate-200/60 dark:border-slate-800/60 bg-slate-50/50 dark:bg-slate-900/50">
                         <button
                             onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
                             disabled={currentPage === 1}
-                            className={`flex items-center px-3.5 py-1.5 rounded border text-xs font-semibold transition-all ${currentPage === 1
-                                ? "border-slate-200 dark:border-slate-800 text-slate-300 dark:text-slate-700 cursor-not-allowed bg-white dark:bg-slate-900"
-                                : "border-slate-350 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 bg-white dark:bg-slate-900 shadow-sm"
+                            className={`flex items-center px-4 py-2 rounded-xl border text-xs font-bold transition-all duration-250 cursor-pointer ${currentPage === 1
+                                ? "border-slate-200 dark:border-slate-800 text-slate-300 dark:text-slate-700 cursor-not-allowed bg-transparent"
+                                : "border-slate-250 dark:border-slate-750 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/80 bg-white dark:bg-slate-900 shadow-sm"
                                 }`}
                         >
                             {lang === 'en' ? 'Previous' : 'មុន'}
@@ -695,9 +957,9 @@ const RentalList: React.FC<RentalListProps> = ({
                                 <button
                                     key={page}
                                     onClick={() => setCurrentPage(page)}
-                                    className={`w-7 h-7 rounded text-xs font-semibold transition-all ${page === currentPage
-                                        ? "bg-indigo-650 text-white shadow-sm"
-                                        : "bg-transparent text-slate-650 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
+                                    className={`w-8 h-8 rounded-xl text-xs font-bold transition-all duration-250 cursor-pointer ${page === currentPage
+                                        ? "bg-indigo-600 text-white shadow-md shadow-indigo-100 dark:shadow-none"
+                                        : "bg-transparent text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
                                         }`}
                                 >
                                     {page}
@@ -707,9 +969,9 @@ const RentalList: React.FC<RentalListProps> = ({
                         <button
                             onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
                             disabled={currentPage === totalPages}
-                            className={`flex items-center px-3.5 py-1.5 rounded border text-xs font-semibold transition-all ${currentPage === totalPages
-                                ? "border-slate-200 dark:border-slate-800 text-slate-300 dark:text-slate-700 cursor-not-allowed bg-white dark:bg-slate-900"
-                                : "border-slate-355 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 bg-white dark:bg-slate-900 shadow-sm"
+                            className={`flex items-center px-4 py-2 rounded-xl border text-xs font-bold transition-all duration-250 cursor-pointer ${currentPage === totalPages
+                                ? "border-slate-200 dark:border-slate-800 text-slate-300 dark:text-slate-700 cursor-not-allowed bg-transparent"
+                                : "border-slate-250 dark:border-slate-750 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/80 bg-white dark:bg-slate-900 shadow-sm"
                                 }`}
                         >
                             {lang === 'en' ? 'Next' : 'បន្ទាប់'}
@@ -721,7 +983,7 @@ const RentalList: React.FC<RentalListProps> = ({
             {/* Date Picker Popup */}
             {showDatePopup && editingId && editForm && (
                 <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                    <div className="bg-white rounded-lg shadow-xl border border-slate-200 w-full max-w-md">
+                    <div className="bg-white rounded-lg shadow-xl border border-slate-200 w-full max-w-md animate-in fade-in duration-200">
                         <KhmerCalendar
                             selectedDate={editingDateField ? (editForm[editingDateField] as string) || "" : ""}
                             onChange={handleDateChange}

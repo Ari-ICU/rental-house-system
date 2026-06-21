@@ -8,12 +8,36 @@ import { Rental, RentalStatus } from "@/types/rents";
 import { getAllRentals } from "@/services/rentalService";
 import { FaHome, FaCheckCircle, FaClock, FaTimesCircle } from "react-icons/fa";
 import { useLang } from "@/context/LangContext";
+import { motion } from "framer-motion";
 
 const statusMap: { [key: string]: RentalStatus } = {
     "active": "Active",
     "reserved": "Reserved",
     "completed": "Completed",
     "maintenance": "Maintenance",
+};
+
+const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+        opacity: 1,
+        transition: {
+            staggerChildren: 0.05,
+        },
+    },
+};
+
+const cardVariants = {
+    hidden: { opacity: 0, y: 20 },
+    show: { 
+        opacity: 1, 
+        y: 0, 
+        transition: { 
+            type: "spring" as const, 
+            stiffness: 100, 
+            damping: 15 
+        } 
+    },
 };
 
 const RentalPageContent: React.FC = () => {
@@ -134,31 +158,36 @@ const RentalPageContent: React.FC = () => {
             label: lang === "en" ? "Total Units" : "យូនីតសរុប",
             value: allRentals.length,
             icon: FaHome,
-            wrapperClass: "bg-indigo-50 text-indigo-600",
+            wrapperClass: "bg-indigo-50 dark:bg-indigo-950/30 text-indigo-600 dark:text-indigo-400 border-indigo-100 dark:border-indigo-900/30",
+            desc: lang === "en" ? "Total lease contracts" : "កិច្ចសន្យាជួលសរុប",
         },
         {
-            label: lang === "en" ? "Renting" : "កំពុងជួល",
+            label: lang === "en" ? "Active renting" : "កំពុងជួល",
             value: activeCount,
             icon: FaCheckCircle,
-            wrapperClass: "bg-emerald-50 text-emerald-600",
+            wrapperClass: "bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 border-emerald-100 dark:border-emerald-900/30",
+            desc: lang === "en" ? "Rooms currently occupied" : "បន្ទប់កំពុងស្នាក់នៅ",
         },
         {
-            label: lang === "en" ? "Reserved" : "បានកក់",
+            label: lang === "en" ? "Reserved rooms" : "បានកក់ទុក",
             value: reservedCount,
             icon: FaClock,
-            wrapperClass: "bg-blue-50 text-blue-600",
+            wrapperClass: "bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 border-blue-100 dark:border-blue-900/30",
+            desc: lang === "en" ? "Leases pending check-in" : "រង់ចាំចូលស្នាក់នៅ",
         },
         {
-            label: lang === "en" ? "Completed" : "បានបញ្ចប់",
+            label: lang === "en" ? "Completed leases" : "បានបញ្ចប់",
             value: completedCount,
             icon: FaCheckCircle,
-            wrapperClass: "bg-slate-100 text-slate-600",
+            wrapperClass: "bg-slate-100 dark:bg-slate-800/50 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700/50",
+            desc: lang === "en" ? "Expired or closed leases" : "កិច្ចសន្យាបានបញ្ចប់",
         },
         {
             label: lang === "en" ? "Maintenance" : "ការជួសជុល",
             value: maintenanceCount,
             icon: FaTimesCircle,
-            wrapperClass: "bg-rose-50 text-rose-600",
+            wrapperClass: "bg-rose-50 dark:bg-rose-950/30 text-rose-600 dark:text-rose-400 border-rose-100 dark:border-rose-900/30",
+            desc: lang === "en" ? "Units undergoing repair" : "យូនីតកំពុងជួសជុល",
         },
     ];
 
@@ -187,7 +216,12 @@ const RentalPageContent: React.FC = () => {
     }
 
     return (
-        <div className="space-y-6">
+        <motion.div 
+            className="space-y-6"
+            initial="hidden"
+            animate="show"
+            variants={containerVariants}
+        >
             <RentalHeader
                 onSearch={handleSearch}
                 onAdd={handleAdd}
@@ -197,32 +231,40 @@ const RentalPageContent: React.FC = () => {
             />
 
             {/* Stat Cards */}
-            <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+            <motion.div 
+                className="grid grid-cols-2 lg:grid-cols-5 gap-4"
+                variants={containerVariants}
+            >
                 {statCards.map((card) => {
                     const Icon = card.icon;
                     return (
-                        <div
+                        <motion.div
                             key={card.label}
-                            className="bg-white dark:bg-slate-900 p-4 rounded-lg border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between"
+                            variants={cardVariants}
+                            whileHover={{ y: -4, scale: 1.01 }}
+                            className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md p-5 rounded-2xl border border-slate-200/60 dark:border-slate-800/60 shadow-sm hover:shadow-md hover:border-slate-350 dark:hover:border-slate-700 transition-all duration-300 flex flex-col justify-between"
                         >
-                            <div className="flex items-start justify-between mb-3">
-                                <div>
-                                    <h3 className="text-slate-500 dark:text-slate-400 text-xs font-medium uppercase tracking-wider">
+                            <div className="flex items-start justify-between">
+                                <div className="space-y-1">
+                                    <h3 className="text-slate-450 dark:text-slate-400 text-[10px] font-extrabold uppercase tracking-wider">
                                         {card.label}
                                     </h3>
-                                    <p className="text-2xl font-semibold text-slate-900 dark:text-slate-50 mt-1">{card.value}</p>
+                                    <p className="text-3xl font-extrabold text-slate-900 dark:text-slate-50 tracking-tight">{card.value}</p>
                                 </div>
-                                <div className={`p-2.5 rounded-md ${card.wrapperClass} dark:bg-opacity-10 dark:text-opacity-90`}>
+                                <div className={`p-2.5 rounded-xl border ${card.wrapperClass} flex items-center justify-center shadow-sm`}>
                                     <Icon className="text-lg" />
                                 </div>
                             </div>
-                        </div>
+                            <p className="text-[10px] text-slate-400 dark:text-slate-500 font-medium mt-3 border-t border-slate-100 dark:border-slate-800/80 pt-2.5">
+                                {card.desc}
+                            </p>
+                        </motion.div>
                     );
                 })}
-            </div>
+            </motion.div>
 
             <RentalList rentals={rentals} />
-        </div>
+        </motion.div>
     );
 };
 
