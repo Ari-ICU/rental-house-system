@@ -37,6 +37,13 @@ model Rental {
   image                 String?
   bills                 Bill[]
 
+  // New Property Management Fields
+  startElectricityReading Decimal  @default(0)
+  startWaterReading       Decimal  @default(0)
+  depositStatus          String   @default("Unpaid")
+  paymentDueDay          Int      @default(5)
+  contractAgreement      String?
+
   @@index([ClientName])
   @@index([roomNumber])
   @@index([clientPhone])

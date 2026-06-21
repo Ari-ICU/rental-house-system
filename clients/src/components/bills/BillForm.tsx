@@ -29,6 +29,19 @@ interface BillFormProps {
     bill?: Bill;
 }
 
+const getInitialReadings = (rental: Rental | undefined, type: 'electricity' | 'water'): number => {
+    if (!rental) return 0;
+    if (rental.bills && rental.bills.length > 0) {
+        const latestBill = rental.bills[0];
+        return type === 'electricity' 
+            ? (latestBill.currElectricityReading ?? 0)
+            : (latestBill.currWaterReading ?? 0);
+    }
+    return type === 'electricity'
+        ? (rental.startElectricityReading ?? 0)
+        : (rental.startWaterReading ?? 0);
+};
+
 const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
     const { lang } = useLang();
     const router = useRouter();
@@ -38,6 +51,7 @@ const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
     const [rentalSearch, setRentalSearch] = useState('');
 
     const activeRentals = rentals.filter(r => r.status === 'Active' || r.status === 'Reserved');
+    const defaultRental = activeRentals.length > 0 ? activeRentals[0] : {} as Rental;
 
     const [formData, setFormData] = useState<Omit<Bill, 'id' | 'rentAmount' | 'electricityAmount' | 'waterAmount'> & {
         rentAmount?: number | string;
@@ -48,13 +62,13 @@ const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
         prevWaterReading: number | string;
         currWaterReading: number | string;
     }>({
-        rental: bill?.rental || (activeRentals.length > 0 ? activeRentals[0] : {} as Rental),
+        rental: bill?.rental || defaultRental,
         month: bill?.month || '',
-        rentAmount: bill?.rentAmount ?? bill?.rental?.rentAmount ?? '',
-        prevElectricityReading: bill?.prevElectricityReading ?? 0,
+        rentAmount: bill?.rentAmount ?? bill?.rental?.rentAmount ?? defaultRental?.rentAmount ?? '',
+        prevElectricityReading: bill?.prevElectricityReading ?? (bill ? 0 : getInitialReadings(defaultRental, 'electricity')),
         currElectricityReading: bill?.currElectricityReading ?? 0,
         electricityAmount: bill?.electricityAmount ?? '',
-        prevWaterReading: bill?.prevWaterReading ?? 0,
+        prevWaterReading: bill?.prevWaterReading ?? (bill ? 0 : getInitialReadings(defaultRental, 'water')),
         currWaterReading: bill?.currWaterReading ?? 0,
         waterAmount: bill?.waterAmount ?? '',
         electricityStatus: bill?.electricityStatus || 'Unpaid',
@@ -137,7 +151,13 @@ const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
         } else if (!formData.rental?.id && rentals.length > 0) {
             const firstActive = rentals.find(r => r.status === 'Active' || r.status === 'Reserved');
             if (firstActive) {
-                setFormData(prev => ({ ...prev, rental: firstActive, rentAmount: firstActive.rentAmount ?? '' }));
+                setFormData(prev => ({
+                    ...prev,
+                    rental: firstActive,
+                    rentAmount: firstActive.rentAmount ?? '',
+                    prevElectricityReading: getInitialReadings(firstActive, 'electricity'),
+                    prevWaterReading: getInitialReadings(firstActive, 'water')
+                }));
             }
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -327,7 +347,13 @@ const BillForm: React.FC<BillFormProps> = ({ rentals, bill }) => {
                                                     <div
                                                         key={r.id}
                                                         onClick={() => {
-                                                            setFormData(prev => ({ ...prev, rental: r, rentAmount: r.rentAmount }));
+                                                            setFormData(prev => ({
+                                                                ...prev,
+                                                                rental: r,
+                                                                rentAmount: r.rentAmount ?? '',
+                                                                prevElectricityReading: getInitialReadings(r, 'electricity'),
+                                                                prevWaterReading: getInitialReadings(r, 'water')
+                                                            }));
                                                             setIsOpen(false);
                                                             setRentalSearch('');
                                                         }}

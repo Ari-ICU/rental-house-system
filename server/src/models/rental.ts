@@ -7,6 +7,11 @@ const convertDecimalToNumber = (rental: any) => {
         rentAmount: Number(rental.rentAmount),
         depositAmount: Number(rental.depositAmount || 0),
         memberCount: Number(rental.memberCount || 1),
+        startElectricityReading: Number(rental.startElectricityReading || 0),
+        startWaterReading: Number(rental.startWaterReading || 0),
+        paymentDueDay: Number(rental.paymentDueDay || 5),
+        depositStatus: rental.depositStatus || 'Unpaid',
+        contractAgreement: rental.contractAgreement || '',
         clientImageCard: {
             front: rental.clientImageCardFront || '',
             back: rental.clientImageCardBack || ''
@@ -34,6 +39,14 @@ const Rental = {
         const [rentals, total] = await Promise.all([
             prisma.rental.findMany({
                 where,
+                include: {
+                    bills: {
+                        orderBy: {
+                            createdAt: 'desc'
+                        },
+                        take: 1
+                    }
+                },
                 orderBy: {
                     createdAt: 'desc',
                 },
@@ -74,7 +87,8 @@ const Rental = {
             ClientName, roomNumber, status, rentAmount, depositAmount, startDate, endDate, notes,
             clientPhone, clientEmail, clientAddress, nationality, gender, occupation, idCardType,
             memberCount, clientIDCard, clientImageCardFront, clientImageCardBack,
-            emergencyContactName, emergencyContactPhone, image, telegramChatId
+            emergencyContactName, emergencyContactPhone, image, telegramChatId,
+            startElectricityReading, startWaterReading, depositStatus, contractAgreement, paymentDueDay
         } = rentalData;
 
         const newRental = await prisma.rental.create({
@@ -82,7 +96,12 @@ const Rental = {
                 ClientName, roomNumber, status, rentAmount, depositAmount, startDate, endDate, notes,
                 clientPhone, clientEmail, clientAddress, nationality, gender, occupation, idCardType,
                 memberCount, clientIDCard, clientImageCardFront, clientImageCardBack,
-                emergencyContactName, emergencyContactPhone, image, telegramChatId
+                emergencyContactName, emergencyContactPhone, image, telegramChatId,
+                startElectricityReading: startElectricityReading !== undefined ? Number(startElectricityReading) : 0,
+                startWaterReading: startWaterReading !== undefined ? Number(startWaterReading) : 0,
+                depositStatus: depositStatus || "Unpaid",
+                contractAgreement,
+                paymentDueDay: paymentDueDay !== undefined ? Number(paymentDueDay) : 5
             },
         });
         return convertDecimalToNumber(newRental);
@@ -98,7 +117,8 @@ const Rental = {
             'ClientName', 'roomNumber', 'status', 'rentAmount', 'depositAmount', 'startDate', 'endDate', 'notes',
             'clientPhone', 'clientEmail', 'clientAddress', 'nationality', 'gender', 'occupation', 'idCardType',
             'memberCount', 'clientIDCard', 'clientImageCardFront', 'clientImageCardBack',
-            'emergencyContactName', 'emergencyContactPhone', 'image', 'telegramChatId'
+            'emergencyContactName', 'emergencyContactPhone', 'image', 'telegramChatId',
+            'startElectricityReading', 'startWaterReading', 'depositStatus', 'contractAgreement', 'paymentDueDay'
         ];
 
         const dataToUpdate: any = {};

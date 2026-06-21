@@ -22,12 +22,23 @@ const sanitize = (data) => {
     return data;
 };
 const xssSanitizer = (req, res, next) => {
-    if (req.body)
+    if (req.body) {
         req.body = sanitize(req.body);
-    if (req.query)
-        req.query = sanitize(req.query);
-    if (req.params)
-        req.params = sanitize(req.params);
+    }
+    if (req.query) {
+        const sanitized = sanitize(req.query);
+        for (const key of Object.keys(req.query)) {
+            delete req.query[key];
+        }
+        Object.assign(req.query, sanitized);
+    }
+    if (req.params) {
+        const sanitized = sanitize(req.params);
+        for (const key of Object.keys(req.params)) {
+            delete req.params[key];
+        }
+        Object.assign(req.params, sanitized);
+    }
     next();
 };
 exports.default = xssSanitizer;

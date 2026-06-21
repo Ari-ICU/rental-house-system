@@ -35,6 +35,13 @@ export interface Rental {
     emergencyContactPhone?: string;
     telegramChatId?: string;
 
+    // Extra fields
+    startElectricityReading?: number;
+    startWaterReading?: number;
+    depositStatus?: string;
+    paymentDueDay?: number;
+    contractAgreement?: string;
+
     bills?: import("./bill").Bill[];
     createdAt?: string;
     updatedAt?: string;

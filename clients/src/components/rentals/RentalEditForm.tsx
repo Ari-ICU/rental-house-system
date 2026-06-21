@@ -4,7 +4,8 @@ import React, { useState } from 'react';
 import {
     FaCalendarAlt, FaArrowLeft, FaUser, FaDoorOpen, FaPhone, FaEnvelope,
     FaMapMarkerAlt, FaIdCard, FaExclamationTriangle, FaStickyNote,
-    FaDollarSign, FaCheckCircle, FaTimesCircle, FaSpinner, FaSave, FaTelegramPlane
+    FaDollarSign, FaCheckCircle, FaTimesCircle, FaSpinner, FaSave, FaTelegramPlane,
+    FaBolt, FaTint
 } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
 import { Rental, RentalStatus } from '@/types/rents';
@@ -47,6 +48,11 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
         emergencyContactName: rental.emergencyContactName ?? '',
         emergencyContactPhone: rental.emergencyContactPhone ?? '',
         telegramChatId: rental.telegramChatId ?? '',
+        startElectricityReading: rental.startElectricityReading ?? 0,
+        startWaterReading: rental.startWaterReading ?? 0,
+        depositStatus: rental.depositStatus ?? 'Unpaid',
+        paymentDueDay: rental.paymentDueDay ?? 5,
+        contractAgreement: rental.contractAgreement ?? '',
         clientImageCard: {
             front: rental.clientImageCard?.front ?? '',
             back: rental.clientImageCard?.back ?? '',
@@ -61,6 +67,7 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
     const [profilePreview, setProfilePreview] = useState<string | null>(rental.image ?? null);
     const [frontPreview, setFrontPreview] = useState<string | null>(rental.clientImageCard?.front ?? null);
     const [backPreview, setBackPreview] = useState<string | null>(rental.clientImageCard?.back ?? null);
+    const [contractPreview, setContractPreview] = useState<string | null>(rental.contractAgreement ?? null);
 
     // OCR States
     const [ocrText, setOcrText] = useState<string>('');
@@ -70,11 +77,26 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
         e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
     ) => {
         const { name, value } = e.target;
-        const numericFields = ['rentAmount', 'depositAmount', 'memberCount'];
+        const numericFields = ['rentAmount', 'depositAmount', 'memberCount', 'startElectricityReading', 'startWaterReading', 'paymentDueDay'];
         setFormData(prev => ({
             ...prev,
             [name]: numericFields.includes(name) ? Number(value) : value,
         }));
+    };
+
+    const handleContractFileChange = (file: File | null) => {
+        if (!file) {
+            setFormData((prev) => ({ ...prev, contractAgreement: '' }));
+            setContractPreview(null);
+            return;
+        }
+        const reader = new FileReader();
+        reader.onload = () => {
+            const base64 = reader.result as string;
+            setFormData((prev) => ({ ...prev, contractAgreement: base64 }));
+            setContractPreview(base64);
+        };
+        reader.readAsDataURL(file);
     };
 
     const handleDateFieldClick = (field: 'startDate' | 'endDate') => {
@@ -171,6 +193,12 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
         { value: 'Reserved', label: lang === 'km' ? 'កក់ទុក' : 'Reserved', color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-300' },
         { value: 'Completed', label: lang === 'km' ? 'បានបញ្ចប់' : 'Completed', color: 'text-gray-500', bg: 'bg-gray-50', border: 'border-gray-300' },
         { value: 'Maintenance', label: lang === 'km' ? 'កំពុងជួសជុល' : 'Maintenance', color: 'text-rose-600', bg: 'bg-rose-50', border: 'border-rose-300' },
+    ];
+
+    const depositStatusOptions = [
+        { value: 'Unpaid', label: lang === 'km' ? 'មិនទាន់បង់ (Unpaid)' : 'Unpaid', color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-300' },
+        { value: 'Paid', label: lang === 'km' ? 'បានបង់ (Paid)' : 'Paid', color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-300' },
+        { value: 'Refunded', label: lang === 'km' ? 'បានបង្វិលសង (Refunded)' : 'Refunded', color: 'text-gray-500', bg: 'bg-gray-50', border: 'border-gray-300' },
     ];
 
     const genderOptions = [
@@ -378,6 +406,38 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
                             </div>
                         </div>
 
+                        {/* Deposit Status */}
+                        <CustomDropdown
+                            label={lang === 'km' ? 'ស្ថានភាពប្រាក់កក់' : 'Deposit Status'}
+                            options={depositStatusOptions}
+                            value={formData.depositStatus || 'Unpaid'}
+                            onChange={(val) => setFormData(prev => ({ ...prev, depositStatus: val }))}
+                            searchable={true}
+                        />
+
+                        {/* Payment Due Day */}
+                        <div className="space-y-1.5">
+                            <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                {lang === 'km' ? 'ថ្ងៃត្រូវបង់ប្រាក់ (ថ្ងៃទី)' : 'Payment Due Day (of month)'} <span className="text-red-400">*</span>
+                            </label>
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                                    <FaCalendarAlt className="text-gray-300 text-sm" />
+                                </div>
+                                <input
+                                    type="number"
+                                    name="paymentDueDay"
+                                    value={formData.paymentDueDay || ''}
+                                    onChange={handleChange}
+                                    min={1}
+                                    max={31}
+                                    placeholder="5"
+                                    className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 outline-none transition-all text-sm text-gray-800 dark:text-gray-200 placeholder-gray-300 dark:placeholder-gray-600 bg-gray-50/50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 hover:border-gray-300 dark:hover:border-slate-600"
+                                    required
+                                />
+                            </div>
+                        </div>
+
                         {/* Start Date */}
                         <div className="space-y-1.5">
                             <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
@@ -410,6 +470,63 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
                             </button>
                         </div>
 
+                    </div>
+                </div>
+
+                {/* Section: Starting Utility Readings */}
+                <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800 animate-fadeIn">
+                    <div className="px-6 py-4 border-b border-gray-50 dark:border-slate-800 bg-gradient-to-r from-gray-50 to-white dark:from-slate-800 dark:to-slate-900 rounded-t-2xl">
+                        <div className="flex items-center gap-2.5">
+                            <div className="w-8 h-8 rounded-lg bg-amber-100 dark:bg-amber-950 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+                                <FaBolt className="text-xs" />
+                            </div>
+                            <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wider">
+                                {lang === 'km' ? 'អំណានកុងទ័រទឹកភ្លើងចាប់ផ្តើម' : 'Starting Utility Readings'}
+                            </h2>
+                        </div>
+                    </div>
+                    <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-5">
+                        {/* Start Electricity Reading */}
+                        <div className="space-y-1.5">
+                            <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                {lang === 'km' ? 'អំណានកុងទ័រអគ្គិសនីចាប់ផ្តើម (kWh)' : 'Starting Electricity Reading (kWh)'}
+                            </label>
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                                    <FaBolt className="text-gray-300 text-sm" />
+                                </div>
+                                <input
+                                    type="number"
+                                    name="startElectricityReading"
+                                    value={formData.startElectricityReading !== undefined ? formData.startElectricityReading : 0}
+                                    onChange={handleChange}
+                                    min={0}
+                                    placeholder="0"
+                                    className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 outline-none transition-all text-sm text-gray-800 dark:text-gray-200 placeholder-gray-300 dark:placeholder-gray-600 bg-gray-50/50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 hover:border-gray-300 dark:hover:border-slate-600"
+                                />
+                            </div>
+                        </div>
+
+                        {/* Start Water Reading */}
+                        <div className="space-y-1.5">
+                            <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                {lang === 'km' ? 'អំណានកុងទ័រទឹកចាប់ផ្តើម (m³)' : 'Starting Water Reading (m³)'}
+                            </label>
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                                    <FaTint className="text-gray-300 text-sm" />
+                                </div>
+                                <input
+                                    type="number"
+                                    name="startWaterReading"
+                                    value={formData.startWaterReading !== undefined ? formData.startWaterReading : 0}
+                                    onChange={handleChange}
+                                    min={0}
+                                    placeholder="0"
+                                    className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 outline-none transition-all text-sm text-gray-800 dark:text-gray-200 placeholder-gray-300 dark:placeholder-gray-600 bg-gray-50/50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 hover:border-gray-300 dark:hover:border-slate-600"
+                                />
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -621,6 +738,28 @@ const RentalEditForm: React.FC<RentalEditFormProps> = ({ rental, id }) => {
                                 </p>
                             </div>
                         )}
+                    </div>
+                </div>
+
+                {/* Section: Lease Contract Agreement */}
+                <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-800 animate-fadeIn">
+                    <div className="px-6 py-4 border-b border-gray-50 dark:border-slate-800 bg-gradient-to-r from-gray-50 to-white dark:from-slate-800 dark:to-slate-900 rounded-t-2xl">
+                        <div className="flex items-center gap-2.5">
+                            <div className="w-8 h-8 rounded-lg bg-indigo-100 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+                                <FaStickyNote className="text-xs" />
+                            </div>
+                            <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wider">
+                                {lang === 'km' ? 'កិច្ចសន្យាជួល' : 'Lease Contract Agreement'}
+                            </h2>
+                        </div>
+                    </div>
+                    <div className="p-6">
+                        <FileUploader
+                            label={lang === 'km' ? 'ផ្ទុកឡើងឯកសារកិច្ចសន្យាជួល (រូបភាព ឬ PDF)' : 'Upload lease contract document (Image or PDF)'}
+                            accept="image/*,application/pdf"
+                            onFileSelect={handleContractFileChange}
+                            preview={contractPreview}
+                        />
                     </div>
                 </div>
 
