@@ -56,7 +56,9 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
     const activeBorder = 'ring-2 ring-violet-500/20 border-violet-400';
     const borderClass = isOpen ? activeBorder : baseBorder;
 
-    const colorClass = selectedOption?.color || 'text-gray-800 dark:text-gray-200';
+    const colorClass = selectedOption
+        ? (selectedOption.color || 'text-gray-800 dark:text-gray-200')
+        : 'text-gray-400 dark:text-slate-500';
 
     return (
         <div className={`relative ${isOpen ? 'z-50' : ''} ${className}`} ref={dropdownRef}>
