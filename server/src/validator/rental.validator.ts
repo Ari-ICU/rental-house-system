@@ -56,3 +56,47 @@ export const rentalValidationRules = () => {
             .withMessage('clientPhone must be a string')
     ];
 };
+
+export const rentalUpdateValidationRules = () => {
+    return [
+        body('ClientName')
+            .optional()
+            .isString()
+            .withMessage('ClientName must be a string'),
+
+        body('roomNumber')
+            .optional()
+            .isString()
+            .withMessage('roomNumber must be a string'),
+
+        body('status')
+            .optional()
+            .isString()
+            .withMessage('status must be a string'),
+
+        body('rentAmount')
+            .optional()
+            .isNumeric()
+            .withMessage('rentAmount must be a number'),
+
+        body('startDate')
+            .optional()
+            .isString()
+            .withMessage('startDate must be a string (e.g., ISO date)'),
+
+        body('endDate')
+            .optional()
+            .isString()
+            .withMessage('endDate must be a string'),
+
+        body('clientEmail')
+            .optional()
+            .isEmail()
+            .withMessage('clientEmail must be a valid email address'),
+
+        body('clientPhone')
+            .optional()
+            .isString()
+            .withMessage('clientPhone must be a string')
+    ];
+};
