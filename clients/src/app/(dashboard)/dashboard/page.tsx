@@ -316,7 +316,7 @@ export default function DashboardPage() {
             {/* SVG Interactive Charts Layout */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* 1. Revenue vs Expenses Trend Line Area Chart */}
-                <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm lg:col-span-2 relative flex flex-col justify-between min-h-[340px]">
+                <div className="rounded-2xl glass-panel p-5.5 lg:col-span-2 relative flex flex-col justify-between min-h-[340px]">
                     <div className="flex justify-between items-center pb-4 border-b border-slate-50 dark:border-slate-800">
                         <div>
                             <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wider">
@@ -484,7 +484,7 @@ export default function DashboardPage() {
                 </div>
 
                 {/* 2. Interactive Circular Donut Chart (Occupancy Rate) */}
-                <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm flex flex-col justify-between min-h-[340px]">
+                <div className="rounded-2xl glass-panel p-5.5 flex flex-col justify-between min-h-[340px]">
                     <div className="pb-4 border-b border-slate-50 dark:border-slate-800">
                         <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wider">
                             {t[langKey].occupancyRate}
@@ -532,9 +532,9 @@ export default function DashboardPage() {
                         {donutArcs.map((seg) => (
                             <div
                                 key={seg.label}
-                                className={`flex items-center gap-2 p-1.5 rounded-lg border transition-colors cursor-pointer ${
+                                className={`flex items-center gap-2.5 p-2 rounded-xl border transition-all cursor-pointer ${
                                     hoveredDonutSegment === seg.label
-                                        ? "bg-slate-50 border-slate-200 dark:bg-slate-800 dark:border-slate-700"
+                                        ? "bg-slate-100/50 border-slate-200/80 dark:bg-slate-800/40 dark:border-slate-800/80 shadow-sm"
                                         : "border-transparent"
                                 }`}
                                 onMouseEnter={() => setHoveredDonutSegment(seg.label)}
@@ -558,7 +558,7 @@ export default function DashboardPage() {
             {/* Receivables & Recent Rentals Rows */}
             <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
                 {/* Outstanding Bills Progress List */}
-                <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm xl:col-span-1 flex flex-col min-h-[380px]">
+                <div className="rounded-2xl glass-panel p-5.5 xl:col-span-1 flex flex-col min-h-[380px]">
                     <div className="pb-4 border-b border-slate-50 dark:border-slate-800 flex justify-between items-center">
                         <div>
                             <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wider">
@@ -587,7 +587,7 @@ export default function DashboardPage() {
                                 return (
                                     <div
                                         key={b.id}
-                                        className="p-3 bg-slate-50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-slate-805/50 hover:shadow-sm transition-all"
+                                        className="p-3.5 bg-slate-100/30 dark:bg-slate-950/20 rounded-xl border border-slate-200/50 dark:border-slate-900/60 hover:shadow-md hover:border-slate-300 dark:hover:border-slate-800 transition-all"
                                     >
                                         <div className="flex justify-between items-start">
                                             <div>
@@ -642,7 +642,7 @@ export default function DashboardPage() {
                 </div>
 
                 {/* Recent Rentals List */}
-                <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm xl:col-span-2 flex flex-col min-h-[380px]">
+                <div className="rounded-2xl glass-panel p-5.5 xl:col-span-2 flex flex-col min-h-[380px]">
                     <div className="pb-4 border-b border-slate-50 dark:border-slate-800 flex justify-between items-center">
                         <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wider">
                             {t[langKey].recentRentals}

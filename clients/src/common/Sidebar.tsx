@@ -16,7 +16,8 @@ import {
     FaCog,
     FaChevronLeft,
     FaMoneyBillWave,
-    FaSignOutAlt
+    FaSignOutAlt,
+    FaBed
 } from "react-icons/fa";
 import { useLang } from "@/context/LangContext";
 import { useAuth } from "@/context/AuthContext";
@@ -53,6 +54,7 @@ const Sidebar: React.FC<{ isMobileOpen: boolean; onClose: () => void }> = ({ isM
             title: "Operations",
             titleKh: "ប្រតិបត្តិការ",
             links: [
+                { name: "Rooms", nameKh: "បន្ទប់ជួល", href: "/dashboard/rooms", icon: <FaBed className="w-4 h-4" /> },
                 { name: "Rentals", nameKh: "ការជួល", href: "/dashboard/rentals", icon: <FaFileContract className="w-4 h-4" /> },
                 { name: "Expenses", nameKh: "ចំណាយ", href: "/dashboard/expenses", icon: <FaMoneyBillWave className="w-4 h-4" /> },
                 { name: "Utilities & Bills", nameKh: "សេវាអគ្គិសនី និងទឹក", href: "/dashboard/bills", icon: <FaPlug className="w-4 h-4" /> },
@@ -117,7 +119,7 @@ const Sidebar: React.FC<{ isMobileOpen: boolean; onClose: () => void }> = ({ isM
                 {active && (
                     <motion.div
                         layoutId="activeNavBackground"
-                        className="absolute inset-0 bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800/80 rounded-xl z-0"
+                        className="absolute inset-0 bg-indigo-50/60 dark:bg-indigo-500/10 border border-indigo-100/50 dark:border-indigo-500/15 rounded-xl z-0"
                         transition={{ type: "spring", stiffness: 380, damping: 30 }}
                     />
                 )}
@@ -126,7 +128,7 @@ const Sidebar: React.FC<{ isMobileOpen: boolean; onClose: () => void }> = ({ isM
                 {active && (
                     <motion.div
                         layoutId="activeNavIndicator"
-                        className="absolute left-0 top-3 bottom-3 w-1 bg-indigo-600 dark:bg-indigo-400 rounded-full z-10"
+                        className="absolute left-0 top-3.5 bottom-3.5 w-1 bg-gradient-to-b from-indigo-500 to-violet-600 dark:from-indigo-400 dark:to-violet-500 rounded-full z-10"
                         transition={{ type: "spring", stiffness: 380, damping: 30 }}
                     />
                 )}
@@ -182,7 +184,7 @@ const Sidebar: React.FC<{ isMobileOpen: boolean; onClose: () => void }> = ({ isM
             : 'U';
             
         return (
-            <div className="p-4 border-t border-slate-100 dark:border-slate-900 bg-white dark:bg-slate-950 transition-all duration-300">
+            <div className="p-4 border-t border-slate-200/50 dark:border-slate-900/60 bg-transparent transition-all duration-300">
                 {collapsed ? (
                     <div className="flex flex-col items-center gap-3">
                         {/* Collapsed Profile Avatar */}
@@ -252,8 +254,8 @@ const Sidebar: React.FC<{ isMobileOpen: boolean; onClose: () => void }> = ({ isM
             {/* Desktop Sidebar */}
             <aside
                 className={`
-                    hidden lg:flex flex-col bg-white dark:bg-slate-950 h-screen transition-all duration-300
-                    border-r border-slate-200 dark:border-slate-800 relative
+                    hidden lg:flex flex-col glass-sidebar h-screen transition-all duration-300
+                    relative
                     ${isCollapsed ? "w-[80px]" : "w-[260px]"}
                     sticky top-0 z-50
                 `}

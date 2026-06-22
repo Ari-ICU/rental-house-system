@@ -225,13 +225,13 @@ export default function RoomsPage() {
     const getStatusStyle = (status: RoomInstance["status"]) => {
         switch (status) {
             case "Occupied":
-                return "bg-emerald-50 dark:bg-emerald-500/10 border-emerald-250 dark:border-emerald-800 text-emerald-800 dark:text-emerald-400";
+                return "bg-emerald-50/40 dark:bg-emerald-500/5 border-emerald-300/40 dark:border-emerald-500/20 text-emerald-800 dark:text-emerald-400 hover:shadow-glow-emerald hover:border-emerald-450/40";
             case "Reserved":
-                return "bg-blue-50 dark:bg-blue-500/10 border-blue-250 dark:border-blue-800 text-blue-800 dark:text-blue-400";
+                return "bg-blue-50/40 dark:bg-blue-500/5 border-blue-300/40 dark:border-blue-500/20 text-blue-800 dark:text-blue-400 hover:shadow-glow-blue hover:border-blue-450/40";
             case "Maintenance":
-                return "bg-rose-50 dark:bg-rose-500/10 border-rose-250 dark:border-rose-800 text-rose-800 dark:text-rose-400";
+                return "bg-rose-50/40 dark:bg-rose-500/5 border-rose-300/40 dark:border-rose-500/20 text-rose-800 dark:text-rose-400 hover:shadow-glow-rose hover:border-rose-450/40";
             default:
-                return "bg-slate-50 dark:bg-slate-800/40 border-slate-200 dark:border-slate-800 text-slate-650 dark:text-slate-400";
+                return "bg-slate-100/30 dark:bg-slate-900/10 border-slate-250/60 dark:border-slate-850 text-slate-600 dark:text-slate-400 hover:shadow-premium hover:border-slate-350 dark:hover:border-slate-750";
         }
     };
 
@@ -284,7 +284,7 @@ export default function RoomsPage() {
             </div>
 
             {/* Filter controls */}
-            <div className="flex flex-col sm:flex-row gap-4 items-center justify-between bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 shadow-sm">
+            <div className="flex flex-col sm:flex-row gap-4 items-center justify-between glass-panel rounded-2xl p-4">
                 <input
                     type="text"
                     placeholder={t[activeLang].searchPlaceholder}
@@ -351,7 +351,7 @@ export default function RoomsPage() {
                                             {roomsInFloor.map((room) => (
                                                 <div
                                                     key={room.roomNumber}
-                                                    className={`border rounded-xl p-4 flex flex-col justify-between h-36 transition-all hover:-translate-y-0.5 hover:shadow-md cursor-pointer ${getStatusStyle(room.status)}`}
+                                                    className={`border-2 rounded-2xl p-4 flex flex-col justify-between h-36 transition-all duration-300 hover:-translate-y-1 hover:shadow-md cursor-pointer ${getStatusStyle(room.status)}`}
                                                     onClick={() => {
                                                         if (room.rentalId) {
                                                             router.push(`/dashboard/rentals/${room.rentalId}`);
@@ -421,7 +421,7 @@ export default function RoomsPage() {
                                 };
 
                                 return (
-                                    <div key={status} className={`border border-slate-200 dark:border-slate-800 border-t-4 rounded-xl ${colColors[status]} flex flex-col h-full overflow-hidden shadow-sm`}>
+                                    <div key={status} className={`border border-slate-250/60 dark:border-slate-850/60 border-t-4 rounded-2xl ${colColors[status]} flex flex-col h-full overflow-hidden shadow-sm backdrop-blur-md`}>
                                         {/* Column Header */}
                                         <div className="p-3 border-b border-slate-200 dark:border-slate-800/80 bg-white dark:bg-slate-900 flex justify-between items-center shrink-0">
                                             <span className="text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider">
@@ -437,7 +437,7 @@ export default function RoomsPage() {
                                             {roomsInCol.map((room) => (
                                                 <div
                                                     key={room.roomNumber}
-                                                    className="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-850 hover:border-slate-350 dark:hover:border-slate-700 rounded-xl p-3.5 shadow-sm space-y-3 transition-colors"
+                                                    className="bg-white/70 dark:bg-slate-950/40 border border-slate-200/60 dark:border-slate-900/60 hover:border-indigo-500/40 dark:hover:border-indigo-400/40 hover:shadow-sm rounded-2xl p-4 space-y-3.5 transition-all duration-300"
                                                 >
                                                     <div className="flex justify-between items-start">
                                                         <span className="text-sm font-bold text-slate-800 dark:text-slate-100">Room {room.roomNumber}</span>
@@ -536,7 +536,7 @@ export default function RoomsPage() {
 
                     {/* VIEW 3: TABLE LIST VIEW */}
                     {activeTab === "table" && (
-                        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm">
+                        <div className="glass-panel rounded-2xl overflow-hidden">
                             <div className="overflow-x-auto w-full">
                                 <table className="w-full text-sm text-left border-collapse">
                                     <thead className="bg-slate-50 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 font-semibold text-xs uppercase tracking-wider">

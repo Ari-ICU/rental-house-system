@@ -105,7 +105,7 @@ const Header: React.FC<HeaderProps> = ({ onMobileMenuToggle }) => {
     };
 
     return (
-        <header className="flex items-center justify-between px-6 py-4 sticky top-0 z-40 bg-white dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 shadow-sm transition-colors">
+        <header className="flex items-center justify-between px-6 py-4 sticky top-0 z-40 glass-header shadow-sm transition-colors">
             {/* Left Section */}
             <div className="flex items-center gap-4">
                 <button
@@ -126,14 +126,14 @@ const Header: React.FC<HeaderProps> = ({ onMobileMenuToggle }) => {
                 {/* Search */}
                 <div className="hidden md:block relative w-72" ref={searchRef}>
                     <div className={`
-                        flex items-center px-3 py-2 bg-white dark:bg-slate-900 border rounded-md transition-colors
-                        ${showResults ? 'border-indigo-500 ring-1 ring-indigo-500/20' : 'border-slate-300 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-600'}
+                        flex items-center px-4 py-2.5 bg-slate-100/50 dark:bg-slate-900/40 border rounded-xl transition-all duration-300
+                        ${showResults ? 'border-indigo-500/80 ring-4 ring-indigo-500/5 shadow-glow-indigo' : 'border-slate-200/80 dark:border-slate-800/80 hover:border-slate-300 dark:hover:border-slate-700'}
                     `}>
-                        <FaSearch className="w-4 h-4 text-slate-400 mr-2" />
+                        <FaSearch className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 mr-2.5" />
                         <input
                             type="text"
                             placeholder={lang === 'en' ? 'Search...' : 'ស្វែងរក...'}
-                            className="bg-transparent border-none outline-none text-sm text-slate-900 dark:text-slate-100 w-full placeholder-slate-400 dark:placeholder-slate-500"
+                            className="bg-transparent border-none outline-none text-xs text-slate-850 dark:text-slate-100 w-full placeholder-slate-450 dark:placeholder-slate-500 font-medium"
                             value={searchQuery}
                             onChange={(e) => handleSearch(e.target.value)}
                             onFocus={() => searchQuery && setShowResults(true)}
@@ -232,12 +232,13 @@ const Header: React.FC<HeaderProps> = ({ onMobileMenuToggle }) => {
                 </button>
 
                 {/* Profile */}
-                <div className="flex items-center gap-2 pl-4 border-l border-slate-200 dark:border-slate-800">
-                    <div className="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center text-sm font-semibold">
+                <div className="flex items-center gap-2.5 pl-4 border-l border-slate-200/80 dark:border-slate-800/60">
+                    <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 text-white flex items-center justify-center text-xs font-black shadow-md shadow-indigo-500/10">
                         A
                     </div>
                     <div className="hidden lg:block text-left">
-                        <p className="text-sm font-medium text-slate-900 dark:text-slate-100 leading-none">Admin</p>
+                        <p className="text-xs font-bold text-slate-800 dark:text-slate-200 leading-none">Admin</p>
+                        <p className="text-[9px] text-slate-400 dark:text-slate-500 font-bold mt-1 uppercase tracking-widest leading-none">System</p>
                     </div>
                 </div>
             </div>

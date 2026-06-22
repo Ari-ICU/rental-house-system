@@ -2,15 +2,47 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+@theme {
+  --color-indigo-650: #4338ca;
+  --color-emerald-650: #059669;
+  --color-rose-650: #e11d48;
+  --color-slate-250: #cbd5e1;
+  --color-slate-350: #94a3b8;
+  --color-slate-405: #94a3b8;
+  --color-slate-450: #64748b;
+  --color-slate-455: #475569;
+  --color-slate-650: #475569;
+  --color-slate-805: #1e293b;
+  --color-slate-850: #0f172a;
+
+  --shadow-premium: 0 12px 40px -10px rgba(0, 0, 0, 0.04);
+  --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.03);
+  --shadow-glow-indigo: 0 0 25px 2px rgba(99, 102, 241, 0.12);
+  --shadow-glow-emerald: 0 0 25px 2px rgba(16, 185, 129, 0.12);
+  --shadow-glow-rose: 0 0 25px 2px rgba(244, 63, 94, 0.12);
+  --shadow-glow-blue: 0 0 25px 2px rgba(59, 130, 246, 0.12);
+  --shadow-glow-amber: 0 0 25px 2px rgba(245, 158, 11, 0.12);
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
     transform: translateY(-8px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.05);
   }
 }
 
@@ -18,24 +50,46 @@
   animation: fadeIn 0.3s ease-out forwards;
 }
 
+.animate-pulseGlow {
+  animation: pulseGlow 8s ease-in-out infinite;
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
   margin: 0;
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  @apply bg-slate-50/40 text-slate-850 dark:bg-[#030712] dark:text-slate-100 transition-colors duration-300;
 }
 
-@media print {
-  body {
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
-
-  /* Optional: hide any unwanted elements on the page */
+/* Glassmorphism System */
+.glass-panel {
+  @apply bg-white/70 backdrop-blur-xl border border-white/60 shadow-glass transition-all duration-300;
+}
+.dark .glass-panel {
+  @apply bg-slate-950/40 backdrop-blur-xl border-slate-900/40 shadow-slate-950/20;
 }
 
+.glass-input {
+  @apply bg-slate-50/50 dark:bg-slate-900/40 border border-slate-200/80 dark:border-slate-800/80 focus:border-indigo-500/80 focus:ring-4 focus:ring-indigo-500/10 focus:bg-white dark:focus:bg-slate-950/60 transition-all duration-200 outline-none rounded-2xl;
+}
+
+.glass-sidebar {
+  @apply bg-white/80 backdrop-blur-xl border-r border-slate-200/60 transition-all duration-300;
+}
+.dark .glass-sidebar {
+  @apply bg-slate-950/70 backdrop-blur-xl border-slate-900/60;
+}
+
+.glass-header {
+  @apply bg-white/70 backdrop-blur-xl border-b border-slate-250/50 transition-all duration-300;
+}
+.dark .glass-header {
+  @apply bg-slate-950/60 backdrop-blur-xl border-slate-900/50;
+}
+
+/* Custom Premium Scrollbar */
 .custom-scrollbar::-webkit-scrollbar {
-  width: 4px;
+  width: 5px;
+  height: 5px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
@@ -43,10 +97,10 @@ body {
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #374151;
-  border-radius: 4px;
+  @apply bg-slate-200/80 dark:bg-slate-800/80 rounded-full hover:bg-slate-350 dark:hover:bg-slate-700 transition-colors;
 }
 
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #4b5563;
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(148, 163, 184, 0.3) transparent;
 }
