@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { FaChevronDown, FaCheck, FaSearch } from 'react-icons/fa';
+import { ChevronDown, Check, Search } from 'lucide-react';
 
 interface Option {
     value: string;
@@ -53,7 +53,7 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
     const bgClass = isOpen ? activeBg : `${baseBg} hover:bg-white dark:hover:bg-slate-800`;
 
     const baseBorder = selectedOption?.border || 'border-gray-200 dark:border-slate-700 hover:border-gray-300 dark:hover:border-slate-600';
-    const activeBorder = 'ring-2 ring-violet-500/20 border-violet-400';
+    const activeBorder = 'ring-2 ring-indigo-500/20 border-indigo-400';
     const borderClass = isOpen ? activeBorder : baseBorder;
 
     const colorClass = selectedOption
@@ -74,7 +74,7 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
                 <span className="text-sm font-medium translate-no notranslate" translate="no">
                     {selectedOption ? selectedOption.label : placeholder}
                 </span>
-                <FaChevronDown className={`text-xs transition-transform duration-300 ${isOpen ? 'rotate-180 text-violet-500' : 'text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300'}`} />
+                <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${isOpen ? 'rotate-180 text-indigo-500' : 'text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300'}`} />
             </div>
 
             {isOpen && (
@@ -82,13 +82,13 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
                     {searchable && (
                         <div className="p-2 border-b border-gray-50 dark:border-slate-700">
                             <div className="relative">
-                                <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs" />
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-3.5 h-3.5" />
                                 <input
                                     type="text"
                                     placeholder="Search..."
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="w-full pl-9 pr-3 py-2 bg-gray-50 dark:bg-slate-700 border border-gray-100 dark:border-slate-600 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 transition-all dark:text-gray-200"
+                                    className="w-full pl-9 pr-3 py-2 bg-gray-50 dark:bg-slate-700 border border-gray-100 dark:border-slate-600 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all dark:text-gray-200"
                                     autoFocus
                                 />
                             </div>
@@ -110,8 +110,8 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
                                     }}
                                     className={`px-4 py-2.5 rounded-lg cursor-pointer flex items-center justify-between text-sm transition-colors mb-0.5
                                         ${value === opt.value
-                                            ? 'bg-violet-600 text-white font-semibold'
-                                            : 'text-gray-700 dark:text-gray-300 hover:bg-violet-50 dark:hover:bg-slate-700'}`}
+                                            ? 'bg-indigo-600 text-white font-semibold'
+                                            : 'text-gray-700 dark:text-gray-300 hover:bg-indigo-50 dark:hover:bg-slate-700'}`}
                                 >
                                     <div className="flex items-center gap-2.5">
                                         {opt.color && (
@@ -119,7 +119,7 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
                                         )}
                                         <span>{opt.label}</span>
                                     </div>
-                                    {value === opt.value && <FaCheck className="text-[10px]" />}
+                                    {value === opt.value && <Check className="w-3.5 h-3.5" />}
                                 </div>
                             ))
                         )}
