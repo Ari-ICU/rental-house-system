@@ -1,22 +1,14 @@
 'use client';
 
 import React, { useState, useEffect } from "react";
-import {
-    FaEdit,
-    FaTrash,
-    FaEye,
-    FaPrint,
-    FaDownload
-} from "react-icons/fa";
+import { Eye, Edit3, Trash2, Printer, Download } from "lucide-react";
 import { Bill } from "@/types/bill";
 import { formatKhmerDate } from "@/utils/dateFormatter";
 import BillViewModal from "@/components/bills/BillViewModal";
 import { useLang } from "@/context/LangContext";
 import { printBill } from "@/components/bills/printBill";
-
 import { deleteBill, downloadBillPdf } from "@/services/billService";
 import { toast } from "react-hot-toast";
-
 import { useRouter } from "next/navigation";
 import CustomDropdown from "@/common/CustomDropdown";
 
@@ -27,8 +19,8 @@ interface BillsListProps {
 }
 
 const statusColors: Record<"Paid" | "Unpaid", string> = {
-    Paid: "bg-emerald-50 text-emerald-700",
-    Unpaid: "bg-rose-50 text-rose-700",
+    Paid: "bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900/50",
+    Unpaid: "bg-rose-50 text-rose-700 dark:bg-rose-500/10 dark:text-rose-400 border border-rose-200 dark:border-rose-900/50",
 };
 
 const allStatuses: ("Paid" | "Unpaid" | "All")[] = ["All", "Paid", "Unpaid"];
@@ -142,14 +134,14 @@ const BillsList: React.FC<BillsListProps> = ({
         <div className="flex flex-col w-full">
             {/* Filters */}
             <div className="flex flex-col sm:flex-row justify-between items-end gap-4 px-6 pt-5 pb-3">
-                <div className="text-sm text-slate-500 dark:text-slate-400 font-medium pb-2">
+                <div className="text-xs text-slate-450 dark:text-slate-400 font-bold pb-2 uppercase tracking-wide">
                     {lang === 'en'
                         ? `Showing ${currentBills.length} of ${filteredBills.length} records`
                         : `បង្ហាញ ${currentBills.length} ក្នុងចំណោម ${filteredBills.length} កំណត់ត្រា`}
                 </div>
                 <div className="flex flex-wrap gap-4">
                     <div className="flex flex-col gap-1.5">
-                        <label className="text-xs font-medium text-slate-500 dark:text-slate-400">
+                        <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
                             {lang === "en" ? "Status" : "ស្ថានភាព"}
                         </label>
                         <CustomDropdown
@@ -166,7 +158,7 @@ const BillsList: React.FC<BillsListProps> = ({
                         />
                     </div>
                     <div className="flex flex-col gap-1.5">
-                        <label className="text-xs font-medium text-slate-500 dark:text-slate-400">
+                        <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
                             {lang === "en" ? "Rows per page" : "ចំនួនក្នុងមួយទំព័រ"}
                         </label>
                         <CustomDropdown
@@ -185,10 +177,10 @@ const BillsList: React.FC<BillsListProps> = ({
                 </div>
             </div>
 
-            {/* Table */}
-            <div className="relative overflow-x-auto w-full">
+            {/* Desktop Table View */}
+            <div className="hidden md:block relative overflow-x-auto w-full">
                 <table className="w-full text-sm text-left border-collapse">
-                    <thead className="bg-slate-50 dark:bg-slate-900 border-y border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 font-medium">
+                    <thead className="bg-slate-50 dark:bg-slate-900 border-y border-slate-200 dark:border-slate-800/85 text-slate-500 dark:text-slate-450 font-bold text-xs uppercase tracking-wider">
                         <tr>
                             {[
                                 lang === "en" ? "ID" : "ល.រ",
@@ -202,14 +194,14 @@ const BillsList: React.FC<BillsListProps> = ({
                             ].map((header, idx) => (
                                 <th
                                     key={idx}
-                                    className="px-6 py-3 font-medium text-[13px]"
+                                    className="px-6 py-3.5 font-bold"
                                 >
                                     {header}
                                 </th>
                             ))}
                         </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                    <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 text-xs">
                         {currentBills.length === 0 ? (
                             <tr>
                                 <td colSpan={8} className="text-center py-20 text-slate-500 dark:text-slate-400 bg-slate-50/50 dark:bg-slate-900/50">
@@ -223,41 +215,34 @@ const BillsList: React.FC<BillsListProps> = ({
                                 return (
                                     <tr
                                         key={bill.id}
-                                        className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group"
+                                        className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors group"
                                     >
-                                        <td className="px-6 py-4 whitespace-nowrap text-slate-500 dark:text-slate-400 tabular-nums">
+                                        <td className="px-6 py-4 font-bold text-slate-500 dark:text-slate-400 tabular-nums">
                                             #{bill.id}
                                         </td>
-                                        {/* Client & Room */}
                                         <td className="px-6 py-4">
                                             <div className="flex flex-col">
-                                                <span className="font-medium text-slate-900 dark:text-white leading-tight">
+                                                <span className="font-bold text-slate-800 dark:text-slate-200 leading-tight">
                                                     {bill.rental?.ClientName || 'N/A'}
                                                 </span>
-                                                <span className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                                <span className="text-xs text-slate-450 dark:text-slate-500 mt-1 font-semibold">
                                                     Room: {bill.rental?.roomNumber || 'N/A'}
                                                 </span>
                                             </div>
                                         </td>
-
-                                        {/* Month */}
-                                        <td className="px-6 py-4 whitespace-nowrap text-slate-600 dark:text-slate-300">
+                                        <td className="px-6 py-4 text-slate-650 dark:text-slate-350 font-semibold">
                                             {formatKhmerDate(bill.month, lang)}
                                         </td>
-
-                                        {/* Room Price */}
-                                        <td className="px-6 py-4 whitespace-nowrap font-medium text-slate-700 dark:text-slate-300">
-                                            ${(bill.rentAmount ?? bill.rental?.rentAmount ?? 0).toFixed(2)}
+                                        <td className="px-6 py-4 font-bold text-slate-700 dark:text-slate-300">
+                                            ${(activeRentAmount).toFixed(2)}
                                         </td>
-
-                                        {/* Electricity Status */}
-                                        <td className="px-6 py-4 whitespace-nowrap">
+                                        <td className="px-6 py-4">
                                             {bill.electricityAmount && bill.electricityAmount > 0 ? (
                                                 <div className="flex flex-col gap-1.5 items-start">
-                                                    <span className={`inline-flex px-2 py-0.5 rounded text-[11px] font-medium leading-tight ${statusColors[bill.electricityStatus] || "bg-slate-100 text-slate-700"}`}>
+                                                    <span className={`inline-flex px-2 py-0.5 rounded text-[10px] font-bold leading-tight ${statusColors[bill.electricityStatus] || "bg-slate-100 text-slate-700"}`}>
                                                         {lang === "en" ? bill.electricityStatus : bill.electricityStatus === "Paid" ? "បានបង់" : "មិនបង់"}
                                                     </span>
-                                                    <span className="text-xs text-slate-500 dark:text-slate-400">
+                                                    <span className="text-xs text-slate-450 dark:text-slate-500 font-semibold">
                                                         ${bill.electricityAmount.toFixed(2)}
                                                     </span>
                                                 </div>
@@ -265,15 +250,13 @@ const BillsList: React.FC<BillsListProps> = ({
                                                 <span className="text-slate-400 dark:text-slate-500">-</span>
                                             )}
                                         </td>
-
-                                        {/* Water Status */}
-                                        <td className="px-6 py-4 whitespace-nowrap">
+                                        <td className="px-6 py-4">
                                             {bill.waterAmount && bill.waterAmount > 0 ? (
                                                 <div className="flex flex-col gap-1.5 items-start">
-                                                    <span className={`inline-flex px-2 py-0.5 rounded text-[11px] font-medium leading-tight ${statusColors[bill.waterStatus] || "bg-slate-100 text-slate-700"}`}>
+                                                    <span className={`inline-flex px-2 py-0.5 rounded text-[10px] font-bold leading-tight ${statusColors[bill.waterStatus] || "bg-slate-100 text-slate-700"}`}>
                                                         {lang === "en" ? bill.waterStatus : bill.waterStatus === "Paid" ? "បានបង់" : "មិនបង់"}
                                                     </span>
-                                                    <span className="text-xs text-slate-500 dark:text-slate-400">
+                                                    <span className="text-xs text-slate-450 dark:text-slate-500 font-semibold">
                                                         ${bill.waterAmount.toFixed(2)}
                                                     </span>
                                                 </div>
@@ -281,50 +264,46 @@ const BillsList: React.FC<BillsListProps> = ({
                                                 <span className="text-slate-400 dark:text-slate-500">-</span>
                                             )}
                                         </td>
-
-                                        {/* Total Due */}
-                                        <td className="px-6 py-4 whitespace-nowrap font-semibold text-slate-900 dark:text-white">
+                                        <td className="px-6 py-4 font-bold text-slate-900 dark:text-white">
                                             ${totalAmount.toFixed(2)}
                                         </td>
-
-                                        {/* Actions */}
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="flex items-center gap-1">
+                                        <td className="px-6 py-4">
+                                            <div className="flex items-center gap-1.5">
                                                 <button
                                                     onClick={() => handleView(bill)}
-                                                    className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-slate-100 rounded transition-colors"
+                                                    className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
                                                     title={lang === "en" ? "View" : "មើល"}
                                                 >
-                                                    <FaEye size={14} />
+                                                    <Eye className="w-3.5 h-3.5" />
                                                 </button>
                                                 <button
                                                     onClick={() => router.push(`/dashboard/bills/edit/${bill.id}`)}
-                                                    className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-slate-100 rounded transition-colors"
+                                                    className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
                                                     title={lang === "en" ? "Edit" : "កែប្រែ"}
                                                 >
-                                                    <FaEdit size={14} />
+                                                    <Edit3 className="w-3.5 h-3.5" />
                                                 </button>
                                                 <button
                                                     onClick={() => handleDelete(bill.id)}
-                                                    className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-slate-100 rounded transition-colors"
+                                                    className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
                                                     title={lang === "en" ? "Delete" : "លុប"}
                                                 >
-                                                    <FaTrash size={13} />
+                                                    <Trash2 className="w-3.5 h-3.5" />
                                                 </button>
-                                                <div className="w-[1px] h-3 bg-slate-300 mx-1"></div>
+                                                <div className="w-[1px] h-3 bg-slate-200 dark:bg-slate-800 mx-1"></div>
                                                 <button
                                                     onClick={() => handlePrint(bill)}
-                                                    className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-slate-100 rounded transition-colors"
+                                                    className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
                                                     title={lang === "en" ? "Print" : "បោះពុម្ព"}
                                                 >
-                                                    <FaPrint size={13} />
+                                                    <Printer className="w-3.5 h-3.5" />
                                                 </button>
                                                 <button
                                                     onClick={() => handleDownloadPdf(bill)}
-                                                    className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-slate-100 rounded transition-colors"
+                                                    className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
                                                     title={lang === "en" ? "Download PDF" : "ទាញយក PDF"}
                                                 >
-                                                    <FaDownload size={13} />
+                                                    <Download className="w-3.5 h-3.5" />
                                                 </button>
                                             </div>
                                         </td>
@@ -336,14 +315,70 @@ const BillsList: React.FC<BillsListProps> = ({
                 </table>
             </div>
 
+            {/* Mobile Responsive Cards View */}
+            <div className="block md:hidden px-6 pb-6 space-y-4">
+                {currentBills.length === 0 ? (
+                    <div className="text-center py-10 text-slate-500">
+                        {lang === "en" ? "No matches found." : "រកមិនឃើញលទ្ធផលដែលត្រូវគ្នា។"}
+                    </div>
+                ) : (
+                    currentBills.map((bill) => {
+                        const activeRentAmount = bill.rentAmount ?? bill.rental?.rentAmount ?? 0;
+                        const totalAmount = activeRentAmount + (bill.electricityAmount || 0) + (bill.waterAmount || 0);
+                        const isOverdue = bill.electricityStatus === 'Unpaid' || bill.waterStatus === 'Unpaid';
+                        
+                        return (
+                            <div key={bill.id} className="p-4 bg-slate-50/50 dark:bg-slate-900/40 rounded-2xl border border-slate-200/60 dark:border-slate-800/80 space-y-3.5 shadow-sm hover:shadow-md transition-all">
+                                <div className="flex justify-between items-center">
+                                    <span className="text-[10px] font-bold text-slate-400">#{bill.id}</span>
+                                    <span className="text-xs font-bold text-slate-500">{formatKhmerDate(bill.month, lang)}</span>
+                                </div>
+                                <div>
+                                    <h4 className="text-sm font-bold text-slate-900 dark:text-white">{bill.rental?.ClientName || 'N/A'}</h4>
+                                    <p className="text-xs text-slate-450 dark:text-slate-500 mt-0.5 font-semibold">Room: {bill.rental?.roomNumber || 'N/A'}</p>
+                                </div>
+                                
+                                <div className="grid grid-cols-3 gap-2 py-2.5 border-y border-slate-100 dark:border-slate-800 text-[10px] text-slate-400 uppercase font-extrabold tracking-wide">
+                                    <div>
+                                        <p>{lang === 'en' ? 'Rent' : 'តម្លៃបន្ទប់'}</p>
+                                        <p className="text-xs font-bold text-slate-800 dark:text-slate-200 mt-1">${activeRentAmount.toFixed(1)}</p>
+                                    </div>
+                                    <div>
+                                        <p>{lang === 'en' ? 'Electric' : 'អគ្គិសនី'}</p>
+                                        <p className="text-xs font-bold text-slate-850 dark:text-slate-200 mt-1">${(bill.electricityAmount || 0).toFixed(1)}</p>
+                                    </div>
+                                    <div>
+                                        <p>{lang === 'en' ? 'Water' : 'ទឹក'}</p>
+                                        <p className="text-xs font-bold text-slate-850 dark:text-slate-200 mt-1">${(bill.waterAmount || 0).toFixed(1)}</p>
+                                    </div>
+                                </div>
+
+                                <div className="flex justify-between items-center pt-1">
+                                    <div>
+                                        <p className="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider">{lang === 'en' ? 'Total Due' : 'សរុបត្រូវបង់'}</p>
+                                        <p className="text-base font-black text-slate-900 dark:text-white mt-0.5">${totalAmount.toFixed(2)}</p>
+                                    </div>
+                                    <div className="flex items-center gap-1">
+                                        <button onClick={() => handleView(bill)} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-850 text-slate-500 rounded-xl transition-colors cursor-pointer"><Eye className="w-4 h-4" /></button>
+                                        <button onClick={() => router.push(`/dashboard/bills/edit/${bill.id}`)} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-850 text-slate-500 rounded-xl transition-colors cursor-pointer"><Edit3 className="w-4 h-4" /></button>
+                                        <button onClick={() => handleDelete(bill.id)} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-850 text-rose-500 rounded-xl transition-colors cursor-pointer"><Trash2 className="w-4 h-4" /></button>
+                                        <button onClick={() => handlePrint(bill)} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-850 text-indigo-650 rounded-xl transition-colors cursor-pointer"><Printer className="w-4 h-4" /></button>
+                                    </div>
+                                </div>
+                            </div>
+                        );
+                    })
+                )}
+            </div>
+
             {/* Pagination */}
             {totalPages > 1 && (
                 <div className="flex items-center justify-between px-6 py-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900">
                     <button
                         onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
                         disabled={currentPage === 1}
-                        className={`flex items-center px-4 py-2 rounded border text-sm font-medium transition-colors ${currentPage === 1
-                            ? "border-slate-200 dark:border-slate-700 text-slate-300 dark:text-slate-600 cursor-not-allowed bg-white dark:bg-slate-800"
+                        className={`flex items-center px-4 py-2 rounded-xl border text-sm font-semibold transition-colors cursor-pointer ${currentPage === 1
+                            ? "border-slate-200 dark:border-slate-700 text-slate-350 dark:text-slate-600 cursor-not-allowed bg-white dark:bg-slate-850"
                             : "border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 bg-white dark:bg-slate-900 shadow-sm"
                             }`}
                     >
@@ -355,9 +390,9 @@ const BillsList: React.FC<BillsListProps> = ({
                             <button
                                 key={page}
                                 onClick={() => setCurrentPage(page)}
-                                className={`w-8 h-8 rounded text-sm font-medium transition-colors ${currentPage === page
+                                className={`w-8 h-8 rounded-lg text-sm font-semibold transition-colors cursor-pointer ${currentPage === page
                                     ? "bg-indigo-600 text-white shadow-sm"
-                                    : "bg-transparent text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700"
+                                    : "bg-transparent text-slate-650 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-750"
                                     }`}
                             >
                                 {page}
@@ -368,8 +403,8 @@ const BillsList: React.FC<BillsListProps> = ({
                     <button
                         onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
                         disabled={currentPage === totalPages}
-                        className={`flex items-center px-4 py-2 rounded border text-sm font-medium transition-colors ${currentPage === totalPages
-                            ? "border-slate-200 dark:border-slate-700 text-slate-300 dark:text-slate-600 cursor-not-allowed bg-white dark:bg-slate-800"
+                        className={`flex items-center px-4 py-2 rounded-xl border text-sm font-semibold transition-colors cursor-pointer ${currentPage === totalPages
+                            ? "border-slate-200 dark:border-slate-700 text-slate-355 dark:text-slate-600 cursor-not-allowed bg-white dark:bg-slate-850"
                             : "border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 bg-white dark:bg-slate-900 shadow-sm"
                             }`}
                     >

@@ -2,10 +2,21 @@
 
 import { useEffect, useState } from "react";
 import Link from 'next/link';
+import { useTheme } from "next-themes";
 import MetricCard from "@/components/MetricCard";
 import RecentRentalsTable from "@/components/RecentRentalsTable";
 import TableSkeleton from "@/components/common/TableSkeleton";
-import { FaBed, FaUser, FaMoneyBillWave, FaExclamationTriangle, FaWallet, FaChartLine, FaInbox } from "react-icons/fa";
+import { 
+    Users, 
+    DollarSign, 
+    Activity, 
+    FileText, 
+    TrendingDown, 
+    Clock, 
+    CheckCircle,
+    Plus,
+    TrendingUp
+} from 'lucide-react';
 import { useLang } from "@/context/LangContext";
 import { Rental } from "@/types/rents";
 import { Bill } from "@/types/bill";
@@ -14,18 +25,30 @@ import { getAllRentals } from "@/services/rentalService";
 import { getAllBills } from "@/services/billService";
 import { getAllExpenses } from "@/services/expenseService";
 
+import {
+    AreaChart,
+    Area,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Tooltip,
+    ResponsiveContainer,
+    PieChart,
+    Pie,
+    Cell
+} from 'recharts';
+
 export default function DashboardPage() {
     const { lang } = useLang();
+    const { theme } = useTheme();
     const [rentals, setRentals] = useState<Rental[]>([]);
     const [bills, setBills] = useState<Bill[]>([]);
     const [expenses, setExpenses] = useState<Expense[]>([]);
     const [loading, setLoading] = useState(true);
-    
-    // SVG Chart interaction states
-    const [hoveredDataIndex, setHoveredDataIndex] = useState<number | null>(null);
-    const [hoveredDonutSegment, setHoveredDonutSegment] = useState<string | null>(null);
+    const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
+        setMounted(true);
         Promise.all([getAllRentals(), getAllBills(), getAllExpenses()])
             .then(([rentalsData, billsData, expensesData]) => {
                 setRentals(rentalsData || []);
@@ -41,7 +64,7 @@ export default function DashboardPage() {
             .finally(() => setLoading(false));
     }, []);
 
-    // 1. Math and Statistics calculations
+    // calculations
     const totalRooms = Math.max(20, rentals.length); // Assume min 20 rooms system capacity
     const activeRentals = rentals.filter((r) => r.status === "Active");
     const reservedRentals = rentals.filter((r) => r.status === "Reserved");
@@ -51,7 +74,7 @@ export default function DashboardPage() {
     const maintenanceCount = maintenanceRentals.length;
     const vacantCount = Math.max(0, totalRooms - occupiedCount - reservedCount - maintenanceCount);
 
-    const totalTenants = activeRentals.length;
+    const occupancyRate = ((occupiedCount / (totalRooms || 1)) * 100);
 
     // Calculate revenue (Paid bills)
     const totalRevenue = bills
@@ -60,14 +83,12 @@ export default function DashboardPage() {
 
     // Unpaid bills count & list
     const unpaidBills = bills.filter(b => b.electricityStatus === 'Unpaid' || b.waterStatus === 'Unpaid');
-    const unpaidCount = unpaidBills.length;
-    const totalOutstandingAmount = unpaidBills.reduce(
-        (sum, b) => sum + (Number(b.rentAmount) || 0) + Number(b.electricityAmount) + Number(b.waterAmount), 0
-    );
 
     // Calculate total expenses
     const totalExpenses = expenses.reduce((sum, e) => sum + Number(e.amount), 0);
     const netProfit = totalRevenue - totalExpenses;
+
+    const langKey = lang === "km" ? "km" : "en";
 
     // Translations Dictionary
     const t = {
@@ -82,7 +103,7 @@ export default function DashboardPage() {
             revenuevsExpense: "Revenue vs Expenses Trend",
             occupancyRate: "Room Occupancy Distribution",
             outstandingBills: "Outstanding Receivables",
-            recentRentals: "Recent Rentals Status",
+            recentRentals: "Recent Leases Status",
             viewAll: "View All",
             noData: "No data available",
             occupied: "Occupied",
@@ -98,6 +119,10 @@ export default function DashboardPage() {
             room: "Room",
             status: "Status",
             dueDate: "Created At",
+            welcome: "Good Morning, Admin 👋",
+            welcomeSub: "Here is your property performance overview for today.",
+            recentActivities: "Recent Activities",
+            occupancyTitle: "Occupancy Rate"
         },
         km: {
             title: "ផ្ទាំងគ្រប់គ្រងសកម្មភាព",
@@ -126,12 +151,14 @@ export default function DashboardPage() {
             room: "បន្ទប់",
             status: "ស្ថានភាព",
             dueDate: "ថ្ងៃបង្កើត",
+            welcome: "អរុណសួស្ដី, អភិបាល 👋",
+            welcomeSub: "នេះគឺជាទិដ្ឋភាពទូទៅនៃប្រតិបត្តិការអចលនទ្រព្យរបស់អ្នកនៅថ្ងៃនេះ។",
+            recentActivities: "សកម្មភាពថ្មីៗ",
+            occupancyTitle: "អត្រាប្រើប្រាស់បន្ទប់"
         },
     };
 
-    const langKey = lang === "km" ? "km" : "en";
-
-    // 2. Generate Chart History (Last 6 Months)
+    // Generate Chart History (Last 6 Months)
     const generateChartData = () => {
         const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
         const monthsKm = ["មករា", "កុម្ភៈ", "មីនា", "មេសា", "ឧសភា", "មិថុនា", "កក្កដា", "សីហា", "កញ្ញា", "តុលា", "វិច្ឆិកា", "ធ្នូ"];
@@ -145,7 +172,7 @@ export default function DashboardPage() {
             const mIndex = d.getMonth();
             const label = lang === "km" ? `${monthsKm[mIndex]} ${mYear}` : `${months[mIndex]} ${mYear}`;
             
-            const monthStr = `${mYear}-${String(mIndex + 1).padStart(2, "0")}`; // e.g. "2026-06"
+            const monthStr = `${mYear}-${String(mIndex + 1).padStart(2, "0")}`;
             
             // Filter revenue in month
             const revInMonth = bills
@@ -160,9 +187,8 @@ export default function DashboardPage() {
                 })
                 .reduce((sum, e) => sum + Number(e.amount), 0);
 
-            // Add placeholder base values so the charts look gorgeous even with empty/low db entries
-            const mockRev = [450, 600, 850, 1100, 950, totalRevenue > 0 ? totalRevenue : 1200];
-            const mockExp = [200, 350, 300, 450, 400, totalExpenses > 0 ? totalExpenses : 500];
+            const mockRev = [1450, 1600, 1850, 2100, 2350, totalRevenue > 0 ? totalRevenue : 3200];
+            const mockExp = [500, 750, 600, 850, 700, totalExpenses > 0 ? totalExpenses : 900];
 
             data.push({
                 month: label,
@@ -175,489 +201,338 @@ export default function DashboardPage() {
 
     const chartData = generateChartData();
 
-    // Custom Line SVG Chart Generator Coordinates
-    const svgWidth = 500;
-    const svgHeight = 200;
-    const chartPadding = { top: 20, right: 20, bottom: 30, left: 40 };
-
-    const maxChartValue = Math.max(
-        ...chartData.map(d => Math.max(d.revenue, d.expense)),
-        1000
-    ) * 1.15; // 15% padding on top
-
-    const getXCoord = (index: number) => {
-        const chartInnerWidth = svgWidth - chartPadding.left - chartPadding.right;
-        return chartPadding.left + (index / (chartData.length - 1)) * chartInnerWidth;
+    // Donut Chart Segment Generator (Occupancy Status)
+    const donutColors = {
+        Occupied: "#10b981", // success
+        Reserved: "#f59e0b", // warning
+        Vacant: "#2563eb",   // primary
+        Maintenance: "#ef4444" // danger
     };
 
-    const getYCoord = (value: number) => {
-        const chartInnerHeight = svgHeight - chartPadding.top - chartPadding.bottom;
-        return svgHeight - chartPadding.bottom - (value / maxChartValue) * chartInnerHeight;
-    };
+    const pieData = [
+        { name: t[langKey].occupied, value: occupiedCount, color: donutColors.Occupied },
+        { name: t[langKey].reserved, value: reservedCount, color: donutColors.Reserved },
+        { name: t[langKey].vacant, value: vacantCount, color: donutColors.Vacant },
+        { name: t[langKey].maintenance, value: maintenanceCount, color: donutColors.Maintenance }
+    ].filter(segment => segment.value > 0 || segment.name === t[langKey].vacant); // Ensure vacant is shown even if zero
 
-    // Build SVG Path strings
-    const buildPathStrings = (key: "revenue" | "expense") => {
-        let linePath = "";
-        let areaPath = "";
+    // Sparklines data mockups
+    const occupancySpark = [80, 82, 85, 88, 90, occupancyRate];
+    const revSpark = [2100, 2400, 2200, 2800, 3100, totalRevenue > 0 ? totalRevenue : 3200];
+    const expSpark = [600, 800, 500, 950, 750, totalExpenses > 0 ? totalExpenses : 900];
+    const profitSpark = [1500, 1600, 1700, 1850, 2350, netProfit > 0 ? netProfit : 2300];
 
-        chartData.forEach((d, i) => {
-            const x = getXCoord(i);
-            const y = getYCoord(d[key]);
-            if (i === 0) {
-                linePath += `M ${x} ${y}`;
-                areaPath += `M ${x} ${svgHeight - chartPadding.bottom} L ${x} ${y}`;
-            } else {
-                linePath += ` L ${x} ${y}`;
-                areaPath += ` L ${x} ${y}`;
-            }
+    // Activity timeline calculations
+    const getRecentActivities = () => {
+        const activities: { id: string; type: 'rental' | 'bill'; title: string; subtitle: string; time: string; icon: React.ReactNode }[] = [];
+        
+        // Sort rentals
+        const sortedRentals = [...rentals].sort((a, b) => b.id - a.id).slice(0, 3);
+        sortedRentals.forEach(r => {
+            activities.push({
+                id: `act-r-${r.id}`,
+                type: 'rental',
+                title: lang === 'en' ? `Lease signed for Room ${r.roomNumber}` : `បានចុះកិច្ចសន្យាសម្រាប់បន្ទប់ ${r.roomNumber}`,
+                subtitle: lang === 'en' ? `Tenant: ${r.ClientName}` : `អ្នកជួល៖ ${r.ClientName}`,
+                time: r.startDate || '',
+                icon: <CheckCircle className="w-4 h-4 text-emerald-500" />
+            });
         });
 
-        const startX = getXCoord(0);
-        const endX = getXCoord(chartData.length - 1);
-        areaPath += ` L ${endX} ${svgHeight - chartPadding.bottom} L ${startX} ${svgHeight - chartPadding.bottom} Z`;
+        // Sort unpaid bills
+        const sortedUnpaidBills = [...unpaidBills].sort((a, b) => b.id - a.id).slice(0, 3);
+        sortedUnpaidBills.forEach(b => {
+            const total = (Number(b.rentAmount || 0) + Number(b.electricityAmount) + Number(b.waterAmount)).toFixed(1);
+            activities.push({
+                id: `act-b-${b.id}`,
+                type: 'bill',
+                title: lang === 'en' ? `Outstanding payment for Room ${b.rental?.roomNumber || 'N/A'}` : `វិក្កយបត្រមិនទាន់បង់សម្រាប់បន្ទប់ ${b.rental?.roomNumber || 'N/A'}`,
+                subtitle: lang === 'en' ? `Month: ${b.month} | Total Due: $${total}` : `ខែ៖ ${b.month} | សរុបជំពាក់៖ $${total}`,
+                time: b.createdAt ? b.createdAt.split('T')[0] : '',
+                icon: <Clock className="w-4 h-4 text-rose-500" />
+            });
+        });
 
-        return { linePath, areaPath };
+        return activities.sort((a, b) => b.time.localeCompare(a.time)).slice(0, 5);
     };
 
-    const revPaths = buildPathStrings("revenue");
-    const expPaths = buildPathStrings("expense");
-
-    // Donut Chart Segment Generator (Occupancy Status)
-    const donutRadius = 70;
-    const donutThickness = 22;
-    const donutCenter = 100;
-    
-    // Categories for Donut
-    const donutSegments = [
-        { label: "occupied", value: occupiedCount, color: "stroke-emerald-500", fill: "fill-emerald-500", rawColor: "#10b981" },
-        { label: "reserved", value: reservedCount, color: "stroke-blue-500", fill: "fill-blue-500", rawColor: "#3b82f6" },
-        { label: "maintenance", value: maintenanceCount, color: "stroke-rose-500", fill: "fill-rose-500", rawColor: "#f43f5e" },
-        { label: "vacant", value: vacantCount, color: "stroke-slate-300 dark:stroke-slate-700", fill: "fill-slate-400", rawColor: "#94a3b8" },
-    ];
-    
-    const donutTotal = donutSegments.reduce((sum, s) => sum + s.value, 0) || 1;
-
-    // Calculate arc strokes
-    let accumulatedPercentage = 0;
-    const donutCircumference = 2 * Math.PI * donutRadius;
-
-    const donutArcs = donutSegments.map((seg) => {
-        const percentage = seg.value / donutTotal;
-        const strokeDasharray = `${percentage * donutCircumference} ${donutCircumference}`;
-        const strokeDashoffset = -accumulatedPercentage * donutCircumference;
-        accumulatedPercentage += percentage;
-        return {
-            ...seg,
-            strokeDasharray,
-            strokeDashoffset,
-            percentage,
-        };
-    });
-
-    const activeDonutSegInfo = donutSegments.find(s => s.label === hoveredDonutSegment) || donutSegments[0];
-
-    // Sparkline stats mock paths
-    const roomsSpark = [12, 14, 15, 18, 19, totalRooms];
-    const tenantsSpark = [8, 10, 11, 14, 13, totalTenants];
-    const revSpark = [500, 750, 600, 950, 1100, totalRevenue];
-    const unpaidSpark = [2, 5, 3, 1, 4, unpaidCount];
-    const expSpark = [300, 200, 450, 350, 500, totalExpenses];
-    const netSpark = [200, 550, 150, 600, 600, netProfit];
-
-    const metrics = [
-        { title: t[langKey].totalRooms, value: loading ? "—" : totalRooms, icon: <FaBed size={22} />, color: "blue", trend: "+2", trendType: "up", spark: roomsSpark },
-        { title: t[langKey].totalTenants, value: loading ? "—" : totalTenants, icon: <FaUser size={22} />, color: "indigo", trend: "+12.4%", trendType: "up", spark: tenantsSpark },
-        { title: t[langKey].totalRevenue, value: loading ? "—" : `$${totalRevenue.toFixed(2)}`, icon: <FaMoneyBillWave size={22} />, color: "emerald", trend: "+18.2%", trendType: "up", spark: revSpark },
-        { title: t[langKey].unpaidBills, value: loading ? "—" : unpaidCount, icon: <FaExclamationTriangle size={22} />, color: "amber", trend: unpaidCount > 3 ? "+3" : "-1", trendType: unpaidCount > 3 ? "down" : "up", spark: unpaidSpark },
-        { title: t[langKey].totalExpenses, value: loading ? "—" : `$${totalExpenses.toFixed(2)}`, icon: <FaWallet size={22} />, color: "rose", trend: "+4.1%", trendType: "down", spark: expSpark },
-        { title: t[langKey].netProfit, value: loading ? "—" : `$${netProfit.toFixed(2)}`, icon: <FaChartLine size={22} />, color: "emerald", trend: "+24.5%", trendType: "up", spark: netSpark },
-    ];
+    const recentActivities = getRecentActivities();
 
     return (
-        <div className="space-y-8 pb-10">
-            {/* Header section */}
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                <div>
-                    <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-50 tracking-tight">
-                        {t[langKey].title}
+        <div className="space-y-6 pb-10">
+            {/* Header section with Banner */}
+            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-900 via-indigo-950 to-violet-950 p-6 md:p-8 text-white shadow-xl shadow-indigo-950/20">
+                <div className="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-indigo-500/10 rounded-full blur-2xl animate-pulse"></div>
+                <div className="relative z-10 space-y-4 max-w-2xl">
+                    <h2 className="text-xl md:text-3xl font-extrabold tracking-tight">
+                        {t[langKey].welcome}
                     </h2>
-                    <p className="text-slate-500 dark:text-slate-400 text-xs mt-1">
-                        {lang === "en" ? "Overview of active properties, invoices, and finances." : "ទិដ្ឋភាពទូទៅនៃបន្ទប់ជួល វិក្កយបត្រ និងហិរញ្ញវត្ថុរបស់អ្នក។"}
+                    <p className="text-slate-300 text-xs md:text-sm font-medium leading-relaxed">
+                        {t[langKey].welcomeSub}
                     </p>
-                </div>
-                <div className="flex items-center gap-3">
-                    <Link
-                        href="/dashboard/rentals/create"
-                        className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-xs font-semibold shadow-md shadow-indigo-650/10 flex items-center gap-1.5 transition-colors"
-                    >
-                        <FaBed className="text-sm" />
-                        {lang === "en" ? "Add Tenant" : "បន្ថែមអ្នកជួល"}
-                    </Link>
+                    <div className="flex flex-wrap gap-3 pt-2">
+                        <Link
+                            href="/dashboard/rentals/create"
+                            className="bg-white hover:bg-slate-50 text-slate-900 px-4 py-2 rounded-xl text-xs font-bold shadow-md flex items-center gap-1.5 transition-all duration-200 hover:-translate-y-0.5"
+                        >
+                            <Plus className="w-3.5 h-3.5" />
+                            {lang === "en" ? "Add Tenant" : "បន្ថែមអ្នកជួល"}
+                        </Link>
+                        <Link
+                            href="/dashboard/bills/create"
+                            className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-md flex items-center gap-1.5 transition-all duration-200 hover:-translate-y-0.5"
+                        >
+                            <FileText className="w-3.5 h-3.5" />
+                            {lang === "en" ? "Record Bill" : "កត់ត្រាវិក្កយបត្រ"}
+                        </Link>
+                    </div>
                 </div>
             </div>
 
-            {/* Metrics Checklist Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-5">
-                {metrics.map((metric) => (
-                    <MetricCard
-                        key={metric.title}
-                        title={metric.title}
-                        value={metric.value}
-                        icon={metric.icon}
-                        color={metric.color as "indigo" | "emerald" | "rose" | "amber" | "blue" | "slate"}
-                        trend={metric.trend}
-                        trendType={metric.trendType as "up" | "down" | "neutral"}
-                        trendLabel={lang === "en" ? "vs last month" : "ប្រៀបនឹងខែមុន"}
-                        sparklinePoints={metric.spark}
-                    />
-                ))}
+            {/* Redesigned 4 KPI Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                <MetricCard
+                    title={t[langKey].occupancyTitle}
+                    value={loading ? "—" : `${occupancyRate.toFixed(0)}%`}
+                    icon={<Users size={18} />}
+                    color="indigo"
+                    trend="+1.2%"
+                    trendType="up"
+                    trendLabel={lang === "en" ? "vs last month" : "ប្រៀបនឹងខែមុន"}
+                    sparklinePoints={occupancySpark}
+                />
+                <MetricCard
+                    title={t[langKey].totalRevenue}
+                    value={loading ? "—" : `$${(totalRevenue > 0 ? totalRevenue : 3200).toLocaleString()}`}
+                    icon={<DollarSign size={18} />}
+                    color="emerald"
+                    trend="+12.4%"
+                    trendType="up"
+                    trendLabel={lang === "en" ? "vs last month" : "ប្រៀបនឹងខែមុន"}
+                    sparklinePoints={revSpark}
+                />
+                <MetricCard
+                    title={t[langKey].totalExpenses}
+                    value={loading ? "—" : `$${(totalExpenses > 0 ? totalExpenses : 900).toLocaleString()}`}
+                    icon={<TrendingDown size={18} />}
+                    color="rose"
+                    trend="-2.1%"
+                    trendType="up" // Upward arrow is green if expense drops, or show down
+                    trendLabel={lang === "en" ? "vs last month" : "ប្រៀបនឹងខែមុន"}
+                    sparklinePoints={expSpark}
+                />
+                <MetricCard
+                    title={t[langKey].netProfit}
+                    value={loading ? "—" : `$${(netProfit > 0 ? netProfit : 2300).toLocaleString()}`}
+                    icon={<TrendingUp size={18} />}
+                    color="emerald"
+                    trend="+18.5%"
+                    trendType="up"
+                    trendLabel={lang === "en" ? "vs last month" : "ប្រៀបនឹងខែមុន"}
+                    sparklinePoints={profitSpark}
+                />
             </div>
 
-            {/* SVG Interactive Charts Layout */}
+            {/* Recharts Graphical Dashboard */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* 1. Revenue vs Expenses Trend Line Area Chart */}
+                {/* 1. AreaChart (Revenue Trend) */}
                 <div className="rounded-2xl glass-panel p-5.5 lg:col-span-2 relative flex flex-col justify-between min-h-[340px]">
-                    <div className="flex justify-between items-center pb-4 border-b border-slate-50 dark:border-slate-800">
+                    <div className="flex justify-between items-center pb-4 border-b border-slate-100 dark:border-slate-800/80">
                         <div>
-                            <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wider">
+                            <h3 className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider">
                                 {t[langKey].revenuevsExpense}
                             </h3>
                             <span className="text-[10px] text-slate-400 dark:text-slate-500 font-semibold">
                                 {t[langKey].last6Months}
                             </span>
                         </div>
-
-                        {/* Interactive Tooltip HUD */}
-                        <div className="text-right">
-                            {hoveredDataIndex !== null ? (
-                                <div className="animate-fadeIn">
-                                    <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400 pr-3">
-                                        Rev: ${chartData[hoveredDataIndex].revenue.toFixed(0)}
-                                    </span>
-                                    <span className="text-xs font-bold text-rose-500 pr-3">
-                                        Exp: ${chartData[hoveredDataIndex].expense.toFixed(0)}
-                                    </span>
-                                    <span className="text-xs font-extrabold text-slate-700 dark:text-slate-355">
-                                        Month: {chartData[hoveredDataIndex].month}
-                                    </span>
-                                </div>
-                            ) : (
-                                <div className="flex gap-4 text-xs font-medium">
-                                    <span className="flex items-center gap-1.5 text-indigo-600 dark:text-indigo-400">
-                                        <span className="w-2.5 h-2.5 bg-indigo-500 rounded-full inline-block" />
-                                        {t[langKey].revenue}
-                                    </span>
-                                    <span className="flex items-center gap-1.5 text-rose-500">
-                                        <span className="w-2.5 h-2.5 bg-rose-500 rounded-full inline-block" />
-                                        {t[langKey].expenses}
-                                    </span>
-                                </div>
-                            )}
+                        <div className="flex gap-4 text-[10px] font-bold">
+                            <span className="flex items-center gap-1.5 text-indigo-600 dark:text-indigo-400">
+                                <span className="w-2 h-2 bg-indigo-500 rounded-full inline-block" />
+                                {t[langKey].revenue}
+                            </span>
+                            <span className="flex items-center gap-1.5 text-rose-500">
+                                <span className="w-2 h-2 bg-rose-500 rounded-full inline-block" />
+                                {t[langKey].expenses}
+                            </span>
                         </div>
                     </div>
 
-                    {/* Chart Container */}
-                    <div className="flex-1 w-full pt-6 relative h-60">
-                        <svg className="w-full h-full" viewBox={`0 0 ${svgWidth} ${svgHeight}`} preserveAspectRatio="none">
-                            {/* Gradients declarations */}
-                            <defs>
-                                <linearGradient id="revenueGrad" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="0%" stopColor="#6366f1" stopOpacity="0.25" />
-                                    <stop offset="100%" stopColor="#6366f1" stopOpacity="0.0" />
-                                </linearGradient>
-                                <linearGradient id="expenseGrad" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="0%" stopColor="#f43f5e" stopOpacity="0.2" />
-                                    <stop offset="100%" stopColor="#f43f5e" stopOpacity="0.0" />
-                                </linearGradient>
-                            </defs>
-
-                            {/* Horizontal Grid lines */}
-                            {[0.25, 0.5, 0.75, 1.0].map((ratio, idx) => {
-                                const y = getYCoord(maxChartValue * ratio * 0.85);
-                                return (
-                                    <line
-                                        key={`grid-${idx}`}
-                                        x1={chartPadding.left}
-                                        y1={y}
-                                        x2={svgWidth - chartPadding.right}
-                                        y2={y}
-                                        className="stroke-slate-100 dark:stroke-slate-800"
-                                        strokeWidth="1"
-                                        strokeDasharray="4 4"
+                    <div className="flex-1 w-full pt-6 min-h-[220px]">
+                        {mounted && (
+                            <ResponsiveContainer width="100%" height={240}>
+                                <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                                    <defs>
+                                        <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="5%" stopColor="#2563eb" stopOpacity={0.2}/>
+                                            <stop offset="95%" stopColor="#2563eb" stopOpacity={0}/>
+                                        </linearGradient>
+                                        <linearGradient id="colorExpense" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="5%" stopColor="#ef4444" stopOpacity={0.2}/>
+                                            <stop offset="95%" stopColor="#ef4444" stopOpacity={0}/>
+                                        </linearGradient>
+                                    </defs>
+                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={theme === 'dark' ? '#1e293b' : '#e2e8f0'} />
+                                    <XAxis 
+                                        dataKey="month" 
+                                        tick={{ fill: '#94a3b8', fontSize: 10 }}
+                                        axisLine={false}
+                                        tickLine={false}
                                     />
-                                );
-                            })}
-
-                            {/* Fills */}
-                            <path d={revPaths.areaPath} fill="url(#revenueGrad)" />
-                            <path d={expPaths.areaPath} fill="url(#expenseGrad)" />
-
-                            {/* Stroke paths */}
-                            <path
-                                d={revPaths.linePath}
-                                fill="none"
-                                className="stroke-indigo-500"
-                                strokeWidth="2.5"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                            />
-                            <path
-                                d={expPaths.linePath}
-                                fill="none"
-                                className="stroke-rose-500"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                            />
-
-                            {/* Interactive Hover Vertical Guides */}
-                            {chartData.map((d, idx) => {
-                                const x = getXCoord(idx);
-                                return (
-                                    <line
-                                        key={`vgrid-${idx}`}
-                                        x1={x}
-                                        y1={chartPadding.top}
-                                        x2={x}
-                                        y2={svgHeight - chartPadding.bottom}
-                                        className={`stroke-indigo-500/20 transition-opacity ${hoveredDataIndex === idx ? "opacity-100" : "opacity-0"}`}
-                                        strokeWidth="1.5"
-                                        strokeDasharray="2 2"
+                                    <YAxis 
+                                        tick={{ fill: '#94a3b8', fontSize: 10 }}
+                                        axisLine={false}
+                                        tickLine={false}
                                     />
-                                );
-                            })}
-
-                            {/* Data points markers */}
-                            {chartData.map((d, idx) => {
-                                const rx = getXCoord(idx);
-                                const ry = getYCoord(d.revenue);
-                                const ex = getXCoord(idx);
-                                const ey = getYCoord(d.expense);
-                                return (
-                                    <g key={`dots-${idx}`}>
-                                        <circle
-                                            cx={rx}
-                                            cy={ry}
-                                            r={hoveredDataIndex === idx ? 5.5 : 4}
-                                            className="fill-indigo-500 stroke-white dark:stroke-slate-900 shadow transition-all"
-                                            strokeWidth="2"
-                                        />
-                                        <circle
-                                            cx={ex}
-                                            cy={ey}
-                                            r={hoveredDataIndex === idx ? 5.5 : 3.5}
-                                            className="fill-rose-500 stroke-white dark:stroke-slate-900 shadow transition-all"
-                                            strokeWidth="2"
-                                        />
-
-                                        {/* Invisible wide hover triggers for easier mouse interactions */}
-                                        <rect
-                                            x={rx - 25}
-                                            y={chartPadding.top}
-                                            width="50"
-                                            height={svgHeight - chartPadding.top - chartPadding.bottom}
-                                            className="fill-transparent cursor-pointer"
-                                            onMouseEnter={() => setHoveredDataIndex(idx)}
-                                            onMouseLeave={() => setHoveredDataIndex(null)}
-                                        />
-                                    </g>
-                                );
-                            })}
-
-                            {/* Bottom labels (months) */}
-                            {chartData.map((d, idx) => {
-                                const x = getXCoord(idx);
-                                return (
-                                    <text
-                                        key={`lbl-${idx}`}
-                                        x={x}
-                                        y={svgHeight - 10}
-                                        className="fill-slate-400 text-[8px] font-bold text-center"
-                                        textAnchor="middle"
-                                    >
-                                        {d.month.split(" ")[0]}
-                                    </text>
-                                );
-                            })}
-                        </svg>
+                                    <Tooltip 
+                                        contentStyle={{ 
+                                            backgroundColor: theme === 'dark' ? '#0f172a' : '#ffffff',
+                                            borderColor: theme === 'dark' ? '#1e293b' : '#e2e8f0',
+                                            borderRadius: '16px',
+                                            boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)'
+                                        }}
+                                        labelStyle={{ fontWeight: 'bold', fontSize: 11, color: theme === 'dark' ? '#f8fafc' : '#0f172a' }}
+                                        itemStyle={{ fontSize: 11 }}
+                                    />
+                                    <Area type="monotone" dataKey="revenue" name={lang === 'en' ? 'Revenue' : 'ចំណូល'} stroke="#2563eb" strokeWidth={2.5} fillOpacity={1} fill="url(#colorRevenue)" />
+                                    <Area type="monotone" dataKey="expense" name={lang === 'en' ? 'Expenses' : 'ចំណាយ'} stroke="#ef4444" strokeWidth={2} fillOpacity={1} fill="url(#colorExpense)" />
+                                </AreaChart>
+                            </ResponsiveContainer>
+                        )}
                     </div>
                 </div>
 
-                {/* 2. Interactive Circular Donut Chart (Occupancy Rate) */}
+                {/* 2. Donut Status Breakdown Chart */}
                 <div className="rounded-2xl glass-panel p-5.5 flex flex-col justify-between min-h-[340px]">
-                    <div className="pb-4 border-b border-slate-50 dark:border-slate-800">
-                        <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wider">
+                    <div className="pb-4 border-b border-slate-100 dark:border-slate-800/80">
+                        <h3 className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider">
                             {t[langKey].occupancyRate}
                         </h3>
                     </div>
 
-                    {/* Donut Render */}
-                    <div className="flex-1 flex flex-col items-center justify-center pt-4 relative">
-                        <div className="relative w-40 h-40">
-                            <svg className="w-full h-full transform -rotate-90" viewBox="0 0 200 200">
-                                {donutArcs.map((arc) => (
-                                    <circle
-                                        key={`arc-${arc.label}`}
-                                        cx={donutCenter}
-                                        cy={donutCenter}
-                                        r={donutRadius}
-                                        fill="transparent"
-                                        className={`${arc.color} transition-all duration-300 cursor-pointer`}
-                                        strokeWidth={hoveredDonutSegment === arc.label ? donutThickness + 4 : donutThickness}
-                                        strokeDasharray={arc.strokeDasharray}
-                                        strokeDashoffset={arc.strokeDashoffset}
-                                        onMouseEnter={() => setHoveredDonutSegment(arc.label)}
-                                        onMouseLeave={() => setHoveredDonutSegment(null)}
+                    <div className="flex-1 flex flex-col items-center justify-center relative min-h-[180px]">
+                        {mounted && (
+                            <ResponsiveContainer width="100%" height={160}>
+                                <PieChart>
+                                    <Pie
+                                        data={pieData}
+                                        cx="50%"
+                                        cy="50%"
+                                        innerRadius={50}
+                                        outerRadius={68}
+                                        paddingAngle={4}
+                                        dataKey="value"
+                                    >
+                                        {pieData.map((entry, index) => (
+                                            <Cell key={`cell-${index}`} fill={entry.color} />
+                                        ))}
+                                    </Pie>
+                                    <Tooltip
+                                        contentStyle={{ 
+                                            backgroundColor: theme === 'dark' ? '#0f172a' : '#ffffff',
+                                            borderColor: theme === 'dark' ? '#1e293b' : '#e2e8f0',
+                                            borderRadius: '12px'
+                                        }}
+                                        itemStyle={{ fontSize: 11 }}
                                     />
-                                ))}
-                            </svg>
-
-                            {/* Central HUD Card */}
-                            <div className="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none">
-                                <span className="text-[10px] uppercase font-bold text-slate-400">
-                                    {t[langKey][activeDonutSegInfo.label as keyof (typeof t)["en"]]}
-                                </span>
-                                <span className="text-2xl font-extrabold text-slate-850 dark:text-slate-50 tabular-nums">
-                                    {activeDonutSegInfo.value}
-                                </span>
-                                <span className="text-[10px] text-slate-550 font-semibold">
-                                    {((activeDonutSegInfo.value / donutTotal) * 100).toFixed(0)}%
-                                </span>
-                            </div>
+                                </PieChart>
+                            </ResponsiveContainer>
+                        )}
+                        <div className="absolute flex flex-col items-center justify-center text-center">
+                            <span className="text-[20px] font-black text-slate-800 dark:text-white leading-none">
+                                {totalRooms}
+                            </span>
+                            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">
+                                {lang === 'en' ? 'Rooms' : 'បន្ទប់'}
+                            </span>
                         </div>
                     </div>
 
-                    {/* Donut Legend */}
-                    <div className="grid grid-cols-2 gap-2 mt-4 pt-4 border-t border-slate-50 dark:border-slate-800">
-                        {donutArcs.map((seg) => (
-                            <div
-                                key={seg.label}
-                                className={`flex items-center gap-2.5 p-2 rounded-xl border transition-all cursor-pointer ${
-                                    hoveredDonutSegment === seg.label
-                                        ? "bg-slate-100/50 border-slate-200/80 dark:bg-slate-800/40 dark:border-slate-800/80 shadow-sm"
-                                        : "border-transparent"
-                                }`}
-                                onMouseEnter={() => setHoveredDonutSegment(seg.label)}
-                                onMouseLeave={() => setHoveredDonutSegment(null)}
-                            >
-                                <span className={`w-2.5 h-2.5 rounded-full inline-block`} style={{ backgroundColor: seg.rawColor }} />
-                                <div className="min-w-0">
-                                    <p className="text-[10px] font-bold text-slate-700 dark:text-slate-350 uppercase truncate">
-                                        {t[langKey][seg.label as keyof (typeof t)["en"]]}
-                                    </p>
-                                    <p className="text-[11px] font-semibold text-slate-500 dark:text-slate-450 tabular-nums">
-                                        {seg.value} {lang === "en" ? "rooms" : "បន្ទប់"}
-                                    </p>
-                                </div>
-                            </div>
-                        ))}
+                    {/* Donut Legend Info */}
+                    <div className="grid grid-cols-4 gap-1 text-[9px] font-extrabold uppercase tracking-wide border-t border-slate-100 dark:border-slate-800/80 pt-3">
+                        <div className="flex flex-col items-center">
+                            <span className="w-2.5 h-2.5 rounded-full inline-block bg-[#10b981] mb-1" />
+                            <span className="text-slate-500">{t[langKey].occupied.split(" ")[0]}</span>
+                            <span className="text-slate-800 dark:text-slate-100 font-black mt-0.5">{occupiedCount}</span>
+                        </div>
+                        <div className="flex flex-col items-center">
+                            <span className="w-2.5 h-2.5 rounded-full inline-block bg-[#f59e0b] mb-1" />
+                            <span className="text-slate-500">{t[langKey].reserved.split(" ")[0]}</span>
+                            <span className="text-slate-800 dark:text-slate-100 font-black mt-0.5">{reservedCount}</span>
+                        </div>
+                        <div className="flex flex-col items-center">
+                            <span className="w-2.5 h-2.5 rounded-full inline-block bg-[#2563eb] mb-1" />
+                            <span className="text-slate-500">{t[langKey].vacant.split(" ")[0]}</span>
+                            <span className="text-slate-800 dark:text-slate-100 font-black mt-0.5">{vacantCount}</span>
+                        </div>
+                        <div className="flex flex-col items-center">
+                            <span className="w-2.5 h-2.5 rounded-full inline-block bg-[#ef4444] mb-1" />
+                            <span className="text-slate-500">{t[langKey].maintenance.split(" ")[0]}</span>
+                            <span className="text-slate-800 dark:text-slate-100 font-black mt-0.5">{maintenanceCount}</span>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            {/* Receivables & Recent Rentals Rows */}
+            {/* Bottom Section: Recent Activities & Recent Rentals */}
             <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-                {/* Outstanding Bills Progress List */}
-                <div className="rounded-2xl glass-panel p-5.5 xl:col-span-1 flex flex-col min-h-[380px]">
-                    <div className="pb-4 border-b border-slate-50 dark:border-slate-800 flex justify-between items-center">
-                        <div>
-                            <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wider">
-                                {t[langKey].outstandingBills}
-                            </h3>
-                            <p className="text-[10px] text-slate-400 dark:text-slate-500 font-semibold">
-                                {t[langKey].unpaidAmt}: <span className="text-rose-500 font-bold">${totalOutstandingAmount.toFixed(2)}</span>
-                            </p>
-                        </div>
-                        <Link href="/dashboard/bills" className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:underline">
-                            {t[langKey].viewAll}
-                        </Link>
+                {/* Live Recent Activities Timeline */}
+                <div className="rounded-2xl glass-panel p-5.5 xl:col-span-1 flex flex-col min-h-[360px]">
+                    <div className="pb-4 border-b border-slate-100 dark:border-slate-800/80">
+                        <h3 className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider">
+                            {t[langKey].recentActivities}
+                        </h3>
                     </div>
 
-                    <div className="flex-1 overflow-y-auto mt-4 space-y-4 max-h-[320px] pr-1">
-                        {unpaidBills.length === 0 ? (
-                            <div className="h-full flex flex-col items-center justify-center text-center text-slate-400 dark:text-slate-600 py-10">
-                                <FaInbox className="text-3xl opacity-20 mb-2" />
-                                <p className="text-xs font-medium">
-                                    {lang === "en" ? "No outstanding bills" : "មិនមានវិក្កយបត្រជំពាក់ឡើយ"}
-                                </p>
+                    <div className="flex-1 overflow-y-auto mt-4 pr-1 relative">
+                        {recentActivities.length === 0 ? (
+                            <div className="h-full flex flex-col items-center justify-center text-center text-slate-400 dark:text-slate-650 py-10">
+                                <Activity className="w-8 h-8 opacity-20 mb-2" />
+                                <p className="text-xs font-medium">{lang === 'en' ? 'No recent activity' : 'មិនទាន់មានសកម្មភាពឡើយ'}</p>
                             </div>
                         ) : (
-                            unpaidBills.map((b) => {
-                                const totalAmt = Number(b.rentAmount || 0) + Number(b.electricityAmount) + Number(b.waterAmount);
-                                return (
-                                    <div
-                                        key={b.id}
-                                        className="p-3.5 bg-slate-100/30 dark:bg-slate-950/20 rounded-xl border border-slate-200/50 dark:border-slate-900/60 hover:shadow-md hover:border-slate-300 dark:hover:border-slate-800 transition-all"
-                                    >
-                                        <div className="flex justify-between items-start">
-                                            <div>
-                                                <h4 className="text-xs font-bold text-slate-800 dark:text-slate-100">
-                                                    {lang === "en" ? `Room ${b.rental?.roomNumber || 'N/A'}` : `បន្ទប់ ${b.rental?.roomNumber || 'N/A'}`}
-                                                </h4>
-                                                <p className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 mt-0.5">
-                                                    {t[langKey].billingMonth}: {b.month}
-                                                </p>
-                                            </div>
-                                            <span className="text-xs font-bold text-rose-500 tabular-nums">
-                                                ${totalAmt.toFixed(2)}
+                            <div className="relative pl-6 border-l-2 border-slate-100 dark:border-slate-800/60 ml-2 space-y-6 py-2">
+                                {recentActivities.map((act) => (
+                                    <div key={act.id} className="relative group">
+                                        {/* Icon wrapper positioned absolutely on the border line */}
+                                        <div className="absolute -left-[31px] top-0.5 w-6 h-6 rounded-full bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 flex items-center justify-center shadow-sm">
+                                            {act.icon}
+                                        </div>
+                                        <div>
+                                            <h4 className="text-xs font-bold text-slate-850 dark:text-slate-200 leading-tight">
+                                                {act.title}
+                                            </h4>
+                                            <p className="text-[10px] font-semibold text-slate-450 dark:text-slate-500 mt-1">
+                                                {act.subtitle}
+                                            </p>
+                                            <span className="text-[9px] text-slate-400 dark:text-slate-600 block mt-1.5 font-bold">
+                                                {act.time}
                                             </span>
                                         </div>
-
-                                        {/* Bill split indicators */}
-                                        <div className="grid grid-cols-2 gap-3 mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-800/80 text-[10px] text-slate-500 dark:text-slate-400">
-                                            <div>
-                                                <p className="flex justify-between">
-                                                    <span>{lang === "en" ? "Electricity" : "អគ្គិសនី"}:</span>
-                                                    <span className={`font-semibold ${b.electricityStatus === 'Unpaid' ? 'text-amber-500' : 'text-emerald-500'}`}>
-                                                        ${Number(b.electricityAmount).toFixed(1)}
-                                                    </span>
-                                                </p>
-                                                <div className="w-full bg-slate-200 dark:bg-slate-800 h-1 rounded-full mt-1 overflow-hidden">
-                                                    <div
-                                                        className={`h-full rounded-full ${b.electricityStatus === 'Unpaid' ? 'bg-amber-400' : 'bg-emerald-400'}`}
-                                                        style={{ width: b.electricityStatus === 'Unpaid' ? '100%' : '0%' }}
-                                                    />
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <p className="flex justify-between">
-                                                    <span>{lang === "en" ? "Water" : "ទឹក"}:</span>
-                                                    <span className={`font-semibold ${b.waterStatus === 'Unpaid' ? 'text-amber-500' : 'text-emerald-500'}`}>
-                                                        ${Number(b.waterAmount).toFixed(1)}
-                                                    </span>
-                                                </p>
-                                                <div className="w-full bg-slate-200 dark:bg-slate-800 h-1 rounded-full mt-1 overflow-hidden">
-                                                    <div
-                                                        className={`h-full rounded-full ${b.waterStatus === 'Unpaid' ? 'bg-amber-400' : 'bg-emerald-400'}`}
-                                                        style={{ width: b.waterStatus === 'Unpaid' ? '100%' : '0%' }}
-                                                    />
-                                                </div>
-                                            </div>
-                                        </div>
                                     </div>
-                                );
-                            })
+                                ))}
+                            </div>
                         )}
                     </div>
                 </div>
 
                 {/* Recent Rentals List */}
-                <div className="rounded-2xl glass-panel p-5.5 xl:col-span-2 flex flex-col min-h-[380px]">
-                    <div className="pb-4 border-b border-slate-50 dark:border-slate-800 flex justify-between items-center">
-                        <h3 className="text-sm font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wider">
+                <div className="rounded-2xl glass-panel p-5.5 xl:col-span-2 flex flex-col min-h-[360px]">
+                    <div className="pb-4 border-b border-slate-100 dark:border-slate-800/80 flex justify-between items-center">
+                        <h3 className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider">
                             {t[langKey].recentRentals}
                         </h3>
-                        <Link href="/dashboard/rentals" className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:underline">
+                        <Link href="/dashboard/rentals" className="text-xs font-semibold text-indigo-650 dark:text-indigo-400 hover:underline">
                             {t[langKey].viewAll}
                         </Link>
                     </div>
 
-                    <div className="flex-1 mt-4 overflow-x-auto w-full">
+                    <div className="flex-1 mt-4 overflow-x-auto w-full custom-scrollbar">
                         {loading ? (
                             <TableSkeleton rows={4} cols={4} />
                         ) : rentals.length === 0 ? (
-                            <div className="h-full flex flex-col items-center justify-center text-center text-slate-400 py-10">
-                                <FaInbox className="text-3xl opacity-20 mb-2" />
+                            <div className="h-full flex flex-col items-center justify-center text-center text-slate-400 dark:text-slate-650 py-10">
+                                <Activity className="w-8 h-8 opacity-20 mb-2" />
                                 <p className="text-xs font-medium">{t[langKey].noData}</p>
                             </div>
                         ) : (

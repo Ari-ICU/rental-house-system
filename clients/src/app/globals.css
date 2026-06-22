@@ -3,6 +3,12 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
+  --color-primary: #2563eb;
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
+  --color-background-saas: #f8fafc;
+
   --color-indigo-650: #4338ca;
   --color-emerald-650: #059669;
   --color-rose-650: #e11d48;

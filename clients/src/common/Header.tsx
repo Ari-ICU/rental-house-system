@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { FaBars, FaSearch, FaUser } from "react-icons/fa";
+import { Menu, Search, User, Plus, ChevronDown, Sun, Moon } from "lucide-react";
 import { useLang } from "@/context/LangContext";
 import { Rental } from "@/types/rents";
 import { getAllRentals } from "@/services/rentalService";
@@ -22,7 +22,12 @@ const Header: React.FC<HeaderProps> = ({ onMobileMenuToggle }) => {
     const [results, setResults] = useState<Rental[]>([]);
     const [showResults, setShowResults] = useState(false);
     const [mounted, setMounted] = useState(false);
+    
+    // Dropdown States
+    const [isQuickActionsOpen, setIsQuickActionsOpen] = useState(false);
+    
     const searchRef = useRef<HTMLDivElement>(null);
+    const quickActionsRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         setMounted(true);
@@ -44,6 +49,9 @@ const Header: React.FC<HeaderProps> = ({ onMobileMenuToggle }) => {
         const handleClickOutside = (event: MouseEvent) => {
             if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
                 setShowResults(false);
+            }
+            if (quickActionsRef.current && !quickActionsRef.current.contains(event.target as Node)) {
+                setIsQuickActionsOpen(false);
             }
         };
         document.addEventListener("mousedown", handleClickOutside);
@@ -112,7 +120,7 @@ const Header: React.FC<HeaderProps> = ({ onMobileMenuToggle }) => {
                     onClick={onMobileMenuToggle}
                     className="lg:hidden w-10 h-10 flex items-center justify-center text-slate-500 hover:text-slate-700 hover:bg-slate-50 dark:hover:bg-slate-900 flex-shrink-0 rounded-md transition-colors"
                 >
-                    <FaBars className="w-5 h-5" />
+                    <Menu className="w-5 h-5" />
                 </button>
                 <div className="hidden sm:flex flex-col">
                     <h1 className="text-xl font-semibold text-slate-900 dark:text-slate-50 tracking-tight leading-none">
@@ -122,14 +130,14 @@ const Header: React.FC<HeaderProps> = ({ onMobileMenuToggle }) => {
             </div>
 
             {/* Right Section */}
-            <div className="flex items-center gap-4">
-                {/* Search */}
-                <div className="hidden md:block relative w-72" ref={searchRef}>
+            <div className="flex items-center gap-3">
+                {/* Global Search */}
+                <div className="hidden md:block relative w-64" ref={searchRef}>
                     <div className={`
-                        flex items-center px-4 py-2.5 bg-slate-100/50 dark:bg-slate-900/40 border rounded-xl transition-all duration-300
+                        flex items-center px-3.5 py-2 bg-slate-100/50 dark:bg-slate-900/40 border rounded-xl transition-all duration-300
                         ${showResults ? 'border-indigo-500/80 ring-4 ring-indigo-500/5 shadow-glow-indigo' : 'border-slate-200/80 dark:border-slate-800/80 hover:border-slate-300 dark:hover:border-slate-700'}
                     `}>
-                        <FaSearch className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 mr-2.5" />
+                        <Search className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 mr-2" />
                         <input
                             type="text"
                             placeholder={lang === 'en' ? 'Search...' : 'ស្វែងរក...'}
@@ -147,7 +155,7 @@ const Header: React.FC<HeaderProps> = ({ onMobileMenuToggle }) => {
                                 initial={{ opacity: 0, y: 5 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: 5 }}
-                                className="absolute top-full mt-2 left-0 right-0 bg-white dark:bg-slate-900 rounded-md shadow-lg border border-slate-200 dark:border-slate-800 overflow-hidden z-50"
+                                className="absolute top-full mt-2 left-0 right-0 bg-white dark:bg-slate-900 rounded-xl shadow-xl border border-slate-200 dark:border-slate-800 overflow-hidden z-50"
                             >
                                 <div className="px-3 py-2 text-xs font-semibold text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800">
                                     {lang === 'en' ? 'Results' : 'លទ្ធផល'}
@@ -160,7 +168,7 @@ const Header: React.FC<HeaderProps> = ({ onMobileMenuToggle }) => {
                                             className="w-full flex items-center gap-3 p-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors text-left border-b border-slate-100 dark:border-slate-800 last:border-0"
                                         >
                                             <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 dark:text-slate-400 flex-shrink-0">
-                                                <FaUser className="w-4 h-4" />
+                                                <User className="w-4 h-4" />
                                             </div>
                                             <div className="flex-1 min-w-0">
                                                 <div className="flex justify-between items-center">
@@ -192,10 +200,58 @@ const Header: React.FC<HeaderProps> = ({ onMobileMenuToggle }) => {
                     </AnimatePresence>
                 </div>
 
+                {/* Quick Actions Dropdown */}
+                <div className="relative" ref={quickActionsRef}>
+                    <button
+                        onClick={() => setIsQuickActionsOpen(!isQuickActionsOpen)}
+                        className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-indigo-650 hover:bg-indigo-750 dark:bg-indigo-600 dark:hover:bg-indigo-700 text-white text-xs font-bold shadow-sm cursor-pointer transition-all duration-205"
+                    >
+                        <Plus className="w-3.5 h-3.5" />
+                        <span className="hidden sm:inline">{lang === "en" ? "Quick Action" : "សកម្មភាពរហ័ស"}</span>
+                        <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${isQuickActionsOpen ? 'rotate-180' : ''}`} />
+                    </button>
+                    <AnimatePresence>
+                        {isQuickActionsOpen && (
+                            <motion.div
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: 10 }}
+                                transition={{ duration: 0.15 }}
+                                className="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-900 border border-slate-250/60 dark:border-slate-850 shadow-xl rounded-xl overflow-hidden z-50 py-1"
+                            >
+                                <button
+                                    onClick={() => { router.push('/dashboard/rentals/create'); setIsQuickActionsOpen(false); }}
+                                    className="w-full text-left px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-800/60 text-xs font-semibold text-slate-700 dark:text-slate-200 transition-colors"
+                                >
+                                    {lang === "en" ? "+ New Rental" : "+ បន្ថែមការជួល"}
+                                </button>
+                                <button
+                                    onClick={() => { router.push('/dashboard/bills/create'); setIsQuickActionsOpen(false); }}
+                                    className="w-full text-left px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-800/60 text-xs font-semibold text-slate-700 dark:text-slate-200 transition-colors"
+                                >
+                                    {lang === "en" ? "+ Add Bill" : "+ បង្កើតវិក្កយបត្រ"}
+                                </button>
+                                <button
+                                    onClick={() => { router.push('/dashboard/expenses?action=create'); setIsQuickActionsOpen(false); }}
+                                    className="w-full text-left px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-800/60 text-xs font-semibold text-slate-700 dark:text-slate-200 transition-colors"
+                                >
+                                    {lang === "en" ? "+ Add Expense" : "+ បន្ថែមចំណាយ"}
+                                </button>
+                                <button
+                                    onClick={() => { router.push('/dashboard/rooms?action=create'); setIsQuickActionsOpen(false); }}
+                                    className="w-full text-left px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-800/60 text-xs font-semibold text-slate-700 dark:text-slate-200 transition-colors"
+                                >
+                                    {lang === "en" ? "+ Add Room" : "+ បន្ថែមបន្ទប់"}
+                                </button>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                </div>
+
                 {/* Language Switch */}
                 <button
                     onClick={toggleLang}
-                    className="flex items-center justify-center w-8 h-8 rounded-full border border-slate-200 hover:border-slate-300 hover:shadow-sm transition-all overflow-hidden"
+                    className="flex items-center justify-center w-8 h-8 rounded-full border border-slate-200 hover:border-slate-300 hover:shadow-sm transition-all overflow-hidden cursor-pointer"
                 >
                     <div className="w-full h-full relative">
                         <Image
@@ -213,26 +269,22 @@ const Header: React.FC<HeaderProps> = ({ onMobileMenuToggle }) => {
                 {/* Theme Switch */}
                 <button
                     onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                    className="flex items-center justify-center w-8 h-8 rounded-md bg-slate-50 dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-800 transition-colors"
+                    className="flex items-center justify-center w-8 h-8 rounded-xl bg-slate-50 dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-800 transition-colors cursor-pointer"
                     aria-label="Toggle Dark Mode"
                 >
                     {mounted ? (
                         theme === 'dark' ? (
-                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-                            </svg>
+                            <Sun className="w-4 h-4" />
                         ) : (
-                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-                            </svg>
+                            <Moon className="w-4 h-4" />
                         )
                     ) : (
                         <div className="w-4 h-4" />
                     )}
                 </button>
 
-                {/* Profile */}
-                <div className="flex items-center gap-2.5 pl-4 border-l border-slate-200/80 dark:border-slate-800/60">
+                {/* Profile Avatar */}
+                <div className="flex items-center gap-2 pl-3 border-l border-slate-200 dark:border-slate-800">
                     <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 text-white flex items-center justify-center text-xs font-black shadow-md shadow-indigo-500/10">
                         A
                     </div>

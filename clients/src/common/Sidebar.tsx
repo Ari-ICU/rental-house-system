@@ -5,20 +5,22 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-    FaTachometerAlt,
-    FaFileContract,
-    FaChartBar,
-    FaCamera,
-    FaBars,
-    FaLifeRing,
-    FaTimes,
-    FaPlug,
-    FaCog,
-    FaChevronLeft,
-    FaMoneyBillWave,
-    FaSignOutAlt,
-    FaBed
-} from "react-icons/fa";
+    LayoutDashboard,
+    Bed,
+    FileText,
+    Users,
+    Receipt,
+    Wallet,
+    BarChart3,
+    Video,
+    UserCheck,
+    Settings,
+    HelpCircle,
+    ChevronLeft,
+    Menu,
+    LogOut,
+    X
+} from "lucide-react";
 import { useLang } from "@/context/LangContext";
 import { useAuth } from "@/context/AuthContext";
 
@@ -46,49 +48,43 @@ const Sidebar: React.FC<{ isMobileOpen: boolean; onClose: () => void }> = ({ isM
 
     const linkGroups: LinkGroup[] = [
         {
-            title: "Insights",
-            titleKh: "ការយល់ដឹង",
-            links: [{ name: "Dashboard", nameKh: "ផ្ទាំងគ្រប់គ្រង", href: "/dashboard", icon: <FaTachometerAlt className="w-4 h-4" /> }],
-        },
-        {
-            title: "Operations",
-            titleKh: "ប្រតិបត្តិការ",
+            title: "Overview",
+            titleKh: "ទិដ្ឋភាពទូទៅ",
             links: [
-                { name: "Rooms", nameKh: "បន្ទប់ជួល", href: "/dashboard/rooms", icon: <FaBed className="w-4 h-4" /> },
-                { name: "Rentals", nameKh: "ការជួល", href: "/dashboard/rentals", icon: <FaFileContract className="w-4 h-4" /> },
-                { name: "Expenses", nameKh: "ចំណាយ", href: "/dashboard/expenses", icon: <FaMoneyBillWave className="w-4 h-4" /> },
-                { name: "Utilities & Bills", nameKh: "សេវាអគ្គិសនី និងទឹក", href: "/dashboard/bills", icon: <FaPlug className="w-4 h-4" /> },
+                { 
+                    name: "Overview", 
+                    nameKh: "ទិដ្ឋភាពទូទៅ", 
+                    href: "/dashboard", 
+                    icon: <LayoutDashboard className="w-4 h-4" /> 
+                }
             ],
         },
         {
-            title: "Security",
-            titleKh: "សន្តិសុខ",
+            title: "Property",
+            titleKh: "អចលនទ្រព្យ",
             links: [
-                {
-                    name: "Camera Hub",
-                    nameKh: "មជ្ឈមណ្ឌលកាមេរ៉ា",
-                    href: "/dashboard/camera",
-                    icon: <FaCamera className="w-4 h-4" />,
-                },
+                { name: "Rooms", nameKh: "បន្ទប់ជួល", href: "/dashboard/rooms", icon: <Bed className="w-4 h-4" /> },
+                { name: "Rentals", nameKh: "ការជួល", href: "/dashboard/rentals", icon: <FileText className="w-4 h-4" /> },
+                { name: "Tenants", nameKh: "អ្នកជួល", href: "/dashboard/tenants", icon: <Users className="w-4 h-4" /> },
             ],
         },
         {
-            title: "Analytics",
-            titleKh: "ការវិភាគ",
-            links: [{ name: "Performance Reports", nameKh: "របាយការណ៍", href: "/dashboard/reports", icon: <FaChartBar className="w-4 h-4" /> }],
-        },
-        {
-            title: "Preferences",
-            titleKh: "ចំណូលចិត្ត",
+            title: "Finance",
+            titleKh: "ហិរញ្ញវត្ថុ",
             links: [
-                { name: "System Settings", nameKh: "ការកំណត់", href: "/dashboard/settings", icon: <FaCog className="w-4 h-4" /> },
+                { name: "Bills", nameKh: "វិក្កយបត្រ", href: "/dashboard/bills", icon: <Receipt className="w-4 h-4" /> },
+                { name: "Expenses", nameKh: "ចំណាយ", href: "/dashboard/expenses", icon: <Wallet className="w-4 h-4" /> },
+                { name: "Reports", nameKh: "របាយការណ៍", href: "/dashboard/reports", icon: <BarChart3 className="w-4 h-4" /> },
             ],
         },
         {
-            title: "Help & Support",
-            titleKh: "ជំនួយ និងការគាំទ្រ",
+            title: "System",
+            titleKh: "ប្រព័ន្ធ",
             links: [
-                { name: "Support Hub", nameKh: "មជ្ឈមណ្ឌលគាំទ្រ", href: "/dashboard/support", icon: <FaLifeRing className="w-4 h-4" /> },
+                { name: "Cameras", nameKh: "កាមេរ៉ា", href: "/dashboard/camera", icon: <Video className="w-4 h-4" /> },
+                { name: "Users", nameKh: "អ្នកប្រើប្រាស់", href: "/dashboard/users", icon: <UserCheck className="w-4 h-4" /> },
+                { name: "Settings", nameKh: "ការកំណត់", href: "/dashboard/settings", icon: <Settings className="w-4 h-4" /> },
+                { name: "Support Hub", nameKh: "ជំនួយការគាំទ្រ", href: "/dashboard/support", icon: <HelpCircle className="w-4 h-4" /> },
             ],
         },
     ];
@@ -207,7 +203,7 @@ const Sidebar: React.FC<{ isMobileOpen: boolean; onClose: () => void }> = ({ isM
                             className="group relative w-10 h-10 rounded-xl text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 flex items-center justify-center transition-all duration-200"
                             aria-label="Logout"
                         >
-                            <FaSignOutAlt size={16} />
+                            <LogOut size={16} />
                             <div className="absolute left-full ml-4 px-3 py-2 bg-slate-900/95 dark:bg-slate-950/95 backdrop-blur-md text-white text-xs font-semibold rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 shadow-xl border border-slate-800 dark:border-slate-800 whitespace-nowrap z-50">
                                 {lang === 'en' ? 'Logout' : 'ចាកចេញ'}
                             </div>
@@ -241,7 +237,7 @@ const Sidebar: React.FC<{ isMobileOpen: boolean; onClose: () => void }> = ({ isM
                             className="w-8 h-8 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 flex items-center justify-center transition-all duration-200 shrink-0"
                             aria-label="Logout"
                         >
-                            <FaSignOutAlt size={15} />
+                            <LogOut size={15} />
                         </button>
                     </div>
                 )}
@@ -283,7 +279,7 @@ const Sidebar: React.FC<{ isMobileOpen: boolean; onClose: () => void }> = ({ isM
                             className="w-7 h-7 flex items-center justify-center rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-white dark:hover:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-700 transition-all duration-200 shadow-sm"
                             aria-label="Collapse Sidebar"
                         >
-                            <FaChevronLeft size={10} />
+                            <ChevronLeft size={10} />
                         </button>
                     )}
                 </div>
@@ -295,7 +291,7 @@ const Sidebar: React.FC<{ isMobileOpen: boolean; onClose: () => void }> = ({ isM
                             className="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-white dark:hover:bg-slate-800 transition-colors shadow-sm"
                             aria-label="Expand Sidebar"
                         >
-                            <FaBars size={11} />
+                            <Menu size={11} />
                         </button>
                     </div>
                 )}
@@ -335,7 +331,7 @@ const Sidebar: React.FC<{ isMobileOpen: boolean; onClose: () => void }> = ({ isM
                                     onClick={onClose}
                                     className="w-8 h-8 flex items-center justify-center rounded-md text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
                                 >
-                                    <FaTimes size={16} />
+                                    <X size={16} />
                                 </button>
                             </div>
                             {renderNav(false, onClose)}
