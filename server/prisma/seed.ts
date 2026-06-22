@@ -50,6 +50,28 @@ async function main() {
         console.log('🟡 System settings already exist, skipping initialization.');
     }
 
+    // 3. Initialize Rooms list if empty
+    const roomsCount = await prisma.room.count();
+    if (roomsCount === 0) {
+        const baseRoomNumbers = [
+            "101", "102", "103", "104", "105",
+            "201", "202", "203", "204", "205",
+            "301", "302", "303", "304", "305"
+        ];
+        for (const rNo of baseRoomNumbers) {
+            await prisma.room.create({
+                data: {
+                    roomNumber: rNo,
+                    rentAmount: 100,
+                    notes: "Standard Single"
+                }
+            });
+        }
+        console.log(`✅ ${baseRoomNumbers.length} default rooms seeded successfully.`);
+    } else {
+        console.log('🟡 Rooms already exist in database, skipping room seeding.');
+    }
+
     console.log('🏁 Seeding completed successfully.');
 }
 

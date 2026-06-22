@@ -4,9 +4,12 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { getAllRentals, updateRental, createRental } from "@/services/rentalService";
 import { Rental, RentalStatus } from "@/types/rents";
-import { FaBuilding, FaThLarge, FaInbox, FaColumns, FaList, FaUser } from "react-icons/fa";
+import { FaBuilding, FaThLarge, FaInbox, FaColumns, FaList, FaUser, FaTrashAlt, FaPen, FaPlus, FaTimes } from "react-icons/fa";
 import { useLang } from "@/context/LangContext";
 import TableSkeleton from "@/components/common/TableSkeleton";
+import { Room } from "@/types/room";
+import { getAllRooms, createRoom, updateRoom, deleteRoom } from "@/services/roomService";
+import { toast } from "react-hot-toast";
 
 interface RoomInstance {
     roomNumber: string;
@@ -28,19 +31,40 @@ export default function RoomsPage() {
     const { lang } = useLang();
     const router = useRouter();
     const [rentals, setRentals] = useState<Rental[]>([]);
+    const [dbRooms, setDbRooms] = useState<Room[]>([]);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState<"visual" | "kanban" | "table">("visual");
     const [search, setSearch] = useState("");
     const [statusFilter, setStatusFilter] = useState<string>("All");
 
-    // Fetch rentals from backend
+    // Modal forms states
+    const [showAddModal, setShowAddModal] = useState(false);
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [showActionMenu, setShowActionMenu] = useState(false);
+    const [actionRoom, setActionRoom] = useState<RoomInstance | null>(null);
+
+    // Add Room Form
+    const [addRoomNumber, setAddRoomNumber] = useState("");
+    const [addRentAmount, setAddRentAmount] = useState("100");
+    const [addNotes, setAddNotes] = useState("");
+
+    // Edit Room Form
+    const [editRoomNumber, setEditRoomNumber] = useState("");
+    const [editRentAmount, setEditRentAmount] = useState("100");
+    const [editNotes, setEditNotes] = useState("");
+
+    // Fetch rentals & rooms from backend
     const fetchRoomsData = useCallback(async () => {
         try {
             setLoading(true);
-            const data = await getAllRentals();
-            setRentals(data || []);
+            const [rentalsData, roomsData] = await Promise.all([
+                getAllRentals(),
+                getAllRooms()
+            ]);
+            setRentals(rentalsData || []);
+            setDbRooms(roomsData || []);
         } catch (error) {
-            console.error("Failed to fetch room rentals:", error);
+            console.error("Failed to fetch rooms and rentals data:", error);
         } finally {
             setLoading(false);
         }
@@ -50,43 +74,103 @@ export default function RoomsPage() {
         fetchRoomsData();
     }, [fetchRoomsData]);
 
-    // Predefined baseline rooms (15 rooms across 3 floors)
-    const baseRoomNumbers = [
-        "101", "102", "103", "104", "105",
-        "201", "202", "203", "204", "205",
-        "301", "302", "303", "304", "305"
-    ];
+    const handleAddRoom = async (e: React.FormEvent) => {
+        e.preventDefault();
+        try {
+            if (!addRoomNumber || !addRentAmount) {
+                toast.error("Please fill in all required fields.");
+                return;
+            }
+            await createRoom({
+                roomNumber: addRoomNumber.trim(),
+                rentAmount: Number(addRentAmount),
+                notes: addNotes.trim() || undefined
+            });
+            toast.success("Room created successfully!");
+            setShowAddModal(false);
+            setAddRoomNumber("");
+            setAddRentAmount("100");
+            setAddNotes("");
+            fetchRoomsData();
+        } catch (error: unknown) {
+            const err = error as { response?: { data?: { message?: string } }; message?: string };
+            toast.error(err.response?.data?.message || err.message || "Failed to create room.");
+        }
+    };
 
-    // Combine predefined rooms and rooms from rentals dynamically
+    const handleEditRoom = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!actionRoom) return;
+        try {
+            const dbRoom = dbRooms.find(r => r.roomNumber === actionRoom.roomNumber);
+            if (!dbRoom) {
+                toast.error("Room not found in database.");
+                return;
+            }
+            await updateRoom(dbRoom.id, {
+                roomNumber: editRoomNumber.trim(),
+                rentAmount: Number(editRentAmount),
+                notes: editNotes.trim() || undefined
+            });
+            toast.success("Room updated successfully!");
+            setShowEditModal(false);
+            setActionRoom(null);
+            fetchRoomsData();
+        } catch (error: unknown) {
+            const err = error as { response?: { data?: { message?: string } }; message?: string };
+            toast.error(err.response?.data?.message || err.message || "Failed to update room.");
+        }
+    };
+
+    const handleDeleteRoom = async () => {
+        if (!actionRoom) return;
+        if (!confirm(lang === "en" ? `Are you sure you want to delete Room ${actionRoom.roomNumber}?` : `តើអ្នកប្រាកដជាចង់លុបបន្ទប់ ${actionRoom.roomNumber} មែនទេ?`)) return;
+        try {
+            const dbRoom = dbRooms.find(r => r.roomNumber === actionRoom.roomNumber);
+            if (!dbRoom) {
+                toast.error("Room not found in database.");
+                return;
+            }
+            await deleteRoom(dbRoom.id);
+            toast.success("Room deleted successfully!");
+            setShowActionMenu(false);
+            setActionRoom(null);
+            fetchRoomsData();
+        } catch (error: unknown) {
+            const err = error as { response?: { data?: { message?: string } }; message?: string };
+            toast.error(err.response?.data?.message || err.message || "Failed to delete room.");
+        }
+    };
+
+
     const buildRoomsList = (): RoomInstance[] => {
         const roomsMap = new Map<string, RoomInstance>();
 
-        // 1. Initialize with predefined rooms (Vacant)
-        baseRoomNumbers.forEach(roomNo => {
-            roomsMap.set(roomNo, {
-                roomNumber: roomNo,
+        // 1. Initialize with database rooms (Vacant)
+        dbRooms.forEach(room => {
+            roomsMap.set(room.roomNumber, {
+                roomNumber: room.roomNumber,
                 status: "Vacant",
                 clientName: "",
                 rentalId: null,
-                rentAmount: 100, // Default price
-                notes: "Standard Single",
+                rentAmount: Number(room.rentAmount),
+                notes: room.notes || "Standard Single",
             });
         });
 
         // 2. Scan database rentals to overlay statuses
-        // We sort by id ascending so the latest status overlays
         const sortedRentals = [...rentals].sort((a, b) => a.id - b.id);
         sortedRentals.forEach(r => {
             const roomNo = r.roomNumber;
-            // Only capture active, reserved, or maintenance statuses
-            if (r.status === "Active" || r.status === "Reserved" || r.status === "Maintenance") {
+            if ((r.status === "Active" || r.status === "Reserved" || r.status === "Maintenance") && roomsMap.has(roomNo)) {
+                const currentRoom = roomsMap.get(roomNo)!;
                 roomsMap.set(roomNo, {
-                    roomNumber: roomNo,
+                    ...currentRoom,
                     status: r.status === "Active" ? "Occupied" : (r.status as "Reserved" | "Maintenance"),
                     clientName: r.ClientName,
                     rentalId: r.id,
                     rentAmount: r.rentAmount,
-                    notes: r.notes || "Standard Unit",
+                    notes: r.notes || currentRoom.notes,
                     startDate: r.startDate,
                     clientPhone: r.clientPhone,
                 });
@@ -248,8 +332,17 @@ export default function RoomsPage() {
                     </p>
                 </div>
 
-                {/* View switcher */}
-                <div className="flex bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-850 p-1 rounded-xl">
+                <div className="flex items-center gap-3">
+                    <button
+                        onClick={() => setShowAddModal(true)}
+                        className="bg-indigo-600 hover:bg-indigo-700 text-white px-3.5 py-2 rounded-xl text-xs font-semibold shadow-md shadow-indigo-500/10 flex items-center gap-1.5 transition-all duration-200 hover:-translate-y-0.5 cursor-pointer"
+                    >
+                        <FaBuilding className="text-[10px]" />
+                        {lang === "en" ? "Add Room" : "បន្ថែមបន្ទប់"}
+                    </button>
+
+                    {/* View switcher */}
+                    <div className="flex bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-850 p-1 rounded-xl">
                     <button
                         onClick={() => setActiveTab("visual")}
                         className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
@@ -280,6 +373,7 @@ export default function RoomsPage() {
                     >
                         <FaList /> {t[activeLang].tableTab}
                     </button>
+                </div>
                 </div>
             </div>
 
@@ -356,7 +450,11 @@ export default function RoomsPage() {
                                                         if (room.rentalId) {
                                                             router.push(`/dashboard/rentals/${room.rentalId}`);
                                                         } else {
-                                                            router.push(`/dashboard/rentals/create?roomNumber=${room.roomNumber}`);
+                                                            setActionRoom(room);
+                                                            setEditRoomNumber(room.roomNumber);
+                                                            setEditRentAmount(String(room.rentAmount));
+                                                            setEditNotes(room.notes || "");
+                                                            setShowActionMenu(true);
                                                         }
                                                     }}
                                                 >
@@ -565,7 +663,11 @@ export default function RoomsPage() {
                                                         if (room.rentalId) {
                                                             router.push(`/dashboard/rentals/${room.rentalId}`);
                                                         } else {
-                                                            router.push(`/dashboard/rentals/create?roomNumber=${room.roomNumber}`);
+                                                            setActionRoom(room);
+                                                            setEditRoomNumber(room.roomNumber);
+                                                            setEditRentAmount(String(room.rentAmount));
+                                                            setEditNotes(room.notes || "");
+                                                            setShowActionMenu(true);
                                                         }
                                                     }}
                                                     className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors cursor-pointer"
@@ -597,6 +699,176 @@ export default function RoomsPage() {
                         </div>
                     )}
                 </>
+            )}
+
+            {/* Modal: Action Menu for Vacant Room */}
+            {showActionMenu && actionRoom && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-sm animate-fadeIn">
+                    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 w-full max-w-sm shadow-xl space-y-4">
+                        <div className="flex justify-between items-center border-b border-slate-105 dark:border-slate-800 pb-3">
+                            <h3 className="text-xs font-bold text-slate-800 dark:text-slate-150 uppercase tracking-wider">
+                                {lang === "en" ? `Room ${actionRoom.roomNumber} Options` : `ជម្រើសបន្ទប់ ${actionRoom.roomNumber}`}
+                            </h3>
+                            <button onClick={() => setShowActionMenu(false)} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-350 cursor-pointer">
+                                <FaTimes size={16} />
+                            </button>
+                        </div>
+                        <div className="flex flex-col gap-2.5 pt-2">
+                            <button
+                                onClick={() => {
+                                    setShowActionMenu(false);
+                                    router.push(`/dashboard/rentals/create?roomNumber=${actionRoom.roomNumber}`);
+                                }}
+                                className="w-full flex items-center justify-center gap-2 py-3 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-xl transition-colors cursor-pointer"
+                            >
+                                <FaPlus /> {lang === "en" ? "Rent This Room" : "ជួលបន្ទប់នេះ"}
+                            </button>
+                            <button
+                                onClick={() => {
+                                    setShowActionMenu(false);
+                                    setShowEditModal(true);
+                                }}
+                                className="w-full flex items-center justify-center gap-2 py-3 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-semibold rounded-xl transition-colors cursor-pointer"
+                            >
+                                <FaPen /> {lang === "en" ? "Edit Room Details" : "កែប្រែព័ត៌មានបន្ទប់"}
+                            </button>
+                            <button
+                                onClick={handleDeleteRoom}
+                                className="w-full flex items-center justify-center gap-2 py-3 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/20 dark:hover:bg-rose-950/40 text-rose-600 text-xs font-semibold rounded-xl transition-colors cursor-pointer"
+                            >
+                                <FaTrashAlt /> {lang === "en" ? "Delete Room" : "លុបបន្ទប់ចោល"}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Modal: Add Room */}
+            {showAddModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-sm animate-fadeIn">
+                    <form onSubmit={handleAddRoom} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 w-full max-w-md shadow-xl space-y-4">
+                        <div className="flex justify-between items-center border-b border-slate-105 dark:border-slate-800 pb-3">
+                            <h3 className="text-xs font-bold text-slate-800 dark:text-slate-150 uppercase tracking-wider">
+                                {lang === "en" ? "Add New Room" : "បន្ថែមបន្ទប់ថ្មី"}
+                            </h3>
+                            <button type="button" onClick={() => setShowAddModal(false)} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-350 cursor-pointer">
+                                <FaTimes size={16} />
+                            </button>
+                        </div>
+                        <div className="space-y-3.5 pt-2">
+                            <div className="space-y-1.5">
+                                <label className="text-[10px] font-bold text-slate-450 dark:text-slate-400 uppercase tracking-wider">{lang === "en" ? "Room Number" : "លេខបន្ទប់"}</label>
+                                <input
+                                    type="text"
+                                    required
+                                    value={addRoomNumber}
+                                    onChange={(e) => setAddRoomNumber(e.target.value)}
+                                    placeholder="e.g. 101"
+                                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 rounded-xl px-4 py-2.5 text-xs text-slate-800 dark:text-slate-100 outline-none focus:border-indigo-500/80 focus:ring-4 focus:ring-indigo-500/5 transition-all"
+                                />
+                            </div>
+                            <div className="space-y-1.5">
+                                <label className="text-[10px] font-bold text-slate-450 dark:text-slate-400 uppercase tracking-wider">{lang === "en" ? "Default Rent ($)" : "ថ្លៃជួលលំនាំដើម ($)"}</label>
+                                <input
+                                    type="number"
+                                    required
+                                    value={addRentAmount}
+                                    onChange={(e) => setAddRentAmount(e.target.value)}
+                                    placeholder="e.g. 100"
+                                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 rounded-xl px-4 py-2.5 text-xs text-slate-800 dark:text-slate-100 outline-none focus:border-indigo-500/80 focus:ring-4 focus:ring-indigo-500/5 transition-all"
+                                />
+                            </div>
+                            <div className="space-y-1.5">
+                                <label className="text-[10px] font-bold text-slate-450 dark:text-slate-400 uppercase tracking-wider">{lang === "en" ? "Description / Notes" : "ការពិពណ៌នា / កំណត់សម្គាល់"}</label>
+                                <textarea
+                                    value={addNotes}
+                                    onChange={(e) => setAddNotes(e.target.value)}
+                                    placeholder="e.g. Standard Single Room"
+                                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 rounded-xl px-4 py-2.5 text-xs text-slate-800 dark:text-slate-100 outline-none focus:border-indigo-500/80 focus:ring-4 focus:ring-indigo-500/5 transition-all min-h-[70px] resize-none"
+                                />
+                            </div>
+                        </div>
+                        <div className="flex justify-end gap-2 pt-3 border-t border-slate-105 dark:border-slate-800">
+                            <button
+                                type="button"
+                                onClick={() => setShowAddModal(false)}
+                                className="px-4 py-2 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-750 dark:text-slate-250 text-xs font-semibold rounded-xl transition-colors cursor-pointer"
+                            >
+                                {lang === "en" ? "Cancel" : "បោះបង់"}
+                            </button>
+                            <button
+                                type="submit"
+                                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-xl shadow-md shadow-indigo-600/10 transition-colors cursor-pointer"
+                            >
+                                {lang === "en" ? "Create Room" : "បង្កើតបន្ទប់"}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            )}
+
+            {/* Modal: Edit Room */}
+            {showEditModal && actionRoom && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-sm animate-fadeIn">
+                    <form onSubmit={handleEditRoom} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 w-full max-w-md shadow-xl space-y-4">
+                        <div className="flex justify-between items-center border-b border-slate-105 dark:border-slate-800 pb-3">
+                            <h3 className="text-xs font-bold text-slate-800 dark:text-slate-150 uppercase tracking-wider">
+                                {lang === "en" ? `Edit Room ${actionRoom.roomNumber}` : `កែប្រែបន្ទប់ ${actionRoom.roomNumber}`}
+                            </h3>
+                            <button type="button" onClick={() => setShowEditModal(false)} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-350 cursor-pointer">
+                                <FaTimes size={16} />
+                            </button>
+                        </div>
+                        <div className="space-y-3.5 pt-2">
+                            <div className="space-y-1.5">
+                                <label className="text-[10px] font-bold text-slate-450 dark:text-slate-400 uppercase tracking-wider">{lang === "en" ? "Room Number" : "លេខបន្ទប់"}</label>
+                                <input
+                                    type="text"
+                                    required
+                                    value={editRoomNumber}
+                                    onChange={(e) => setEditRoomNumber(e.target.value)}
+                                    placeholder="e.g. 101"
+                                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 rounded-xl px-4 py-2.5 text-xs text-slate-800 dark:text-slate-100 outline-none focus:border-indigo-500/80 focus:ring-4 focus:ring-indigo-500/5 transition-all"
+                                />
+                            </div>
+                            <div className="space-y-1.5">
+                                <label className="text-[10px] font-bold text-slate-450 dark:text-slate-400 uppercase tracking-wider">{lang === "en" ? "Default Rent ($)" : "ថ្លៃជួលលំនាំដើម ($)"}</label>
+                                <input
+                                    type="number"
+                                    required
+                                    value={editRentAmount}
+                                    onChange={(e) => setEditRentAmount(e.target.value)}
+                                    placeholder="e.g. 100"
+                                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 rounded-xl px-4 py-2.5 text-xs text-slate-800 dark:text-slate-100 outline-none focus:border-indigo-500/80 focus:ring-4 focus:ring-indigo-500/5 transition-all"
+                                />
+                            </div>
+                            <div className="space-y-1.5">
+                                <label className="text-[10px] font-bold text-slate-450 dark:text-slate-400 uppercase tracking-wider">{lang === "en" ? "Description / Notes" : "ការពិពណ៌នា / កំណត់សម្គាល់"}</label>
+                                <textarea
+                                    value={editNotes}
+                                    onChange={(e) => setEditNotes(e.target.value)}
+                                    placeholder="e.g. Standard Single Room"
+                                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 rounded-xl px-4 py-2.5 text-xs text-slate-800 dark:text-slate-100 outline-none focus:border-indigo-500/80 focus:ring-4 focus:ring-indigo-500/5 transition-all min-h-[70px] resize-none"
+                                />
+                            </div>
+                        </div>
+                        <div className="flex justify-end gap-2 pt-3 border-t border-slate-105 dark:border-slate-800">
+                            <button
+                                type="button"
+                                onClick={() => setShowEditModal(false)}
+                                className="px-4 py-2 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-750 dark:text-slate-250 text-xs font-semibold rounded-xl transition-colors cursor-pointer"
+                            >
+                                {lang === "en" ? "Cancel" : "បោះបង់"}
+                            </button>
+                            <button
+                                type="submit"
+                                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-xl shadow-md shadow-indigo-600/10 transition-colors cursor-pointer"
+                            >
+                                {lang === "en" ? "Save Changes" : "រក្សាទុក"}
+                            </button>
+                        </div>
+                    </form>
+                </div>
             )}
         </div>
     );

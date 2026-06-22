@@ -99,6 +99,7 @@ import authRoutes from './routes/auth.route';
 import supportRoutes from './routes/support.route';
 import expenseRoutes from './routes/expense.route';
 import cameraRoutes from './routes/cameraRoutes';
+import roomRoutes from './routes/room.route';
 
 app.use('/api/auth', authRoutes);
 app.use('/api/rentals', rentalRoutes);
@@ -109,6 +110,7 @@ app.use('/api/payments', paymentRoutes);
 app.use('/api/support', supportRoutes);
 app.use('/api/expenses', expenseRoutes);
 app.use('/api/cameras', cameraRoutes);
+app.use('/api/rooms', roomRoutes);
 
 // ── Health check ──────────────────────────────────────────────────────────────
 app.get('/api/health', (req, res) => {
